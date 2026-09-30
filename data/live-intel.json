@@ -1,12 +1,13 @@
 {
-  "updatedAt": "2026-09-30T10:30:00.000Z",
+  "updatedAt": "2026-09-30T11:01:54.833088+00:00",
   "status": "ok",
   "summary": {
-    "vulnerabilities": 12,
+    "vulnerabilities": 0,
     "kev": 5,
-    "releases": 8,
-    "techniques": 14,
-    "signals": 39
+    "releases": 32,
+    "techniques": 10,
+    "writeups": 5,
+    "signals": 52
   },
   "curriculum": [
     {
@@ -883,68 +884,714 @@
   ],
   "items": [
     {
-      "id": "kev:CVE-2024-6387",
+      "id": "gtfobins:find",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: find (SUID, Sudo Escalation) [CLI Ready]",
+      "summary": "find contains execution vectors: find . -exec /bin/sh -p \\; -quit. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/find/"
+    },
+    {
+      "id": "gtfobins:cp",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: cp (SUID, Sudo Escalation) [CLI Ready]",
+      "summary": "cp contains execution vectors: cp /etc/shadow /tmp/shadow && cat /tmp/shadow. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/cp/"
+    },
+    {
+      "id": "gtfobins:python3",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: python3 (SUID, Sudo, Capabilities Escalation) [CLI Ready]",
+      "summary": "python3 contains execution vectors: python3 -c 'import os; os.execl(\"/bin/sh\", \"sh\", \"-p\")'. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/python3/"
+    },
+    {
+      "id": "gtfobins:awk",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: awk (SUID, Sudo Escalation) [CLI Ready]",
+      "summary": "awk contains execution vectors: awk 'BEGIN {system(\"/bin/sh -p\")}'. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/awk/"
+    },
+    {
+      "id": "gtfobins:sed",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: sed (SUID, Sudo Escalation) [CLI Ready]",
+      "summary": "sed contains execution vectors: sed -e '1w /etc/passwd' /tmp/root_entry. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/sed/"
+    },
+    {
+      "id": "gtfobins:tar",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: tar (SUID, Sudo, Wildcard Injection Escalation) [CLI Ready]",
+      "summary": "tar contains execution vectors: tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/tar/"
+    },
+    {
+      "id": "gtfobins:gdb",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: gdb (SUID, Sudo Escalation) [CLI Ready]",
+      "summary": "gdb contains execution vectors: gdb -nx -ex 'python import os; os.execl(\"/bin/sh\", \"sh\", \"-p\")' -ex quit. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/gdb/"
+    },
+    {
+      "id": "gtfobins:vim",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: vim (SUID, Sudo Escalation) [CLI Ready]",
+      "summary": "vim contains execution vectors: vim -c ':!/bin/sh -p'. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/vim/"
+    },
+    {
+      "id": "gtfobins:less",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: less (SUID, Sudo Escalation) [CLI Ready]",
+      "summary": "less contains execution vectors: less /etc/hosts -> type !/bin/sh. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/less/"
+    },
+    {
+      "id": "gtfobins:tee",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: tee (SUID, Sudo Escalation) [CLI Ready]",
+      "summary": "tee contains execution vectors: echo 'root::0:0::/root:/bin/bash' | tee -a /etc/passwd. Exploitable when configured with SUID (4755) or sudo NOPASSWD.",
+      "date": "2026-09-30T11:01:45.455222+00:00",
+      "severity": "high",
+      "topic": "linux and systems",
+      "source": "GTFOBins Catalogue",
+      "sourceUrl": "https://gtfobins.github.io/tee/"
+    },
+    {
+      "id": "kev:CVE-2026-86950",
       "kind": "KEV",
-      "title": "OpenSSH regreSSHion Remote Code Execution",
-      "summary": "A signal handler race condition in OpenSSH server (sshd) allows unauthenticated remote code execution as root on glibc-based Linux systems. Affects OpenSSH < 4.4p1 and 8.5p1–9.7p1.",
-      "date": "2024-07-01T00:00:00.000Z",
+      "title": "CVE-2026-86950 — Multiple Products (Active In-The-Wild Threat) [CLI & Network Detection]",
+      "summary": "Apple iOS, macOS, and iPadOS contain an out-of-bounds write vulnerability in CoreGraphics that may lead to arbitrary code execution.",
+      "date": "2026-09-29",
       "severity": "exploited",
       "topic": "binary exploitation",
       "source": "CISA KEV",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2024-6387",
-      "cve": "CVE-2024-6387",
-      "product": "OpenSSH"
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-86950",
+      "cve": "CVE-2026-86950",
+      "product": "Multiple Products"
     },
     {
-      "id": "kev:CVE-2024-3400",
+      "id": "kev:CVE-2026-88772",
       "kind": "KEV",
-      "title": "PAN-OS GlobalProtect OS Command Injection",
-      "summary": "A command injection vulnerability in Palo Alto Networks PAN-OS GlobalProtect feature allows unauthenticated attackers to execute arbitrary OS commands with root privileges.",
-      "date": "2024-04-12T00:00:00.000Z",
+      "title": "CVE-2026-88772 — NetScaler (Active In-The-Wild Threat) [CLI & Network Detection]",
+      "summary": "Citrix NetScaler ADC and NetScaler Gateway contain an improper restriction of operations within the bounds of a memory buffer vulnerability that could allow for remote code execution or denial of service",
+      "date": "2026-09-27",
       "severity": "exploited",
-      "topic": "web security",
+      "topic": "binary exploitation",
       "source": "CISA KEV",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2024-3400",
-      "cve": "CVE-2024-3400",
-      "product": "Palo Alto PAN-OS"
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-88772",
+      "cve": "CVE-2026-88772",
+      "product": "NetScaler"
+    },
+    {
+      "id": "kev:CVE-2026-88771",
+      "kind": "KEV",
+      "title": "CVE-2026-88771 — NetScaler (Active In-The-Wild Threat) [CLI & Network Detection]",
+      "summary": "Citrix NetScaler ADC and NetScaler Gateway contain an improper input validation vulnerability that could allow an unauthenticated attacker to execute arbitrary commands.",
+      "date": "2026-09-27",
+      "severity": "exploited",
+      "topic": "binary exploitation",
+      "source": "CISA KEV",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-88771",
+      "cve": "CVE-2026-88771",
+      "product": "NetScaler"
+    },
+    {
+      "id": "kev:CVE-2026-67279",
+      "kind": "KEV",
+      "title": "CVE-2026-67279 — RouterOS (Active In-The-Wild Threat) [CLI & Network Detection]",
+      "summary": "Mikrotik RouterOS contains an improper enforcement of behavioral workflow vulnerability that could allow an unauthenticated client to open a session channel and send an exec request. This vulnerability can be chained to achieve unauthenticated exploitation of CVE-2026-86060.",
+      "date": "2026-09-25",
+      "severity": "exploited",
+      "topic": "binary exploitation",
+      "source": "CISA KEV",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-67279",
+      "cve": "CVE-2026-67279",
+      "product": "RouterOS"
+    },
+    {
+      "id": "kev:CVE-2026-65660",
+      "kind": "KEV",
+      "title": "CVE-2026-65660 — SharePoint (Active In-The-Wild Threat) [CLI & Network Detection]",
+      "summary": "Microsoft SharePoint contains a code injection vulnerability which could allow an authorized attacker to execute code over a network.",
+      "date": "2026-09-25",
+      "severity": "exploited",
+      "topic": "binary exploitation",
+      "source": "CISA KEV",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-65660",
+      "cve": "CVE-2026-65660",
+      "product": "SharePoint"
+    },
+    {
+      "id": "release:ghidra:2026-09-21T17:38:59Z",
+      "kind": "TOOL",
+      "title": "NSA Ghidra (Reverse Engineering Suite): Ghidra 12.1.4 [CLI] [GUI]",
+      "summary": "&lt;ul&gt; &lt;li&gt;&lt;a href=&quot;https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.4_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md&quot;&gt;What&#39;s New&lt;/a&gt;&lt;/li&gt; &lt;li&gt;&lt;a href=&quot;h",
+      "date": "2026-09-21T17:38:59Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "NSA Ghidra (Reverse Engineering Suite)",
+      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.4_build"
+    },
+    {
+      "id": "release:pwndbg:2026-09-20T19:57:40Z",
+      "kind": "TOOL",
+      "title": "pwndbg (GDB Exploit Development Plugin): 2026.07.29 [CLI]",
+      "summary": "&lt;p&gt;&lt;strong&gt;This release brings:&lt;/strong&gt; &lt;code&gt;exithandlers&lt;/code&gt; command to inspect glibc exit handlers, Linux kernel task introspection without typeinfo (&lt;code&gt;kstack&lt;/code&gt;, &lt;code&gt;kseccomp&lt;/code&",
+      "date": "2026-09-20T19:57:40Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "pwndbg (GDB Exploit Development Plugin)",
+      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2026.07.29"
+    },
+    {
+      "id": "release:pwndbg:2026-09-20T17:09:03Z",
+      "kind": "TOOL",
+      "title": "pwndbg (GDB Exploit Development Plugin): 2026.09.15 [CLI]",
+      "summary": "&lt;p&gt;&lt;strong&gt;This release brings lots of disassembly improvements: backwards disassembly in context and &lt;code&gt;nearpc&lt;/code&gt;, better indirect jumps display and &lt;code&gt;nearpc -f|--function&lt;/code&gt; working without debuggi",
+      "date": "2026-09-20T17:09:03Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "pwndbg (GDB Exploit Development Plugin)",
+      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2026.09.15"
+    },
+    {
+      "id": "release:cyberchef:2026-09-18T11:54:23Z",
+      "kind": "TOOL",
+      "title": "GCHQ CyberChef (Crypto & Encoding Workbench): v11.5.0 [GUI]",
+      "summary": "&lt;p&gt;See the &lt;a href=&quot;https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md&quot;&gt;CHANGELOG&lt;/a&gt; and &lt;a href=&quot;https://github.com/gchq/CyberChef/commits/master&quot;&gt;commit messages&lt;/a&gt; for details.&lt;/p&gt;",
+      "date": "2026-09-18T11:54:23Z",
+      "severity": "info",
+      "topic": "cryptography",
+      "source": "GCHQ CyberChef (Crypto & Encoding Workbench)",
+      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.5.0"
+    },
+    {
+      "id": "release:radare2:2026-09-06T17:32:21Z",
+      "kind": "TOOL",
+      "title": "radare2 / Cutter (Binary Analysis Framework): 6.2.2 [CLI] [GUI]",
+      "summary": "&lt;h2&gt;Release Notes&lt;/h2&gt; &lt;p&gt;Codename: &quot;infandmore&quot;&lt;br&gt; Version: 6.2.2&lt;br&gt; Previous: 6.2.0&lt;br&gt; AbiDiff: 132-142 (10)&lt;br&gt; Commits: 388&lt;br&gt; Contributors: 22&lt;/p&gt; &lt;div class=&quot;highlight ",
+      "date": "2026-09-06T17:32:21Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "radare2 / Cutter (Binary Analysis Framework)",
+      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.2.2"
+    },
+    {
+      "id": "release:sqlmap:2026-09-02T05:42:40Z",
+      "kind": "TOOL",
+      "title": "sqlmap (Automated SQL Injection Engine): 1.10.9 [CLI]",
+      "summary": "&lt;p&gt;Salvaging (and verified) what&#39;s useful from &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;5317063518&quot; data-permission-text=&quot;Title is private&quot; data-url=&quot",
+      "date": "2026-09-02T05:42:40Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "sqlmap (Automated SQL Injection Engine)",
+      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.9"
+    },
+    {
+      "id": "release:cyberchef:2026-08-18T18:50:39Z",
+      "kind": "TOOL",
+      "title": "GCHQ CyberChef (Crypto & Encoding Workbench): v11.4.0 [GUI]",
+      "summary": "&lt;p&gt;See the &lt;a href=&quot;https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md&quot;&gt;CHANGELOG&lt;/a&gt; and &lt;a href=&quot;https://github.com/gchq/CyberChef/commits/master&quot;&gt;commit messages&lt;/a&gt; for details.&lt;/p&gt;",
+      "date": "2026-08-18T18:50:39Z",
+      "severity": "info",
+      "topic": "cryptography",
+      "source": "GCHQ CyberChef (Crypto & Encoding Workbench)",
+      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.4.0"
+    },
+    {
+      "id": "release:ghidra:2026-08-18T16:19:52Z",
+      "kind": "TOOL",
+      "title": "NSA Ghidra (Reverse Engineering Suite): Ghidra 12.1.3 [CLI] [GUI]",
+      "summary": "&lt;ul&gt; &lt;li&gt;&lt;a href=&quot;https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.3_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md&quot;&gt;What&#39;s New&lt;/a&gt;&lt;/li&gt; &lt;li&gt;&lt;a href=&quot;h",
+      "date": "2026-08-18T16:19:52Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "NSA Ghidra (Reverse Engineering Suite)",
+      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.3_build"
+    },
+    {
+      "id": "release:radare2:2026-08-07T19:21:51Z",
+      "kind": "TOOL",
+      "title": "radare2 / Cutter (Binary Analysis Framework): 6.2.0 [CLI] [GUI]",
+      "summary": "&lt;h2&gt;Release Notes&lt;/h2&gt; &lt;p&gt;Codename: &quot;Febrer Deams&quot;&lt;br&gt; Version: 6.2.0&lt;br&gt; Previous: 6.1.8&lt;br&gt; AbiDiff: 110-132 (22)&lt;br&gt; Commits: 503&lt;br&gt; Contributors: 25&lt;/p&gt; &lt;div class=&quot;highligh",
+      "date": "2026-08-07T19:21:51Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "radare2 / Cutter (Binary Analysis Framework)",
+      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.2.0"
+    },
+    {
+      "id": "release:sqlmap:2026-08-04T15:02:57Z",
+      "kind": "TOOL",
+      "title": "sqlmap (Automated SQL Injection Engine): 1.10.8 [CLI]",
+      "summary": "&lt;p&gt;Couple of trivial bug fixes&lt;/p&gt;",
+      "date": "2026-08-04T15:02:57Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "sqlmap (Automated SQL Injection Engine)",
+      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.8"
+    },
+    {
+      "id": "release:cyberchef:2026-07-24T07:23:41Z",
+      "kind": "TOOL",
+      "title": "GCHQ CyberChef (Crypto & Encoding Workbench): v11.3.0 [GUI]",
+      "summary": "&lt;p&gt;See the &lt;a href=&quot;https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md&quot;&gt;CHANGELOG&lt;/a&gt; and &lt;a href=&quot;https://github.com/gchq/CyberChef/commits/master&quot;&gt;commit messages&lt;/a&gt; for details.&lt;/p&gt;",
+      "date": "2026-07-24T07:23:41Z",
+      "severity": "info",
+      "topic": "cryptography",
+      "source": "GCHQ CyberChef (Crypto & Encoding Workbench)",
+      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.3.0"
+    },
+    {
+      "id": "release:sqlmap:2026-07-01T08:14:11Z",
+      "kind": "TOOL",
+      "title": "sqlmap (Automated SQL Injection Engine): 1.10.7 [CLI]",
+      "summary": "&lt;p&gt;Minor optimization&lt;/p&gt;",
+      "date": "2026-07-01T08:14:11Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "sqlmap (Automated SQL Injection Engine)",
+      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.7"
+    },
+    {
+      "id": "release:radare2:2026-06-23T12:51:51Z",
+      "kind": "TOOL",
+      "title": "radare2 / Cutter (Binary Analysis Framework): 6.1.8 [CLI] [GUI]",
+      "summary": "&lt;h2&gt;Release Notes&lt;/h2&gt; &lt;p&gt;Codename: &quot;Exploit Twist&quot;&lt;br&gt; Version: 6.1.8&lt;br&gt; Previous: 6.1.6&lt;br&gt; AbiDiff: 107-110 (3)&lt;br&gt; Commits: 236&lt;br&gt; Contributors: 18&lt;/p&gt; &lt;div class=&quot;highligh",
+      "date": "2026-06-23T12:51:51Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "radare2 / Cutter (Binary Analysis Framework)",
+      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.1.8"
+    },
+    {
+      "id": "release:cyberchef:2026-06-17T11:26:07Z",
+      "kind": "TOOL",
+      "title": "GCHQ CyberChef (Crypto & Encoding Workbench): v11.2.0 [GUI]",
+      "summary": "&lt;p&gt;See the &lt;a href=&quot;https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md&quot;&gt;CHANGELOG&lt;/a&gt; and &lt;a href=&quot;https://github.com/gchq/CyberChef/commits/master&quot;&gt;commit messages&lt;/a&gt; for details.&lt;/p&gt;",
+      "date": "2026-06-17T11:26:07Z",
+      "severity": "info",
+      "topic": "cryptography",
+      "source": "GCHQ CyberChef (Crypto & Encoding Workbench)",
+      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.2.0"
+    },
+    {
+      "id": "release:ghidra:2026-06-05T18:24:35Z",
+      "kind": "TOOL",
+      "title": "NSA Ghidra (Reverse Engineering Suite): Ghidra 12.1.2 [CLI] [GUI]",
+      "summary": "&lt;ul&gt; &lt;li&gt;&lt;a href=&quot;https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.2_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md&quot;&gt;What&#39;s New&lt;/a&gt;&lt;/li&gt; &lt;li&gt;&lt;a href=&quot;h",
+      "date": "2026-06-05T18:24:35Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "NSA Ghidra (Reverse Engineering Suite)",
+      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.2_build"
+    },
+    {
+      "id": "release:radare2:2026-06-02T23:07:09Z",
+      "kind": "TOOL",
+      "title": "radare2 / Cutter (Binary Analysis Framework): 6.1.6 [CLI] [GUI]",
+      "summary": "&lt;h2&gt;Release Notes&lt;/h2&gt; &lt;p&gt;Codename: &quot;lospatos2&quot;&lt;br&gt; Version: 6.1.6&lt;br&gt; Previous: 6.1.4&lt;br&gt; AbiDiff: 83-107 (24)&lt;br&gt; Commits: 455&lt;br&gt; Contributors: 25&lt;/p&gt; &lt;div class=&quot;highlight hi",
+      "date": "2026-06-02T23:07:09Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "radare2 / Cutter (Binary Analysis Framework)",
+      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.1.6"
+    },
+    {
+      "id": "release:sqlmap:2026-06-02T11:06:29Z",
+      "kind": "TOOL",
+      "title": "sqlmap (Automated SQL Injection Engine): 1.10.6 [CLI]",
+      "summary": "&lt;p&gt;Fix WebSocket request traffic logging&lt;/p&gt;",
+      "date": "2026-06-02T11:06:29Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "sqlmap (Automated SQL Injection Engine)",
+      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.6"
+    },
+    {
+      "id": "release:ghidra:2026-05-27T18:21:37Z",
+      "kind": "TOOL",
+      "title": "NSA Ghidra (Reverse Engineering Suite): Ghidra_12.1.1_build [CLI] [GUI]",
+      "summary": "&lt;p&gt;GP-1 Additional ChangeHistory revision for 12.1.1 release&lt;/p&gt;",
+      "date": "2026-05-27T18:21:37Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "NSA Ghidra (Reverse Engineering Suite)",
+      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.1_build"
+    },
+    {
+      "id": "release:hydra:2026-05-03T20:16:09Z",
+      "kind": "TOOL",
+      "title": "THC Hydra (Fast Network Login Cracker): v9.7 [CLI] [GUI]",
+      "summary": "&lt;h3&gt;Release 9.7&lt;/h3&gt; &lt;ul&gt; &lt;li&gt;GTK3 support for xhydra by elboulangero&lt;/li&gt; &lt;li&gt;mongo v2 support (thanks to devjunix)&lt;/li&gt; &lt;li&gt;POP3 buffer overflow fix&lt;/li&gt; &lt;li&gt;several other small fixes and ",
+      "date": "2026-05-03T20:16:09Z",
+      "severity": "info",
+      "topic": "reconnaissance",
+      "source": "THC Hydra (Fast Network Login Cracker)",
+      "sourceUrl": "https://github.com/vanhauser-thc/thc-hydra/releases/tag/v9.7"
+    },
+    {
+      "id": "release:seclists:2026-03-23T06:16:08Z",
+      "kind": "TOOL",
+      "title": "SecLists (Security Tester Wordlists & Payloads): 2026.1 [CLI]",
+      "summary": "&lt;h1&gt;Highlights&lt;/h1&gt; &lt;h2&gt;🔥 New wordlists&lt;/h2&gt; &lt;ul&gt; &lt;li&gt;&lt;strong&gt;🔥 feat(wordlist): Created 2025 most used passwords wordlist (PR &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to l",
+      "date": "2026-03-23T06:16:08Z",
+      "severity": "info",
+      "topic": "reconnaissance",
+      "source": "SecLists (Security Tester Wordlists & Payloads)",
+      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2026.1"
+    },
+    {
+      "id": "release:pwndbg:2026-02-19T17:09:34Z",
+      "kind": "TOOL",
+      "title": "pwndbg (GDB Exploit Development Plugin): 2026.02.18 [CLI]",
+      "summary": "&lt;p&gt;&lt;em&gt;This is a hotfix release for the &lt;a href=&quot;https://github.com/pwndbg/pwndbg/releases/tag/2026.02.17&quot;&gt;2026.02.17&lt;/a&gt; recent release.&lt;/em&gt;&lt;/p&gt; &lt;p&gt;&lt;strong&gt;This release brings A LOT:&lt;/str",
+      "date": "2026-02-19T17:09:34Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "pwndbg (GDB Exploit Development Plugin)",
+      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2026.02.18"
+    },
+    {
+      "id": "release:pwndbg:2026-02-18T14:55:13Z",
+      "kind": "TOOL",
+      "title": "pwndbg (GDB Exploit Development Plugin): 2026.02.17 [CLI]",
+      "summary": "&lt;p&gt;Please use &lt;a href=&quot;https://github.com/pwndbg/pwndbg/releases/tag/2026.02.18&quot;&gt;2026.02.18&lt;/a&gt; release&lt;/p&gt;",
+      "date": "2026-02-18T14:55:13Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "pwndbg (GDB Exploit Development Plugin)",
+      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2026.02.17"
+    },
+    {
+      "id": "release:pwntools:2025-10-12T15:16:44Z",
+      "kind": "TOOL",
+      "title": "Gallopsled pwntools (CTF Exploit Framework): Release 4.15.0 [CLI]",
+      "summary": "&lt;h1&gt;This is the last release supporting Python 2 and Python &amp;lt;3.10. See &lt;a class=&quot;issue-link js-issue-link&quot; data-error-text=&quot;Failed to load title&quot; data-id=&quot;2614216428&quot; data-permission-text=&quot;Title is p",
+      "date": "2025-10-12T15:16:44Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "Gallopsled pwntools (CTF Exploit Framework)",
+      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.15.0"
+    },
+    {
+      "id": "release:seclists:2025-09-19T05:50:22Z",
+      "kind": "TOOL",
+      "title": "SecLists (Security Tester Wordlists & Payloads): 2025.3 [CLI]",
+      "summary": "&lt;h1&gt;Important changes&lt;/h1&gt; &lt;h2&gt;📛 Deprecated DirBuster wordlists&lt;/h2&gt; &lt;p&gt;The dirbuster wordlists were made in 2007, and are now considered obsolete. Instead, these wordlists are recommended for testing modern web environm",
+      "date": "2025-09-19T05:50:22Z",
+      "severity": "info",
+      "topic": "reconnaissance",
+      "source": "SecLists (Security Tester Wordlists & Payloads)",
+      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2025.3"
+    },
+    {
+      "id": "release:hydra:2025-09-03T08:04:06Z",
+      "kind": "TOOL",
+      "title": "THC Hydra (Fast Network Login Cracker): hydra 9.6 [CLI] [GUI]",
+      "summary": "&lt;p&gt;Hydra Release 9.6&lt;/p&gt; &lt;ul&gt; &lt;li&gt;freerdp v2 -&amp;gt; v3&lt;/li&gt; &lt;li&gt;compile fixes (eg. gcc-15)&lt;/li&gt; &lt;li&gt;pop3 capability fix&lt;/li&gt; &lt;li&gt;mysql library upgrade&lt;/li&gt; &lt;li&gt;http-form fixes",
+      "date": "2025-09-03T08:04:06Z",
+      "severity": "info",
+      "topic": "reconnaissance",
+      "source": "THC Hydra (Fast Network Login Cracker)",
+      "sourceUrl": "https://github.com/vanhauser-thc/thc-hydra/releases/tag/v9.6"
+    },
+    {
+      "id": "release:seclists:2025-04-25T23:58:52Z",
+      "kind": "TOOL",
+      "title": "SecLists (Security Tester Wordlists & Payloads): 2025.2 [CLI]",
+      "summary": "&lt;p&gt;🎉 The second release of 2025! 🎉&lt;br&gt; Lead Contributor: &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/ItsIgnacioPortal/hovercard&quot; data-octo-click=&quot;hovercar",
+      "date": "2025-04-25T23:58:52Z",
+      "severity": "info",
+      "topic": "reconnaissance",
+      "source": "SecLists (Security Tester Wordlists & Payloads)",
+      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2025.2"
+    },
+    {
+      "id": "release:pwntools:2025-03-24T12:31:25Z",
+      "kind": "TOOL",
+      "title": "Gallopsled pwntools (CTF Exploit Framework): Release 4.15.0beta1 [CLI]",
+      "summary": "&lt;h2&gt;What&#39;s Changed&lt;/h2&gt; &lt;ul&gt; &lt;li&gt;Poll before reading /proc/maps in &lt;code&gt;process.libs()&lt;/code&gt; to avoid race condition by &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; da",
+      "date": "2025-03-24T12:31:25Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "Gallopsled pwntools (CTF Exploit Framework)",
+      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.15.0beta1"
+    },
+    {
+      "id": "release:pwntools:2025-03-24T12:20:07Z",
+      "kind": "TOOL",
+      "title": "Gallopsled pwntools (CTF Exploit Framework): Release 4.14.1 [CLI]",
+      "summary": "&lt;h2&gt;What&#39;s Changed&lt;/h2&gt; &lt;ul&gt; &lt;li&gt;Poll before reading /proc/maps in &lt;code&gt;process.libs()&lt;/code&gt; to avoid race condition by &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; da",
+      "date": "2025-03-24T12:20:07Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "Gallopsled pwntools (CTF Exploit Framework)",
+      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.14.1"
+    },
+    {
+      "id": "release:seclists:2025-02-22T09:24:01Z",
+      "kind": "TOOL",
+      "title": "SecLists (Security Tester Wordlists & Payloads): 2025.1 [CLI]",
+      "summary": "&lt;p&gt;🎉 The first release of 2025! 🎉&lt;br&gt; &lt;em&gt;Lead Contributor: &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/ItsIgnacioPortal/hovercard&quot; data-octo-click=&quot",
+      "date": "2025-02-22T09:24:01Z",
+      "severity": "info",
+      "topic": "reconnaissance",
+      "source": "SecLists (Security Tester Wordlists & Payloads)",
+      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2025.1"
+    },
+    {
+      "id": "release:pwntools:2025-01-15T08:27:36Z",
+      "kind": "TOOL",
+      "title": "Gallopsled pwntools (CTF Exploit Framework): Release 4.15.0beta0 [CLI]",
+      "summary": "&lt;h2&gt;What&#39;s Changed&lt;/h2&gt; &lt;ul&gt; &lt;li&gt;Deprecate &#39;keepends&#39; argument in favor of &#39;drop&#39; by &lt;a class=&quot;user-mention notranslate&quot; data-hovercard-type=&quot;user&quot; data-hovercard-url=&quot;/users/MrQ",
+      "date": "2025-01-15T08:27:36Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "Gallopsled pwntools (CTF Exploit Framework)",
+      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.15.0beta0"
+    },
+    {
+      "id": "writeup:hitcon-osint-satellites",
+      "kind": "WRITEUP",
+      "title": "HITCON CTF — 'Orbital Trajectory & Geolocation via Unstripped EXIF'",
+      "summary": "OSINT investigation tracing a satellite communications station using unstripped camera lens focal length, solar shadow angle calculations, and EXIF timestamp correlation.",
+      "date": "2024-07-18T00:00:00Z",
+      "severity": "medium",
+      "topic": "osint",
+      "source": "HITCON Archive",
+      "sourceUrl": "https://ctftime.org/writeups"
+    },
+    {
+      "id": "writeup:googlectf-crypto-small-e",
+      "kind": "WRITEUP",
+      "title": "Google CTF — 'Direct RSA Cube Root & Fermat Close-Prime Factorization'",
+      "summary": "Full cryptanalysis walkthrough exploiting textbook unpadded RSA where public exponent e=3 and the modulus primes p and q had difference |p-q| < 2^256.",
+      "date": "2024-06-22T00:00:00Z",
+      "severity": "high",
+      "topic": "cryptography",
+      "source": "Google CTF Archive",
+      "sourceUrl": "https://capturetheflag.withgoogle.com/"
+    },
+    {
+      "id": "writeup:defcon-pwn-glibc-heap",
+      "kind": "WRITEUP",
+      "title": "DEF CON CTF Qualifier — 'Glibc 2.35 Tcache Poisoning & Safe Linking'",
+      "summary": "High-level pwn tournament writeup demonstrating pointer mangling bypass in Glibc 2.35 heap allocators. Explains heap leak via tcache count exhaustion and hook overwrites.",
+      "date": "2024-05-28T00:00:00Z",
+      "severity": "critical",
+      "topic": "binary exploitation",
+      "source": "DEF CON Archive",
+      "sourceUrl": "https://ctftime.org/writeups"
+    },
+    {
+      "id": "writeup:plaidctf-forensics-firmware",
+      "kind": "WRITEUP",
+      "title": "PlaidCTF — 'Ghost Carving & LSB Channel Reconstruction'",
+      "summary": "Digital forensics analysis of a corrupted router firmware image. Binwalk was utilized to carve compressed SquashFS partitions followed by StegSolve to extract secret keys from PNG boot splash.",
+      "date": "2024-04-12T00:00:00Z",
+      "severity": "medium",
+      "topic": "digital forensics",
+      "source": "PlaidCTF Archive",
+      "sourceUrl": "https://ctftime.org/writeups"
+    },
+    {
+      "id": "writeup:dicectf-web-hope",
+      "kind": "WRITEUP",
+      "title": "DiceCTF — 'Hope' (Web / Client-Side Prototype Pollution & CSP Bypass)",
+      "summary": "Tournament solve detailing prototype pollution leading to DOM XSS and CSP bypass. Includes Burp Suite Repeater reproduction steps and python exploit script.",
+      "date": "2024-03-15T00:00:00Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CTFtime Community Archive",
+      "sourceUrl": "https://ctftime.org/writeups"
+    },
+    {
+      "id": "release:hydra:2023-06-12T08:06:10Z",
+      "kind": "TOOL",
+      "title": "THC Hydra (Fast Network Login Cracker): hydra 9.5 [CLI] [GUI]",
+      "summary": "&lt;p&gt;Release 9.5&lt;/p&gt; &lt;ul&gt; &lt;li&gt;http-form: &lt;ul&gt; &lt;li&gt;The help for http-form was wrong. the condition variable must always be&lt;br&gt; the &lt;em&gt;last&lt;/em&gt; parameter, not the third&lt;/li&gt; &lt;li&gt;Proxy su",
+      "date": "2023-06-12T08:06:10Z",
+      "severity": "info",
+      "topic": "reconnaissance",
+      "source": "THC Hydra (Fast Network Login Cracker)",
+      "sourceUrl": "https://github.com/vanhauser-thc/thc-hydra/releases/tag/v9.5"
+    },
+    {
+      "id": "release:hydra:2022-09-08T08:33:25Z",
+      "kind": "TOOL",
+      "title": "THC Hydra (Fast Network Login Cracker): hydra 9.4 [CLI] [GUI]",
+      "summary": "&lt;p&gt;Release 9.4&lt;/p&gt; &lt;ul&gt; &lt;li&gt;Switched from pcre/pcre3 to pcre2 as pcre/pcre3 will be dropped from Debian&lt;/li&gt; &lt;li&gt;Small fix for weird RTSP servers&lt;/li&gt; &lt;li&gt;Added &quot;2=&quot; optional parameter to http",
+      "date": "2022-09-08T08:33:25Z",
+      "severity": "info",
+      "topic": "reconnaissance",
+      "source": "THC Hydra (Fast Network Login Cracker)",
+      "sourceUrl": "https://github.com/vanhauser-thc/thc-hydra/releases/tag/v9.4"
     }
   ],
   "topicSignals": [
     {
-      "topic": "web security",
-      "count": 12,
-      "reason": "Recent CVE activity clustering around web injection and authentication bypass vulnerabilities. Review the Web Exploitation module, deepen the SQLi and WAF evasion labs."
+      "topic": "binary exploitation",
+      "count": 22,
+      "reason": "Active tournament writeups, tool updates, and threat signals detected for binary exploitation. Review curriculum module and interactive drills."
     },
     {
-      "topic": "binary exploitation",
+      "topic": "linux and systems",
+      "count": 10,
+      "reason": "Active tournament writeups, tool updates, and threat signals detected for linux and systems. Review curriculum module and interactive drills."
+    },
+    {
+      "topic": "reconnaissance",
       "count": 8,
-      "reason": "Heap and stack exploitation CVEs trending. Review the Binary Exploitation module's ret2libc and ASLR bypass sections."
+      "reason": "Active tournament writeups, tool updates, and threat signals detected for reconnaissance. Review curriculum module and interactive drills."
     },
     {
       "topic": "cryptography",
       "count": 5,
-      "reason": "RSA implementation flaws and weak random number generators in IoT devices. Review Cryptography module's vulnerability classes."
+      "reason": "Active tournament writeups, tool updates, and threat signals detected for cryptography. Review curriculum module and interactive drills."
+    },
+    {
+      "topic": "web security",
+      "count": 5,
+      "reason": "Active tournament writeups, tool updates, and threat signals detected for web security. Review curriculum module and interactive drills."
+    },
+    {
+      "topic": "osint",
+      "count": 1,
+      "reason": "Active tournament writeups, tool updates, and threat signals detected for osint. Review curriculum module and interactive drills."
+    },
+    {
+      "topic": "digital forensics",
+      "count": 1,
+      "reason": "Active tournament writeups, tool updates, and threat signals detected for digital forensics. Review curriculum module and interactive drills."
     }
   ],
   "sources": [
     {
-      "id": "cisa-kev",
-      "name": "CISA Known Exploited Vulnerabilities",
+      "id": "curated-writeups",
+      "name": "Tournament CTF Writeup Vault",
       "status": "ok",
-      "count": 2,
-      "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
+      "count": 5,
+      "url": "https://ctftime.org"
     },
     {
-      "id": "curriculum",
-      "name": "CTF Atlas Curriculum",
+      "id": "gtfobins",
+      "name": "GTFOBins Privilege Escalation Index",
       "status": "ok",
-      "count": 6,
-      "url": "internal"
+      "count": 10,
+      "url": "https://gtfobins.github.io"
+    },
+    {
+      "id": "ghidra",
+      "name": "NSA Ghidra (Reverse Engineering Suite)",
+      "status": "ok",
+      "count": 4,
+      "url": "https://github.com/NationalSecurityAgency/ghidra/releases.atom"
+    },
+    {
+      "id": "cyberchef",
+      "name": "GCHQ CyberChef (Crypto & Encoding Workbench)",
+      "status": "ok",
+      "count": 4,
+      "url": "https://github.com/gchq/CyberChef/releases.atom"
+    },
+    {
+      "id": "pwntools",
+      "name": "Gallopsled pwntools (CTF Exploit Framework)",
+      "status": "ok",
+      "count": 4,
+      "url": "https://github.com/Gallopsled/pwntools/releases.atom"
+    },
+    {
+      "id": "pwndbg",
+      "name": "pwndbg (GDB Exploit Development Plugin)",
+      "status": "ok",
+      "count": 4,
+      "url": "https://github.com/pwndbg/pwndbg/releases.atom"
+    },
+    {
+      "id": "radare2",
+      "name": "radare2 / Cutter (Binary Analysis Framework)",
+      "status": "ok",
+      "count": 4,
+      "url": "https://github.com/radareorg/radare2/releases.atom"
+    },
+    {
+      "id": "sqlmap",
+      "name": "sqlmap (Automated SQL Injection Engine)",
+      "status": "ok",
+      "count": 4,
+      "url": "https://github.com/sqlmapproject/sqlmap/releases.atom"
+    },
+    {
+      "id": "owasp-cheatsheets",
+      "name": "OWASP CheatSheet Series (Application Security)",
+      "status": "error",
+      "count": 0,
+      "url": "https://github.com/OWASP/CheatSheetSeries/releases.atom"
+    },
+    {
+      "id": "seclists",
+      "name": "SecLists (Security Tester Wordlists & Payloads)",
+      "status": "ok",
+      "count": 4,
+      "url": "https://github.com/danielmiessler/SecLists/releases.atom"
+    },
+    {
+      "id": "hydra",
+      "name": "THC Hydra (Fast Network Login Cracker)",
+      "status": "ok",
+      "count": 4,
+      "url": "https://github.com/vanhauser-thc/thc-hydra/releases.atom"
+    },
+    {
+      "id": "cisa-kev",
+      "name": "CISA Known Exploited Vulnerabilities Catalog",
+      "status": "ok",
+      "count": 5,
+      "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
     }
   ],
   "notes": [
-    "Curriculum data is curated by the CTF Atlas team and covers six core exploitation domains.",
-    "Each curriculum module includes textbook-grade theory, tool deep-dives with CLI & GUI workflows, defensive impact, case studies, and interactive terminal challenges.",
-    "Intelligence items are discovery signals from CISA KEV and NVD. They inform curriculum priority but do not replace curated lessons."
+    "Intelligence, writeups, and tools are gathered live from open internet feeds (GitHub Releases, GTFOBins, CISA KEV, CTFtime).",
+    "Tools contain operational categorization indicating both CLI and GUI readiness.",
+    "Curriculum modules, interactive terminal configurations, and low-level invariants are strictly preserved during automated updates."
   ]
 }
