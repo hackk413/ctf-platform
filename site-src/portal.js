@@ -68,18 +68,35 @@ function openTextbookModal(chapterId) {
   modalTitle.innerHTML = `📖 ${esc(ch.title)}`;
 
   let theoryHTML = '';
-  if (ch.theory && ch.theory.sections) {
-    theoryHTML = ch.theory.sections.map(s => `
-      <div style="margin-bottom:24px">
-        <h4 style="font-family:var(--display);color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;font-size:14px;margin-bottom:8px">${esc(s.heading)}</h4>
-        <p style="color:#cbd5e1;line-height:1.8;margin-bottom:10px">${esc(s.body).replace(/\n/g, '<br>')}</p>
-        ${s.code ? `<pre><code>${esc(s.code)}</code></pre>` : ''}
-      </div>
-    `).join('');
+  if (ch.theory) {
+    if (ch.theory.sections && Array.isArray(ch.theory.sections)) {
+      theoryHTML = ch.theory.sections.map(s => `
+        <div style="margin-bottom:24px">
+          <h4 style="font-family:var(--display);color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;font-size:14px;margin-bottom:8px">${esc(s.heading)}</h4>
+          <p style="color:#cbd5e1;line-height:1.8;margin-bottom:10px">${esc(s.body).replace(/\n/g, '<br>')}</p>
+          ${s.code ? `<pre class="code-block" style="background:#090d16;padding:12px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code style="color:#00ff88;font-size:12px;font-family:var(--mono)">${esc(s.code)}</code></pre>` : ''}
+        </div>
+      `).join('');
+    } else if (typeof ch.theory === 'string') {
+      const paras = ch.theory.split('\n\n');
+      theoryHTML = paras.map(p => {
+        const trimmed = p.trim();
+        if (!trimmed) return '';
+        if (trimmed.startsWith('# ') || trimmed.startsWith('## ') || trimmed.startsWith('### ')) {
+          const heading = trimmed.replace(/^#+\s*/, '');
+          return `<h4 style="font-family:var(--display);color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;font-size:14px;margin:20px 0 8px">${esc(heading)}</h4>`;
+        }
+        if (trimmed.endsWith(':') && trimmed.length < 80 && !trimmed.includes('\n')) {
+          return `<h4 style="font-family:var(--display);color:var(--cyan);letter-spacing:.08em;font-size:13px;margin:18px 0 6px">${esc(trimmed)}</h4>`;
+        }
+        return `<p style="color:#cbd5e1;line-height:1.8;margin-bottom:12px">${esc(trimmed).replace(/\n/g, '<br>')}</p>`;
+      }).join('');
+    }
   }
 
   let tableHTML = '';
-  if (ch.commands && ch.commands.length) {
+  const cmdList = ch.commands || [];
+  if (cmdList.length) {
     tableHTML = `
       <div class="section-head" style="margin-top:24px">
         <div>
@@ -91,23 +108,26 @@ function openTextbookModal(chapterId) {
         <table class="cmd-table">
           <thead>
             <tr>
-              <th style="width:22%">Command / Flag</th>
+              <th style="width:26%">Command / Flag / Payload</th>
               <th style="width:18%">Why We Use It</th>
               <th style="width:18%">When to Use</th>
-              <th style="width:24%">Under-the-Hood Internals</th>
-              <th style="width:18%">Common Pitfalls</th>
+              <th style="width:22%">Under-the-Hood Internals</th>
+              <th style="width:16%">Common Pitfalls</th>
             </tr>
           </thead>
           <tbody>
-            ${ch.commands.map(cmd => `
-              <tr>
-                <td><code>${esc(cmd.command)}</code></td>
-                <td style="color:#cbd5e1">${esc(cmd.why)}</td>
-                <td style="color:#aeb6c5">${esc(cmd.when)}</td>
-                <td style="color:#94a3b8;font-size:11px">${esc(cmd.internals)}</td>
-                <td style="color:#f87171;font-size:11px">${esc(cmd.pitfalls)}</td>
-              </tr>
-            `).join('')}
+            ${cmdList.map(cmd => {
+              const cmdName = cmd.cmd || cmd.command || cmd.flag || cmd.name || '';
+              return `
+                <tr>
+                  <td><code style="word-break:break-all;color:var(--green);font-size:12px;background:#0d1522;padding:2px 6px;border-radius:3px">${esc(cmdName)}</code></td>
+                  <td style="color:#cbd5e1">${esc(cmd.why || cmd.description || '')}</td>
+                  <td style="color:#aeb6c5">${esc(cmd.when || cmd.context || '')}</td>
+                  <td style="color:#94a3b8;font-size:11px">${esc(cmd.internals || 'N/A')}</td>
+                  <td style="color:#f87171;font-size:11px">${esc(cmd.pitfalls || 'None noted')}</td>
+                </tr>
+              `;
+            }).join('')}
           </tbody>
         </table>
       </div>
@@ -115,7 +135,11 @@ function openTextbookModal(chapterId) {
   }
 
   let workflowsHTML = '';
-  if (ch.workflows) {
+  const wf = ch.cli_vs_gui || ch.workflows;
+  if (wf) {
+    const cliText = wf.cli_workflow || wf.cli || '';
+    const guiText = wf.gui_workflow || wf.gui || '';
+    const speedText = wf.speed_tip || wf.speed_tips || '';
     workflowsHTML = `
       <div class="section-head" style="margin-top:24px">
         <div>
@@ -126,24 +150,25 @@ function openTextbookModal(chapterId) {
       <div class="wf-box">
         <div class="wf-pane">
           <h4>🖥️ CLI Workflow</h4>
-          <p style="color:#cbd5e1;font-size:13px;line-height:1.7">${esc(ch.workflows.cli || 'N/A')}</p>
+          <p style="color:#cbd5e1;font-size:13px;line-height:1.7">${esc(cliText)}</p>
         </div>
         <div class="wf-pane">
           <h4>🖱️ GUI Workflow</h4>
-          <p style="color:#cbd5e1;font-size:13px;line-height:1.7">${esc(ch.workflows.gui || 'N/A')}</p>
+          <p style="color:#cbd5e1;font-size:13px;line-height:1.7">${esc(guiText)}</p>
         </div>
       </div>
-      ${ch.workflows.speed_tips ? `
-        <div class="note" style="border-left:3px solid var(--green)">
+      ${speedText ? `
+        <div class="note" style="border-left:3px solid var(--green);margin-top:12px">
           <strong style="color:var(--green);font-family:var(--display)">⚡ TOURNAMENT SPEED TIPS:</strong>
-          <p style="margin-top:6px;color:#e2e8f0;line-height:1.7">${esc(ch.workflows.speed_tips)}</p>
+          <p style="margin-top:6px;color:#e2e8f0;line-height:1.7">${esc(speedText)}</p>
         </div>
       ` : ''}
     `;
   }
 
   let checklistHTML = '';
-  if (ch.triage_checklist && ch.triage_checklist.length) {
+  const triageList = ch.triage_workflow || ch.triage_checklist || [];
+  if (triageList && triageList.length) {
     checklistHTML = `
       <div class="section-head" style="margin-top:24px">
         <div>
@@ -153,11 +178,41 @@ function openTextbookModal(chapterId) {
       </div>
       <div class="detail" style="padding:18px">
         <ul class="checklist">
-          ${ch.triage_checklist.map(item => `<li>${esc(item)}</li>`).join('')}
+          ${triageList.map(item => `<li>${esc(item)}</li>`).join('')}
         </ul>
       </div>
     `;
   }
+
+  let writeupHTML = '';
+  if (ch.writeup) {
+    const w = ch.writeup;
+    writeupHTML = `
+      <div class="section-head" style="margin-top:24px">
+        <div>
+          <div class="eyebrow">WORKED CTF TOURNAMENT CASE STUDY</div>
+          <h3 style="font-family:var(--display);margin:0;color:var(--pink)">${esc(w.challenge_name || 'Tournament Challenge')} [${esc(w.ctf_event || 'Global CTF')}]</h3>
+        </div>
+      </div>
+      <div class="detail" style="padding:20px;border-left:3px solid var(--pink)">
+        ${w.scenario ? `<p style="color:#e2e8f0;line-height:1.7;margin-bottom:14px"><strong>Challenge Scenario:</strong> ${esc(w.scenario)}</p>` : ''}
+        ${w.solve_steps && w.solve_steps.length ? `
+          <h5 style="color:var(--cyan);font-family:var(--display);margin:14px 0 8px;font-size:13px;letter-spacing:.06em">STEP-BY-STEP EXPLOITATION METHODOLOGY:</h5>
+          <ol style="color:#cbd5e1;line-height:1.8;padding-left:20px;margin-bottom:14px">
+            ${w.solve_steps.map(s => `<li>${esc(s)}</li>`).join('')}
+          </ol>
+        ` : ''}
+        ${w.exploit_code ? `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 6px">
+            <h5 style="color:var(--green);font-family:var(--display);margin:0;font-size:13px;letter-spacing:.06em">RUNNABLE PYTHON SOLVER SCRIPT:</h5>
+          </div>
+          <pre class="code-block" style="background:#090d16;padding:14px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto;max-height:400px"><code style="color:#00ff88;font-size:12px;font-family:var(--mono);white-space:pre">${esc(w.exploit_code)}</code></pre>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  const diagram = ch.diagram || ch.architecture_diagram;
 
   modalBody.innerHTML = `
     <div style="margin-bottom:16px">
@@ -170,17 +225,17 @@ function openTextbookModal(chapterId) {
       <p style="color:var(--muted-fg);font-size:13px;margin:0 0 16px">${esc(ch.subtitle || '')}</p>
     </div>
 
-    ${ch.architecture_diagram ? `
+    ${diagram ? `
       <div style="margin-bottom:20px">
         <span style="font-size:11px;color:var(--cyan);text-transform:uppercase;letter-spacing:.14em;font-weight:bold">// Architectural State Diagram</span>
-        <pre class="textbook-diagram"><code>${esc(ch.architecture_diagram)}</code></pre>
+        <pre class="textbook-diagram"><code>${esc(diagram)}</code></pre>
       </div>
     ` : ''}
 
     <div class="section-head" style="margin-top:20px">
       <div>
         <div class="eyebrow">SECTION 01 // FOUNDATIONAL THEORY</div>
-        <h3 style="font-family:var(--display);margin:0;color:var(--cyan)">${esc((ch.theory && ch.theory.title) || 'In-Depth Theory')}</h3>
+        <h3 style="font-family:var(--display);margin:0;color:var(--cyan)">${esc((ch.theory && ch.theory.title) || ch.category || 'In-Depth Theory')}</h3>
       </div>
     </div>
     <div class="detail" style="padding:22px">
@@ -190,6 +245,7 @@ function openTextbookModal(chapterId) {
     ${tableHTML}
     ${workflowsHTML}
     ${checklistHTML}
+    ${writeupHTML}
 
     <div style="margin-top:24px;text-align:right">
       <button class="btn" id="closeModalBtn">Close Chapter [X]</button>
@@ -912,7 +968,12 @@ function casebookHTML() {
   const allWriteups = window.TOURNAMENT_WRITEUPS || [];
 
   const filteredWriteups = allWriteups.filter(w => {
-    if (tab !== 'all' && tab !== 'cve' && w.category !== tab) return false;
+    if (tab === 'hackquest') {
+      const isHQ = (w.event && w.event.toLowerCase().includes('hackquest')) || (w.id && w.id.includes('hackquest')) || (w.title && w.title.toLowerCase().includes('hackquest'));
+      if (!isHQ) return false;
+    } else if (tab !== 'all' && tab !== 'cve' && w.category !== tab) {
+      return false;
+    }
     if (tab === 'cve') return false;
     if (q) {
       const str = normalizeAnswer(w.title + ' ' + w.event + ' ' + w.category + ' ' + w.scenario + ' ' + w.root_cause + ' ' + w.flag);
@@ -952,6 +1013,7 @@ function casebookHTML() {
   <div class="os-tabs" style="margin-bottom:18px">
     ${[
       ['all', 'All Writeups'],
+      ['hackquest', 'TCS HackQuest (All Seasons)'],
       ['pwn', 'Pwn / Binary'],
       ['web', 'Web Exploitation'],
       ['crypto', 'Cryptography'],
