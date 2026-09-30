@@ -1,0 +1,11 @@
+{
+  "name": "ctf-atlas-vercel",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "build": "node scripts/build-assets.mjs",
+    "check": "node --check api/login.js && node --check api/logout.js && node --check api/session.js && node --check api/portal.js && node --check api/updates.js && node --check lib/auth.mjs && node --check scripts/build-assets.mjs && node --check scripts/update-intel.mjs",
+    "update:intel": "node scripts/update-intel.mjs"
+  },
+  "type": "module"
+}

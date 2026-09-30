@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>CTF Atlas // Secure Learning Range</title>
+  <meta name="description" content="Authenticated CTF and cybersecurity learning portal with readable modules, tool notes, browser labs, methodology, case studies, and local practice recipes.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-row">
+        <div class="brand-mark cyber-chamfer">CA</div>
+        <div><div class="brand-name">CTF_ATLAS</div><div class="brand-sub">learn // operate // prove</div></div>
+      </div>
+      <button class="mobile-close" id="mobileClose" aria-label="Close navigation">[X]</button>
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="dashboard"><span>01</span> Dashboard</button>
+        <button class="nav-item" data-view="path"><span>02</span> Learning path</button>
+        <button class="nav-item" data-view="modules"><span>03</span> Learning modules</button>
+        <button class="nav-item" data-view="domains"><span>04</span> Domains</button>
+        <button class="nav-item" data-view="tools"><span>05</span> Tool lab</button>
+        <button class="nav-item" data-view="labs"><span>06</span> Micro-labs</button>
+        <button class="nav-item" data-view="playbook"><span>07</span> Methodology</button>
+        <button class="nav-item" data-view="casebook"><span>08</span> Casebook</button>
+        <button class="nav-item" data-view="library"><span>09</span> Reference vault</button>
+        <button class="nav-item" data-view="glossary"><span>10</span> Glossary</button>
+        <button class="nav-item" data-view="intel"><span>11</span> Live intel</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="safe-box"><div class="safe-dot"></div><div><strong>LAB SCOPE</strong><p>Use only systems, samples and targets you own or are explicitly authorized to test.</p></div></div>
+        <div class="mini-stat"><span>Practice progress</span><strong id="sidebarProgress">0%</strong></div>
+        <div class="progress-track"><div id="sidebarProgressBar" class="progress-fill"></div></div>
+        <form id="logoutForm" class="logout-form"><button class="btn outline" type="submit">[ END SESSION ]</button></form>
+      </div>
+    </aside>
+
+    <main class="content" id="main">
+      <header class="topbar">
+        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open navigation">[MENU]</button>
+        <div class="breadcrumbs" id="breadcrumbs">Dashboard</div>
+        <div class="topbar-actions">
+          <label class="search-wrap" aria-label="Search the atlas"><span>&gt;</span><input id="globalSearch" type="search" placeholder="search concepts / tools / labs" autocomplete="off"></label>
+          <button class="icon-btn" id="themeToggle" title="Visual mode" aria-label="Visual mode">NEON</button>
+        </div>
+      </header>
+      <section id="view" class="view" aria-live="polite"></section>
+      <footer class="site-footer"><div><strong>CTF_ATLAS</strong> // authenticated learning range</div><div>Local state + safe lab methodology // no training links required</div></footer>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal cyber-chamfer" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head"><h2 id="modalTitle">MODULE</h2><button class="icon-btn" id="modalClose" aria-label="Close">[X]</button></div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    document.getElementById('logoutForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try { await fetch('/api/logout', { method: 'POST', credentials: 'same-origin' }); } finally { location.replace('/'); }
+    });
+  </script>
+</body>
+</html>

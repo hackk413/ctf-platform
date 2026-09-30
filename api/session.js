@@ -1,0 +1,2 @@
+import { getCookie, readToken, harden } from '../lib/auth.mjs';
+export default function handler(req,res){const {SESSION_SECRET}=process.env;const data=readToken(getCookie(req,'ctf_atlas_session'),SESSION_SECRET||'');Object.entries(harden({'content-type':'application/json; charset=utf-8'})).forEach(([k,v])=>res.setHeader(k,v));if(!data)return res.status(401).json({ok:false});return res.status(200).json({ok:true,uid:data.uid});}

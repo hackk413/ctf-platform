@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0a0a0f">
+<title>CTF_ATLAS // AUTH NODE</title>
+<style>
+:root{--bg:#0a0a0f;--fg:#e0e0e0;--card:#12121a;--muted:#1c1c2e;--sub:#6b7280;--g:#00ff88;--m:#ff00ff;--c:#00d4ff;--b:#2a2a3a;--red:#ff3366;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg)}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(0,255,136,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px);background-size:48px 48px}body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.22) 2px,rgba(0,0,0,.22) 4px);mix-blend-mode:screen;opacity:.45}.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:28px}.auth-panel{width:min(760px,100%);background:rgba(18,18,26,.96);border:1px solid var(--b);padding:30px;position:relative;box-shadow:0 0 20px #00ff8814;clip-path:polygon(0 12px,12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px))}.auth-panel:before{content:"";position:absolute;inset:8px;border:1px solid #00ff8810;pointer-events:none}.auth-topline{display:flex;justify-content:space-between;color:var(--sub);font-size:12px;letter-spacing:.15em}.ascii-logo{font-size:clamp(34px,7vw,72px);font-weight:900;color:var(--g);margin-top:38px;letter-spacing:.12em;text-shadow:0 0 8px #00ff8870}.glitch-title{font-size:clamp(25px,4vw,46px);font-weight:900;text-transform:uppercase;margin:8px 0 12px;color:#fff;text-shadow:-2px 0 var(--m),2px 0 var(--c);animation:glitch 4s steps(2,end) infinite}.auth-sub{color:#9ca3af;line-height:1.7;letter-spacing:.06em}.terminal-input{display:flex;gap:10px;align-items:center;margin:14px 0;padding:14px;border:1px solid var(--b);background:#0f1016}.terminal-input span{color:var(--g);white-space:nowrap}.terminal-input input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--g);font:inherit}.btn{width:100%;margin-top:12px;min-height:48px;border:2px solid var(--g);background:transparent;color:var(--g);font:inherit;letter-spacing:.14em;cursor:pointer;clip-path:polygon(0 9px,9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px));transition:.12s}.btn:hover,.btn:focus-visible{background:var(--g);color:#000;box-shadow:0 0 7px var(--g),0 0 18px #00ff8844;outline:none}.auth-status{margin-top:18px;color:#9ca3af;font-size:13px;letter-spacing:.08em}.auth-status.ok{color:var(--g)}.auth-status.error{color:var(--red)}.auth-foot{margin-top:30px;color:#515766;font-size:11px;letter-spacing:.12em}@keyframes glitch{0%,92%,100%{transform:none}94%{transform:skewX(-1deg) translateX(-1px)}96%{transform:skewX(1deg) translateX(1px)}}@media(prefers-reduced-motion:reduce){.glitch-title{animation:none}}@media(max-width:640px){.auth-panel{padding:22px}.terminal-input{flex-direction:column;align-items:flex-start}.terminal-input input{width:100%}}
+</style>
+</head>
+<body>
+<div class="auth-wrap"><main class="auth-panel" aria-labelledby="title">
+<div class="auth-topline"><span>[ SECURE NODE ]</span><span id="clock">00:00:00</span></div>
+<div class="ascii-logo" aria-hidden="true">CTF_ATLAS</div>
+<div class="glitch-title" id="title">ACCESS TERMINAL</div>
+<p class="auth-sub">PIN-TO-PIN CYBERSECURITY TRAINING / SESSION GATEWAY</p>
+<form id="loginForm" autocomplete="on">
+<label class="terminal-input"><span>&gt; UID:</span><input id="uid" name="uid" autocomplete="username" autocapitalize="none" required></label>
+<label class="terminal-input"><span>&gt; PASS:</span><input id="password" name="password" type="password" autocomplete="current-password" required></label>
+<button class="btn" type="submit">[ INITIATE SESSION ]</button>
+</form>
+<div id="authStatus" class="auth-status" aria-live="polite">[WAITING] ENTER AUTHENTICATION MATERIAL</div>
+<div class="auth-foot">AUTHORIZED TRAINING ENVIRONMENT ONLY // NO TELEMETRY</div>
+</main></div>
+<script>
+(()=>{const $=id=>document.getElementById(id);const clock=$('clock');const tick=()=>clock.textContent=new Date().toLocaleTimeString('en-GB');tick();setInterval(tick,1000);fetch('/api/session',{credentials:'same-origin'}).then(r=>{if(r.ok)location.replace('/portal')}).catch(()=>{});$('loginForm').addEventListener('submit',async e=>{e.preventDefault();const s=$('authStatus');s.className='auth-status';s.textContent='[AUTH] VERIFYING...';try{const r=await fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({uid:$('uid').value.trim(),password:$('password').value})});if(!r.ok)throw 0;s.className='auth-status ok';s.textContent='[OK] SESSION ESTABLISHED';setTimeout(()=>location.replace('/portal'),150)}catch{s.className='auth-status error';s.textContent='[ERR] INVALID CREDENTIALS';$('password').select()}})})()
+</script>
+</body></html>
