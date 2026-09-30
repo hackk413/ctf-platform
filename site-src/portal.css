@@ -80,3 +80,23 @@ code{color:var(--cyan)}
 @keyframes pulse-dot{50%{opacity:.25;transform:scale(.7)}100%{opacity:1;transform:scale(1)}}
 @media(max-width:980px){.intel-hero{grid-template-columns:1fr}.intel-kpis{grid-template-columns:repeat(2,1fr)}.signal-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:620px){.intel-kpis{grid-template-columns:1fr 1fr}.intel-item{grid-template-columns:1fr}.intel-item .meta{white-space:normal}.signal-grid{grid-template-columns:1fr}}
+
+/* Textbook & Knowledge Base Modal Extensions */
+.modal.wide { width: min(1140px, 96vw); max-height: 90vh; }
+.textbook-diagram { background: #06070a; border: 1px solid var(--cyan); padding: 16px; color: var(--cyan); font-family: var(--mono); font-size: 12px; line-height: 1.4; overflow-x: auto; margin: 16px 0; border-radius: 4px; box-shadow: 0 0 12px #00d4ff15; }
+.cmd-table-wrap { overflow-x: auto; margin: 16px 0; }
+.cmd-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.cmd-table th, .cmd-table td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+.cmd-table th { background: #11131c; color: var(--green); font-family: var(--display); letter-spacing: 0.08em; text-transform: uppercase; font-size: 11px; }
+.cmd-table tr:hover td { background: #151824; }
+.cmd-table code { color: var(--green); font-weight: bold; }
+.wf-box { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+@media(max-width: 768px) { .wf-box { grid-template-columns: 1fr; } }
+.wf-pane { border: 1px solid var(--border); background: #0c0d14; padding: 14px; }
+.wf-pane h4 { margin: 0 0 8px; color: var(--cyan); font-family: var(--display); font-size: 13px; text-transform: uppercase; }
+.checklist { list-style: none; padding-left: 0; }
+.checklist li { position: relative; padding-left: 24px; margin-bottom: 8px; color: #cbd5e1; }
+.checklist li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: bold; }
+.copy-btn { margin-bottom: 8px; font-size: 11px; padding: 4px 10px; }
+.writeup-card { border: 1px solid var(--border); background: linear-gradient(180deg,#141520dd,#0e0f16f0); padding: 22px; margin-bottom: 18px; clip-path: polygon(0 9px,9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px)); }
+.writeup-card:hover { border-color: var(--green); box-shadow: var(--shadow-green-sm); }

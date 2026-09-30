@@ -15,6 +15,8 @@ const state = {
   theme: localStorage.getItem('atlas-theme') || 'dark',
   moduleQuery: localStorage.getItem('atlas-module-query') || '',
   curriculumModule: null,
+  casebookTab: 'all',
+  casebookQuery: '',
 };
 
 let intelCache = null;
@@ -25,6 +27,188 @@ function esc(s) {
   return String(s ?? '').replace(/[&<>'"]/g, c =>
     ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":"&#39;",'"':'&quot;' }[c]));
 }
+
+/* ── Chapter Mapping & Textbook Modal Helpers ────────────── */
+function getChapterForConcept(domainId, conceptIndex, conceptTitle) {
+  const map = {
+    'foundations': 'foundations-threat-model',
+    'linux': (conceptIndex === 2 || conceptIndex === 5) ? 'linux-pipelines' : (conceptIndex === 3 ? 'linux-proc-ipc' : 'linux-vfs'),
+    'networking': (conceptIndex === 3) ? 'networking-dns' : ((conceptIndex === 4 || conceptIndex === 5) ? 'networking-nmap' : 'networking-tcp'),
+    'web': (conceptIndex === 2 || conceptIndex === 5) ? 'web-auth-jwt' : (conceptIndex === 4 ? 'web-xss-csp' : 'web-sqli-ast'),
+    'crypto': (conceptIndex === 1 || conceptIndex === 2) ? 'crypto-classical' : (conceptIndex === 4 ? 'crypto-rsa' : 'crypto-aes'),
+    'forensics': (conceptIndex === 4) ? 'forensics-pcap' : ((conceptIndex === 3 || conceptIndex === 5) ? 'forensics-volatility' : 'forensics-disk-fs'),
+    'reverse': (conceptIndex === 2 || conceptIndex === 4) ? 'reverse-x86-asm' : (conceptIndex === 3 ? 'reverse-anti-debug' : 'reverse-ghidra'),
+    'pwn': (conceptIndex === 4 || conceptIndex === 5) ? 'pwn-fmtstr' : (conceptIndex === 2 ? 'pwn-heap' : 'pwn-rop'),
+    'osint': 'osint-recon',
+    'stego': 'stego-deep',
+    'mobile-cloud': (conceptIndex >= 4) ? 'cloud-k8s-iam' : 'cloud-docker-escape',
+    'blue-team': 'blue-team-telemetry'
+  };
+  return map[domainId] || 'foundations-threat-model';
+}
+
+function openTextbookModal(chapterId) {
+  const chapters = window.TEXTBOOK_CHAPTERS || {};
+  const ch = chapters[chapterId];
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modal = modalBackdrop?.querySelector('.modal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+
+  if (!modalBackdrop || !modalBody || !modalTitle) return;
+
+  if (!ch) {
+    modalTitle.textContent = 'CHAPTER NOT FOUND';
+    modalBody.innerHTML = `<div class="empty">Chapter "${esc(chapterId)}" is not currently indexed in the knowledge vault.</div>`;
+    modalBackdrop.hidden = false;
+    return;
+  }
+
+  modal.classList.add('wide');
+  modalTitle.innerHTML = `📖 ${esc(ch.title)}`;
+
+  let theoryHTML = '';
+  if (ch.theory && ch.theory.sections) {
+    theoryHTML = ch.theory.sections.map(s => `
+      <div style="margin-bottom:24px">
+        <h4 style="font-family:var(--display);color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;font-size:14px;margin-bottom:8px">${esc(s.heading)}</h4>
+        <p style="color:#cbd5e1;line-height:1.8;margin-bottom:10px">${esc(s.body).replace(/\n/g, '<br>')}</p>
+        ${s.code ? `<pre><code>${esc(s.code)}</code></pre>` : ''}
+      </div>
+    `).join('');
+  }
+
+  let tableHTML = '';
+  if (ch.commands && ch.commands.length) {
+    tableHTML = `
+      <div class="section-head" style="margin-top:24px">
+        <div>
+          <div class="eyebrow">COMMAND DICTIONARY // IN-DEPTH REFERENCE</div>
+          <h3 style="font-family:var(--display);margin:0;color:var(--green)">Master Command Reference Table</h3>
+        </div>
+      </div>
+      <div class="cmd-table-wrap">
+        <table class="cmd-table">
+          <thead>
+            <tr>
+              <th style="width:22%">Command / Flag</th>
+              <th style="width:18%">Why We Use It</th>
+              <th style="width:18%">When to Use</th>
+              <th style="width:24%">Under-the-Hood Internals</th>
+              <th style="width:18%">Common Pitfalls</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ch.commands.map(cmd => `
+              <tr>
+                <td><code>${esc(cmd.command)}</code></td>
+                <td style="color:#cbd5e1">${esc(cmd.why)}</td>
+                <td style="color:#aeb6c5">${esc(cmd.when)}</td>
+                <td style="color:#94a3b8;font-size:11px">${esc(cmd.internals)}</td>
+                <td style="color:#f87171;font-size:11px">${esc(cmd.pitfalls)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  let workflowsHTML = '';
+  if (ch.workflows) {
+    workflowsHTML = `
+      <div class="section-head" style="margin-top:24px">
+        <div>
+          <div class="eyebrow">VELOCITY WORKFLOW // SPEED GUIDE</div>
+          <h3 style="font-family:var(--display);margin:0;color:var(--cyan)">CLI vs GUI Operation &amp; Speed Tips</h3>
+        </div>
+      </div>
+      <div class="wf-box">
+        <div class="wf-pane">
+          <h4>🖥️ CLI Workflow</h4>
+          <p style="color:#cbd5e1;font-size:13px;line-height:1.7">${esc(ch.workflows.cli || 'N/A')}</p>
+        </div>
+        <div class="wf-pane">
+          <h4>🖱️ GUI Workflow</h4>
+          <p style="color:#cbd5e1;font-size:13px;line-height:1.7">${esc(ch.workflows.gui || 'N/A')}</p>
+        </div>
+      </div>
+      ${ch.workflows.speed_tips ? `
+        <div class="note" style="border-left:3px solid var(--green)">
+          <strong style="color:var(--green);font-family:var(--display)">⚡ TOURNAMENT SPEED TIPS:</strong>
+          <p style="margin-top:6px;color:#e2e8f0;line-height:1.7">${esc(ch.workflows.speed_tips)}</p>
+        </div>
+      ` : ''}
+    `;
+  }
+
+  let checklistHTML = '';
+  if (ch.triage_checklist && ch.triage_checklist.length) {
+    checklistHTML = `
+      <div class="section-head" style="margin-top:24px">
+        <div>
+          <div class="eyebrow">TRIAGE METHODOLOGY // STEP-BY-STEP CHECKLIST</div>
+          <h3 style="font-family:var(--display);margin:0;color:var(--amber)">Solve &amp; Triage Checklist</h3>
+        </div>
+      </div>
+      <div class="detail" style="padding:18px">
+        <ul class="checklist">
+          ${ch.triage_checklist.map(item => `<li>${esc(item)}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  }
+
+  modalBody.innerHTML = `
+    <div style="margin-bottom:16px">
+      <div class="tag-row" style="margin-bottom:10px">
+        <span class="tag accent">${esc(ch.domain || 'Core')}</span>
+        <span class="tag success">${esc(ch.reading_time || '15 min read')}</span>
+        <span class="tag">Textbook Chapter</span>
+      </div>
+      <h3 style="font-family:var(--display);font-size:22px;color:var(--fg);margin:0 0 6px">${esc(ch.title)}</h3>
+      <p style="color:var(--muted-fg);font-size:13px;margin:0 0 16px">${esc(ch.subtitle || '')}</p>
+    </div>
+
+    ${ch.architecture_diagram ? `
+      <div style="margin-bottom:20px">
+        <span style="font-size:11px;color:var(--cyan);text-transform:uppercase;letter-spacing:.14em;font-weight:bold">// Architectural State Diagram</span>
+        <pre class="textbook-diagram"><code>${esc(ch.architecture_diagram)}</code></pre>
+      </div>
+    ` : ''}
+
+    <div class="section-head" style="margin-top:20px">
+      <div>
+        <div class="eyebrow">SECTION 01 // FOUNDATIONAL THEORY</div>
+        <h3 style="font-family:var(--display);margin:0;color:var(--cyan)">${esc((ch.theory && ch.theory.title) || 'In-Depth Theory')}</h3>
+      </div>
+    </div>
+    <div class="detail" style="padding:22px">
+      ${theoryHTML}
+    </div>
+
+    ${tableHTML}
+    ${workflowsHTML}
+    ${checklistHTML}
+
+    <div style="margin-top:24px;text-align:right">
+      <button class="btn" id="closeModalBtn">Close Chapter [X]</button>
+    </div>
+  `;
+
+  modalBackdrop.hidden = false;
+  document.body.style.overflow = 'hidden';
+
+  document.getElementById('closeModalBtn')?.addEventListener('click', closeModal);
+}
+
+function closeModal() {
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  if (modalBackdrop) modalBackdrop.hidden = true;
+  document.body.style.overflow = '';
+}
+window.openTextbookModal = openTextbookModal;
+window.closeModal = closeModal;
 
 /* ── Existing domain & tool datasets (preserved) ────────── */
 const domains = [
@@ -638,10 +822,22 @@ function modulesHTML(query) {
   const rows = [];
   domains.forEach(d => d.concepts.forEach((c, i) => rows.push({ d, index: i+1, title: c[0], theory: c[1], practice: c[2], domain: d })));
   const hits = rows.filter(r => !q || normalizeAnswer(r.title + ' ' + r.theory + ' ' + r.practice + ' ' + r.domain.name).includes(q));
-  return `<div class="section-head"><div><div class="eyebrow">KNOWLEDGE MATRIX / ${rows.length} MODULES</div><h2>Learning modules</h2><p>Every concept is readable here before you touch a tool. Open the domain when you want the full workflow and practice ladder.</p></div><div class="tag-row"><span class="tag accent">in-site curriculum</span><span class="tag">searchable</span></div></div>
+  return `<div class="section-head"><div><div class="eyebrow">KNOWLEDGE MATRIX / ${rows.length} MODULES</div><h2>Learning modules</h2><p>Every concept is readable here before you touch a tool. Open the textbook chapter for exhaustive theory, architecture diagrams, and master command tables.</p></div><div class="tag-row"><span class="tag accent">in-site textbook</span><span class="tag">searchable</span></div></div>
   <div class="module-search"><span>&gt;</span><input id="moduleSearch" value="${esc(query||'')}" placeholder="search a concept, protocol, technique, or domain" autocomplete="off"><span class="cursor">█</span></div>
   <div class="module-count"><span>${hits.length}</span> modules visible</div>
-  <div class="module-grid" id="modulesGrid">${hits.map(r=>`<article class="card module-card"><div class="module-top"><span class="tag accent">${r.domain.icon} / ${r.domain.name}</span><span class="tag">M${String(r.index).padStart(2,'0')}</span></div><h3>${esc(r.title)}</h3><p>${esc(r.theory)}</p><div class="module-action"><span class="tag">practice</span><span>${esc(r.practice)}</span></div><button class="btn outline" data-domain="${r.domain.id}">open full path →</button></article>`).join('') || '<div class="empty">No modules matched. Try "HTTP", "ELF", "XOR", "permissions", or "DNS".</div>'}</div>
+  <div class="module-grid" id="modulesGrid">${hits.map(r=>{
+    const chId = getChapterForConcept(r.domain.id, r.index, r.title);
+    return `<article class="card module-card">
+      <div class="module-top"><span class="tag accent">${r.domain.icon} / ${r.domain.name}</span><span class="tag">M${String(r.index).padStart(2,'0')}</span></div>
+      <h3>${esc(r.title)}</h3>
+      <p>${esc(r.theory)}</p>
+      <div class="module-action"><span class="tag">practice</span><span>${esc(r.practice)}</span></div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn" data-textbook="${chId}">📖 Read Textbook</button>
+        <button class="btn outline" data-domain="${r.domain.id}">Full Path →</button>
+      </div>
+    </article>`;
+  }).join('') || '<div class="empty">No modules matched. Try "HTTP", "ELF", "XOR", "permissions", or "DNS".</div>'}</div>
   <div class="note"><strong>Study contract:</strong> Read the concept, reproduce the observation in a safe lab, then explain it without looking at the text.</div>`;
 }
 
@@ -654,7 +850,15 @@ function domainDetailHTML(id) {
   if (!d) return '<div class="empty">Domain not found.</div>';
   return `<div class="section-head"><div><div class="tag-row"><span class="tag accent">${d.level}</span><span class="tag">${d.duration}</span></div><h2 style="margin-top:8px">${d.name}</h2><p>${d.summary}</p></div><button class="btn primary" data-action="complete-domain" data-domain-id="${d.id}">${state.completedDomains.includes(d.id)?'Completed ✓':'Mark complete'}</button></div>
   <div class="grid cols-2">
-    ${d.concepts.map((c,i)=>`<div class="card"><div class="card-top"><span class="tag accent">C${String(i+1).padStart(2,'0')}</span><h3 style="flex:1">${esc(c[0])}</h3></div><p style="margin-top:8px">${esc(c[1])}</p><div class="note" style="margin-top:12px"><strong>Practice:</strong> ${esc(c[2])}</div></div>`).join('')}
+    ${d.concepts.map((c,i)=>{
+      const chId = getChapterForConcept(d.id, i+1, c[0]);
+      return `<div class="card">
+        <div class="card-top"><span class="tag accent">C${String(i+1).padStart(2,'0')}</span><h3 style="flex:1">${esc(c[0])}</h3></div>
+        <p style="margin-top:8px">${esc(c[1])}</p>
+        <div class="note" style="margin-top:12px"><strong>Practice:</strong> ${esc(c[2])}</div>
+        <button class="btn" data-textbook="${chId}" style="margin-top:12px;width:100%">📖 Read Deep Textbook Chapter</button>
+      </div>`;
+    }).join('')}
   </div>
   ${d.practice ? `<div class="section-head" style="margin-top:24px"><div><h2>Practice tasks</h2></div></div><div class="grid cols-3">${d.practice.map(p=>`<div class="card"><p>${esc(p)}</p></div>`).join('')}</div>` : ''}`;
 }
@@ -703,8 +907,142 @@ function playbookHTML() {
 }
 
 function casebookHTML() {
-  return `<div class="section-head"><div><h2>Casebook</h2><p>Real incidents studied for patterns: what failed, why it mattered, and what defenders learned.</p></div></div>
-  <div class="grid cols-2">${casebook.map(c=>`<div class="card"><div class="card-top"><h3>${esc(c.title)}</h3><span class="tag">${esc(c.domain)}</span></div><p style="margin-top:8px">${esc(c.lesson)}</p><div class="note" style="margin-top:12px"><strong>Study angles:</strong> ${c.study.map(s=>`<span class="tag" style="margin:2px 4px 2px 0;display:inline-block">${esc(s)}</span>`).join('')}</div>${c.source?`<a class="btn outline" href="${esc(c.source)}" target="_blank" rel="noopener" style="margin-top:10px;font-size:11px">Source →</a>`:''}</div>`).join('')}</div>`;
+  const tab = state.casebookTab || 'all';
+  const q = normalizeAnswer(state.casebookQuery || '');
+  const allWriteups = window.TOURNAMENT_WRITEUPS || [];
+
+  const filteredWriteups = allWriteups.filter(w => {
+    if (tab !== 'all' && tab !== 'cve' && w.category !== tab) return false;
+    if (tab === 'cve') return false;
+    if (q) {
+      const str = normalizeAnswer(w.title + ' ' + w.event + ' ' + w.category + ' ' + w.scenario + ' ' + w.root_cause + ' ' + w.flag);
+      if (!str.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const filteredCves = casebook.filter(c => {
+    if (tab !== 'all' && tab !== 'cve') return false;
+    if (q) {
+      const str = normalizeAnswer(c.title + ' ' + c.domain + ' ' + c.lesson + ' ' + c.study.join(' '));
+      if (!str.includes(q)) return false;
+    }
+    return true;
+  });
+
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">TOURNAMENT ARCHIVES &amp; REAL-WORLD EXPLOIT CASEBOOK</div>
+      <h2>Casebook &amp; Exploit Vault</h2>
+      <p>Collegiate CTF tournament writeups with root-cause analysis, step-by-step methodologies, and complete runnable Python exploit scripts.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag accent">${allWriteups.length} Tournaments</span>
+      <span class="tag success">${casebook.length} Historic CVEs</span>
+    </div>
+  </div>
+
+  <div class="module-search" style="margin-bottom:14px">
+    <span>&gt;</span>
+    <input id="casebookSearch" value="${esc(state.casebookQuery || '')}" placeholder="search writeups by technique, challenge name, CVE, or flag format..." autocomplete="off">
+    <span class="cursor">█</span>
+  </div>
+
+  <div class="os-tabs" style="margin-bottom:18px">
+    ${[
+      ['all', 'All Writeups'],
+      ['pwn', 'Pwn / Binary'],
+      ['web', 'Web Exploitation'],
+      ['crypto', 'Cryptography'],
+      ['forensics', 'Forensics & Stego'],
+      ['reverse', 'Reverse Eng'],
+      ['cloud', 'Cloud & Escape'],
+      ['cve', 'Historic CVEs']
+    ].map(([catKey, label]) => `
+      <button class="os-btn${tab === catKey ? ' active' : ''}" data-casebook-tab="${catKey}">${label}</button>
+    `).join('')}
+  </div>
+
+  ${tab !== 'cve' ? `
+    <div class="writeups-list">
+      ${filteredWriteups.map(w => `
+        <article class="writeup-card">
+          <div class="card-top" style="align-items:flex-start">
+            <div>
+              <div class="tag-row" style="margin-bottom:6px">
+                <span class="tag accent">${esc(w.category.toUpperCase())}</span>
+                <span class="tag warn">${esc(w.difficulty)}</span>
+                <span class="tag">${w.points} pts</span>
+                <span class="tag success">${esc(w.event)}</span>
+              </div>
+              <h3 style="font-size:18px;color:var(--fg);margin:0 0 6px">${esc(w.title)}</h3>
+            </div>
+            <button class="btn outline copy-btn" data-copy-exploit="${esc(w.id)}">📋 Copy Exploit</button>
+          </div>
+
+          <div class="note" style="border-left-color:var(--green);margin:10px 0">
+            <strong>🏆 Flag:</strong> <code style="color:var(--green);font-size:13px">${esc(w.flag)}</code>
+          </div>
+
+          <div style="margin:12px 0">
+            <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Scenario &amp; Challenge Environment</h4>
+            <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.scenario)}</p>
+          </div>
+
+          <div class="note" style="margin:12px 0">
+            <h4 style="font-family:var(--display);color:var(--amber);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Root Cause Analysis</h4>
+            <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.root_cause)}</p>
+          </div>
+
+          <div style="margin:14px 0">
+            <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">Step-by-Step Solving Methodology</h4>
+            <ol style="color:#cbd5e1;padding-left:20px;line-height:1.8;margin:0">
+              ${w.solve_methodology.map(s => `<li>${esc(s)}</li>`).join('')}
+            </ol>
+          </div>
+
+          <div style="margin:14px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <h4 style="font-family:var(--display);color:var(--green);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0">Full Executable Python Exploit Script</h4>
+              <button class="btn outline copy-btn" data-copy-exploit="${esc(w.id)}" style="margin:0">Copy Script</button>
+            </div>
+            <pre style="max-height:340px;overflow:auto"><code id="code-${esc(w.id)}">${esc(w.exploit_script)}</code></pre>
+          </div>
+
+          <div class="note warn-note" style="margin-top:12px">
+            <h4 style="font-family:var(--display);color:var(--amber);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Defensive Remediation &amp; Production Hardening</h4>
+            <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.defense_remediation).replace(/\n/g, '<br>')}</p>
+          </div>
+        </article>
+      `).join('') || '<div class="empty">No tournament writeups matched this query.</div>'}
+    </div>
+  ` : ''}
+
+  ${(tab === 'all' || tab === 'cve') ? `
+    <div class="section-head" style="margin-top:28px">
+      <div>
+        <div class="eyebrow">HISTORIC CASE STUDIES // ROOT-CAUSE ARCHIVE</div>
+        <h2>Historic Vulnerabilities &amp; Exploitation Lessons</h2>
+      </div>
+    </div>
+    <div class="grid cols-2">
+      ${filteredCves.map(c => `
+        <div class="card">
+          <div class="card-top">
+            <h3>${esc(c.title)}</h3>
+            <span class="tag">${esc(c.domain)}</span>
+          </div>
+          <p style="margin-top:8px">${esc(c.lesson)}</p>
+          <div class="note" style="margin-top:12px">
+            <strong>Study angles:</strong> ${c.study.map(s => `<span class="tag" style="margin:2px 4px 2px 0;display:inline-block">${esc(s)}</span>`).join('')}
+          </div>
+          ${c.source ? `<a class="btn outline" href="${esc(c.source)}" target="_blank" rel="noopener" style="margin-top:10px;font-size:11px">Source →</a>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  ` : ''}
+  `;
 }
 
 function libraryHTML() {
@@ -777,11 +1115,73 @@ function bindViewEvents() {
           const rows = [];
           domains.forEach(d => d.concepts.forEach((c, i) => rows.push({ d, index: i+1, title: c[0], theory: c[1], practice: c[2], domain: d })));
           const hits = rows.filter(r => !q || normalizeAnswer(r.title + ' ' + r.theory + ' ' + r.practice + ' ' + r.domain.name).includes(q));
-          return hits.map(r => `<article class="card module-card"><div class="module-top"><span class="tag accent">${r.domain.icon} / ${r.domain.name}</span><span class="tag">M${String(r.index).padStart(2,'0')}</span></div><h3>${esc(r.title)}</h3><p>${esc(r.theory)}</p><div class="module-action"><span class="tag">practice</span><span>${esc(r.practice)}</span></div><button class="btn outline" data-domain="${r.domain.id}">open full path →</button></article>`).join('') || '<div class="empty">No modules matched.</div>';
+          return hits.map(r => {
+            const chId = getChapterForConcept(r.domain.id, r.index, r.title);
+            return `<article class="card module-card">
+              <div class="module-top"><span class="tag accent">${r.domain.icon} / ${r.domain.name}</span><span class="tag">M${String(r.index).padStart(2,'0')}</span></div>
+              <h3>${esc(r.title)}</h3>
+              <p>${esc(r.theory)}</p>
+              <div class="module-action"><span class="tag">practice</span><span>${esc(r.practice)}</span></div>
+              <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+                <button class="btn" data-textbook="${chId}">📖 Read Textbook</button>
+                <button class="btn outline" data-domain="${r.domain.id}">Full Path →</button>
+              </div>
+            </article>`;
+          }).join('') || '<div class="empty">No modules matched.</div>';
         })();
       view.querySelectorAll('[data-domain]').forEach(b => b.addEventListener('click', () => openDomain(b.dataset.domain)));
+      view.querySelectorAll('[data-textbook]').forEach(b => b.addEventListener('click', () => openTextbookModal(b.dataset.textbook)));
     });
     ms.focus();
+  }
+
+  /* Textbook modal buttons */
+  view.querySelectorAll('[data-textbook]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openTextbookModal(btn.dataset.textbook);
+    });
+  });
+
+  /* Copy exploit buttons */
+  view.querySelectorAll('[data-copy-exploit]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.copyExploit;
+      const codeEl = view.querySelector(`#code-${id}`);
+      if (codeEl) {
+        try {
+          await navigator.clipboard.writeText(codeEl.textContent);
+          const orig = btn.textContent;
+          btn.textContent = '✓ Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        } catch (err) {
+          btn.textContent = 'Copied';
+        }
+      }
+    });
+  });
+
+  /* Casebook tabs */
+  view.querySelectorAll('[data-casebook-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.casebookTab = btn.dataset.casebookTab;
+      render();
+    });
+  });
+
+  /* Casebook search */
+  const cs = view.querySelector('#casebookSearch');
+  if (cs) {
+    cs.addEventListener('input', () => {
+      state.casebookQuery = cs.value;
+      render();
+      const newCs = document.getElementById('casebookSearch');
+      if (newCs) {
+        newCs.focus();
+        newCs.selectionStart = newCs.selectionEnd = newCs.value.length;
+      }
+    });
   }
 
   /* Glossary search */
@@ -900,6 +1300,15 @@ function init() {
     btn.addEventListener('click', () => setView('curriculum'));
     mainNav.appendChild(btn);
   }
+
+  /* Modal backdrop and escape key closing */
+  document.getElementById('modalClose')?.addEventListener('click', closeModal);
+  document.getElementById('modalBackdrop')?.addEventListener('click', e => {
+    if (e.target.id === 'modalBackdrop') closeModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
 
   /* Background-preload live intelligence and curriculum */
   loadIntel();

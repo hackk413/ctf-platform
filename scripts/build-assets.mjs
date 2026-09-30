@@ -24,10 +24,14 @@ const html           = read('site-src/portal.html');
 const css            = read('site-src/portal.css');
 const js             = read('site-src/portal.js');
 const terminalEngine = read('site-src/terminal-engine.js');
+const textbookData   = read('site-src/textbook-data.js');
 
-/* Build combined app.js (portal.js + terminal-engine.js) for the portal */
+/* Build combined app.js (textbook-data.js + terminal-engine.js + portal.js) for the portal */
 const combinedJs = [
   '/* CTF Atlas — Combined Portal App (auto-generated, do not edit) */',
+  '/* textbook-data.js */',
+  textbookData,
+  '',
   '/* terminal-engine.js */',
   terminalEngine,
   '',
