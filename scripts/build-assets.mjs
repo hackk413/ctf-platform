@@ -42,12 +42,15 @@ const combinedJs = [
   'if (typeof mountTerminal !== "undefined") { window.mountTerminal = mountTerminal; }',
 ].join('\n');
 
+const safeCombinedJs = combinedJs.replace(/<\/script/gi, '<\\/script');
+const safeCss = css.replace(/<\/style/gi, '<\\/style');
+
 const out = [
   '// Generated protected assets. Do not move this file into public/.',
   '// Do not edit manually — run: node scripts/build-assets.mjs',
   `export const portalHtml = ${JSON.stringify(html)};`,
-  `export const portalCss  = ${JSON.stringify(css)};`,
-  `export const portalJs   = ${JSON.stringify(combinedJs)};`,
+  `export const portalCss  = ${JSON.stringify(safeCss)};`,
+  `export const portalJs   = ${JSON.stringify(safeCombinedJs)};`,
   `export const terminalEngineJs = ${JSON.stringify(terminalEngine)};`,
   '',
 ].join('\n');

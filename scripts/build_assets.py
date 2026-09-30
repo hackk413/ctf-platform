@@ -37,6 +37,12 @@ combined_js = "\n".join([
     'if (typeof mountTerminal !== "undefined") { window.mountTerminal = mountTerminal; }',
 ])
 
+import re
+
+# Sanitize combined_js so that any literal </script tags never break out of the HTML <script> tag
+combined_js = re.sub(r'</script', r'<\\/script', combined_js, flags=re.IGNORECASE)
+css = re.sub(r'</style', r'<\\/style', css, flags=re.IGNORECASE)
+
 out = "\n".join([
     "// Generated protected assets. Do not move this file into public/.",
     "// Do not edit manually — run: node scripts/build-assets.mjs or python scripts/build_assets.py",
