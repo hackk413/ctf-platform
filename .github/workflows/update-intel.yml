@@ -1,30 +1,169 @@
-name: CTF Atlas intelligence refresh
+name: CTF Atlas — Intelligence Refresh & Asset Build
 
 on:
   schedule:
-    - cron: '17 3 * * *'
+    # Nightly at 04:00 UTC (as specified in master prompt: '0 4 * * *')
+    - cron: '0 4 * * *'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (do not commit changes)'
+        required: false
+        default: 'false'
+        type: boolean
+      max_items:
+        description: 'Maximum intelligence items to include'
+        required: false
+        default: '90'
+        type: string
 
 permissions:
   contents: write
 
 jobs:
   refresh:
+    name: Refresh Intelligence & Rebuild Assets
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+
     steps:
-      - name: Checkout
+      # ── 1. Checkout ──────────────────────────────────────────
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Refresh intelligence snapshot
-        run: node scripts/update-intel.mjs
-      - name: Commit changed snapshot
+        with:
+          fetch-depth: 1
+
+      # ── 2. Setup Node.js ─────────────────────────────────────
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '**/package.json'
+
+      # ── 3. Install system dependencies ──────────────────────
+      # man-db provides man pages needed by crawl-manpages.mjs
+      - name: Install system packages (man-db + core tools)
         run: |
-          git config user.name "ctf-atlas-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/live-intel.json
-          if git diff --cached --quiet; then
-            echo "No intelligence changes"
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            man-db \
+            manpages \
+            manpages-dev \
+            grep \
+            gawk \
+            sed \
+            curl \
+            openssl \
+            nmap \
+            gdb \
+            binwalk \
+            exiftool \
+            2>/dev/null || true
+          # Make man pages available without 'man-db-auto-update' delays
+          sudo mandb --quiet 2>/dev/null || true
+          echo "System packages installed."
+
+      # ── 4. Install npm dependencies (if any) ─────────────────
+      - name: Install npm dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --ignore-scripts
           else
-            git commit -m "chore: refresh security intelligence"
-            git push
+            echo "No package-lock.json found, skipping npm install."
           fi
+
+      # ── 5. Crawl man pages ────────────────────────────────────
+      - name: Crawl man pages → data/man-intel.json
+        run: |
+          node scripts/crawl-manpages.mjs \
+            --tools find,grep,awk,sed,exiftool,binwalk,openssl,curl,nmap,gdb \
+            --out data/man-intel.json
+        env:
+          NODE_OPTIONS: '--experimental-fetch'
+        continue-on-error: true  # Don't fail build if some tools are missing
+
+      # ── 6. Fetch intelligence snapshot ────────────────────────
+      - name: Refresh intelligence snapshot → data/live-intel.json
+        run: |
+          DRY_FLAG=""
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            DRY_FLAG="--dry-run"
+          fi
+          MAX="${{ github.event.inputs.max_items }}"
+          MAX="${MAX:-90}"
+          node scripts/update-intel.mjs \
+            ${DRY_FLAG} \
+            --max-items=${MAX}
+        env:
+          NODE_OPTIONS: '--experimental-fetch'
+
+      # ── 7. Build static assets ────────────────────────────────
+      - name: Build portal assets → lib/assets.mjs
+        run: node scripts/build-assets.mjs
+
+      # ── 8. Validate syntax of generated files ─────────────────
+      - name: Validate JavaScript syntax
+        run: |
+          echo "Checking generated JavaScript files..."
+          node --check api/login.js
+          node --check api/logout.js
+          node --check api/session.js
+          node --check api/portal.js
+          node --check api/updates.js
+          node --check lib/auth.mjs
+          node --check scripts/build-assets.mjs
+          node --check scripts/update-intel.mjs
+          node --check scripts/crawl-manpages.mjs
+          echo "All JavaScript syntax checks passed."
+
+      - name: Validate JSON data files
+        run: |
+          echo "Validating JSON files..."
+          node -e "JSON.parse(require('fs').readFileSync('data/live-intel.json','utf8')); console.log('live-intel.json: valid');"
+          if [ -f data/man-intel.json ]; then
+            node -e "JSON.parse(require('fs').readFileSync('data/man-intel.json','utf8')); console.log('man-intel.json: valid');";
+          fi
+          echo "JSON validation complete."
+
+      # ── 9. Commit changes ─────────────────────────────────────
+      - name: Commit updated data files
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          git config user.name  "ctf-atlas-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage data files and rebuilt assets
+          git add data/live-intel.json
+          git add data/man-intel.json 2>/dev/null || true
+          git add lib/assets.mjs
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit — intelligence data is current."
+          else
+            TIMESTAMP=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+            ITEM_COUNT=$(node -e "const d=JSON.parse(require('fs').readFileSync('data/live-intel.json','utf8')); console.log(d.summary?.signals || d.items?.length || 0);" 2>/dev/null || echo "?")
+            git commit -m "chore: nightly intelligence refresh [${TIMESTAMP}] (${ITEM_COUNT} signals)"
+            git push
+            echo "Changes committed and pushed."
+          fi
+
+      # ── 10. Summary ───────────────────────────────────────────
+      - name: Print intelligence summary
+        run: |
+          echo "=== Intelligence Summary ==="
+          node -e "
+            const d = JSON.parse(require('fs').readFileSync('data/live-intel.json','utf8'));
+            const s = d.summary || {};
+            console.log('Updated at:', d.updatedAt);
+            console.log('Status:    ', d.status);
+            console.log('KEV items: ', s.kev || 0);
+            console.log('CVE items: ', s.vulnerabilities || 0);
+            console.log('Releases:  ', s.releases || 0);
+            console.log('Total:     ', s.signals || (d.items||[]).length);
+            console.log('Curriculum:', (d.curriculum||[]).length, 'modules preserved');
+            const srcs = (d.sources||[]);
+            console.log('Sources:');
+            srcs.forEach(s => console.log(' ', s.id.padEnd(20), s.status, '(', s.count, 'items)'));
+          " 2>/dev/null || echo "Could not read intelligence file."
+          echo "==========================="

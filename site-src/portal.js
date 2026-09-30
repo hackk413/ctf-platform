@@ -1,3 +1,11 @@
+/* ============================================================
+ * CTF Atlas — portal.js  v3.0
+ * Curriculum Renderer & Portal Controller
+ * Loads data/live-intel.json, renders six advanced curriculum
+ * modules with terminal labs, and keeps all existing views.
+ * ============================================================ */
+
+/* ── Core application state ──────────────────────────────── */
 const state = {
   view: 'dashboard',
   domain: null,
@@ -5,22 +13,29 @@ const state = {
   solved: JSON.parse(localStorage.getItem('atlas-solved') || '[]'),
   completedDomains: JSON.parse(localStorage.getItem('atlas-domains') || '[]'),
   theme: localStorage.getItem('atlas-theme') || 'dark',
-  moduleQuery: localStorage.getItem('atlas-module-query') || ''
+  moduleQuery: localStorage.getItem('atlas-module-query') || '',
+  curriculumModule: null,
 };
 
 let intelCache = null;
 let intelLoading = false;
 
+/* ── Escape helper ───────────────────────────────────────── */
+function esc(s) {
+  return String(s ?? '').replace(/[&<>'"]/g, c =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;',"'":"&#39;",'"':'&quot;' }[c]));
+}
 
+/* ── Existing domain & tool datasets (preserved) ────────── */
 const domains = [
   {id:'foundations',icon:'01',name:'Foundations',level:'Start here',duration:'6–10 h',summary:'What CTFs are, threat modeling, flags, trust boundaries, internet basics, ethics, and a repeatable solve loop.',
    concepts:[
     ['CTF anatomy','Challenges are small, observable systems with an objective. A strong solver moves through hypothesis → experiment → evidence → validation instead of guessing.','Recognize category clues. Keep a scratchpad. Record commands, assumptions and output.'],
     ['CIA + security properties','Confidentiality, integrity and availability are useful lenses, but CTFs also test authenticity, authorization, isolation and provenance.','Map each clue to what property is being broken or proven.'],
     ['Trust boundaries','A browser, API, database, process, file parser and kernel are separate trust zones. Vulnerabilities often occur where data crosses between them.','Draw a 4-box data-flow diagram before touching a hard web or pwn problem.'],
-    ['Evidence discipline','A finding is not “real” because a tool says so. Reproduce it, minimize it, explain why it happens and identify the security impact.','Capture input → transformation → output. Prefer small test cases.'],
+    ['Evidence discipline','A finding is not "real" because a tool says so. Reproduce it, minimize it, explain why it happens and identify the security impact.','Capture input → transformation → output. Prefer small test cases.'],
     ['Legal sandboxing','Use local intentionally vulnerable apps, CTF infrastructure and systems you are explicitly authorized to test.','Keep practice targets on loopback/host-only networks when possible.']
-   ],practice:['Do the browser challenge “Find the flag,” then write a 5-line solve note.','Complete OverTheWire Bandit Level 0–5.','Build a local folder: notes/, evidence/, scripts/, samples/.']},
+   ],practice:['Do the browser challenge "Find the flag," then write a 5-line solve note.','Complete OverTheWire Bandit Level 0–5.','Build a local folder: notes/, evidence/, scripts/, samples/.']},
   {id:'linux',icon:'02',name:'Linux + CLI',level:'Core',duration:'8–14 h',summary:'Shell fluency, processes, files, permissions, pipes, text processing, networking utilities and automation.',
    concepts:[
     ['Filesystem model','Paths, inodes, links, permissions, ownership, mount points and special files explain most beginner Linux CTF tasks.','Learn ls/stat/find/file/strings/xargs. Understand absolute vs relative paths.'],
@@ -35,12 +50,12 @@ const domains = [
     ['TCP state','SYN, SYN-ACK, ACK, sequence numbers, retransmission and connection lifecycle explain port scanning and capture artifacts.','Use Wireshark display filters and tcpdump on your own captures.'],
     ['DNS','Name resolution is a protocol and a data source. A record type can change the investigative path.','Learn A/AAAA/CNAME/MX/TXT/NS and dig.'],
     ['HTTP','Methods, paths, headers, cookies, content types, caching and status codes form the language of web CTFs.','Inspect requests manually with browser devtools or Burp.'],
-    ['Scanning methodology','Discovery answers “what exists”; enumeration answers “what is there to interact with”; validation answers “is the finding real?”','Prefer targeted, rate-aware scans on authorized lab targets.']
+    ['Scanning methodology','Discovery answers "what exists"; enumeration answers "what is there to interact with"; validation answers "is the finding real?"','Prefer targeted, rate-aware scans on authorized lab targets.']
    ],practice:['Run Nmap against 127.0.0.1 only and inspect localhost services.','Load a sample PCAP in Wireshark and reconstruct an HTTP exchange.','Use curl to compare headers across two local endpoints.']},
   {id:'web',icon:'04',name:'Web + APIs',level:'Core',duration:'16–24 h',summary:'Requests, sessions, authentication, access control, injections, client-side behavior, APIs and browser trust boundaries.',
    concepts:[
     ['Request anatomy','Method, target, headers, cookies, body, encoding and response metadata define the web transaction.','Learn to redraw any request in 6 fields.'],
-    ['Authentication vs authorization','Authentication asks “who are you?” Authorization asks “may you do this?” Many real-world bugs live in the second question.','Create an identity/role matrix and test object-level access in a lab.'],
+    ['Authentication vs authorization','Authentication asks "who are you?" Authorization asks "may you do this?" Many real-world bugs live in the second question.','Create an identity/role matrix and test object-level access in a lab.'],
     ['Input handling','Injection occurs when data is interpreted as code or syntax in another language. Encodings can hide the true value from casual inspection.','Trace the data through parser boundaries before choosing a payload.'],
     ['Client-side security','DOM, browser APIs, storage, CORS and prototype behavior can shift the trust boundary into the browser.','Use devtools Sources/Network/Application panels.'],
     ['APIs','JSON, REST, GraphQL, JWTs and rate limits expose application logic in a machine-friendly form.','Map endpoints, inputs, auth requirements and object identifiers.']
@@ -49,10 +64,10 @@ const domains = [
    concepts:[
     ['Encoding ≠ encryption','Base64, hex, URL encoding and ASCII are representations. They do not provide secrecy.','Try decoding before reaching for cryptanalysis.'],
     ['XOR','XOR is reversible and appears in stream ciphers and simple CTF puzzles. Multi-byte reasoning often depends on key repetition.','Practice truth tables, bytes, hex and XOR identities.'],
-    ['Hashes','Cryptographic hashes map arbitrary input to a fixed digest. They are designed to resist specific attack classes—not to be reversible like encryption.','Recognize common digest formats, salts and why “hash = encryption” is wrong.'],
+    ['Hashes','Cryptographic hashes map arbitrary input to a fixed digest. They are designed to resist specific attack classes—not to be reversible like encryption.','Recognize common digest formats, salts and why "hash = encryption" is wrong.'],
     ['Public-key crypto','RSA, ECC and key agreement rely on mathematical structure. CTFs often expose textbook or flawed parameters rather than breaking sound primitives.','Learn modular arithmetic, inverses and why parameter choices matter.'],
-    ['Protocol failures','Most practical crypto weaknesses come from misuse: nonce reuse, weak randomness, missing authentication, poor key handling or unsafe composition.','Ask “what assumption failed?” before attempting brute force.']
-   ],practice:['CryptoHack introductory/general challenges.','Implement Base64, Caesar, XOR and modular inverse in Python.','Write a one-page “crypto smell” checklist.']},
+    ['Protocol failures','Most practical crypto weaknesses come from misuse: nonce reuse, weak randomness, missing authentication, poor key handling or unsafe composition.','Ask "what assumption failed?" before attempting brute force.']
+   ],practice:['CryptoHack introductory/general challenges.','Implement Base64, Caesar, XOR and modular inverse in Python.','Write a one-page "crypto smell" checklist.']},
   {id:'forensics',icon:'06',name:'Forensics',level:'Core',duration:'10–18 h',summary:'Files, metadata, archives, logs, memory concepts, timelines, packet captures and evidence handling.',
    concepts:[
     ['File signatures','Extensions lie; magic bytes, headers and parsers reveal actual file types.','Use file, xxd/hexdump, strings and binwalk in local samples.'],
@@ -60,21 +75,21 @@ const domains = [
     ['Logs + timelines','Correlate timestamps across sources; account for timezone, clock skew and log rotation.','Normalize time to UTC in notes and preserve raw values.'],
     ['PCAP analysis','Capture files can answer who talked to whom, when, over which protocol, and what content crossed the wire.','Filter narrowly, then broaden; reconstruct the conversation.'],
     ['Memory concepts','Process state, mappings, handles and strings may survive in memory after they disappear from disk.','Learn conceptual memory layout before using a full memory framework.']
-   ],practice:['Use the browser packet/log labs.','Open Wireshark’s User Guide alongside a sample capture.','Build a timeline from three synthetic log sources.']},
+   ],practice:['Use the browser packet/log labs.','Open Wireshark\'s User Guide alongside a sample capture.','Build a timeline from three synthetic log sources.']},
   {id:'reverse',icon:'07',name:'Reverse Engineering',level:'Advanced',duration:'16–28 h',summary:'Executable formats, control flow, disassembly, decompilation, strings, symbols, calling conventions and patch reasoning.',
    concepts:[
     ['ELF/PE basics','Executables contain headers, sections/segments, imports/exports, symbols and relocation data.','Learn the difference between what the file declares and what the loader creates.'],
     ['Assembly reading','Recognize function prologues, branches, calls, returns, comparisons, memory access and register conventions.','Track data flow instead of translating every instruction word-for-word.'],
     ['Static vs dynamic analysis','Static analysis asks what the program could do; dynamic analysis observes what it does with a chosen input/state.','Use static first, then instrument targeted functions.'],
-    ['Control flow','Branches and call graphs reveal validation logic, parser boundaries and hidden states.','Mark the “gate” that decides success/failure.'],
+    ['Control flow','Branches and call graphs reveal validation logic, parser boundaries and hidden states.','Mark the "gate" that decides success/failure.'],
     ['Ghidra workflow','Import → analyze → locate interesting functions/strings → rename → decompile → confirm with disassembly.','Keep hypotheses in comments and verify by tracing callers.']
-   ],practice:['Open the Ghidra docs and a tiny local binary you wrote yourself.','Use Linux Insides + Beej C as prerequisites.','Solve the browser “reverse the logic” lab.']},
+   ],practice:['Open the Ghidra docs and a tiny local binary you wrote yourself.','Use Linux Insides + Beej C as prerequisites.','Solve the browser "reverse the logic" lab.']},
   {id:'pwn',icon:'08',name:'Binary Exploitation',level:'Advanced',duration:'18–32 h',summary:'Memory safety, stack frames, calling conventions, mitigations, debugging and exploit-development concepts—inside local CTF binaries.',
    concepts:[
     ['Memory model','Stack, heap, data, code and shared libraries occupy different regions with different purposes and protections.','Draw a process address-space map before writing exploit code.'],
     ['Memory corruption','Out-of-bounds reads/writes and lifetime bugs can change data or control flow.','Start from root cause and exact bytes in memory, not from a payload recipe.'],
     ['Mitigations','NX, ASLR, PIE, stack canaries, RELRO and CFI change what is feasible.','Learn what each mitigation protects and what assumptions remain.'],
-    ['Debugging','A debugger turns “crash” into evidence: registers, stack, memory, call stack and instruction pointer.','Use breakpoints and watchpoints in local programs you own.'],
+    ['Debugging','A debugger turns "crash" into evidence: registers, stack, memory, call stack and instruction pointer.','Use breakpoints and watchpoints in local programs you own.'],
     ['pwntools mindset','Automate repetitive interaction and packing/parsing after you understand the target.','Use scripts as executable lab notes, not magic incantations.']
    ],practice:['pwn.college core material.','Write a tiny vulnerable C program locally and inspect it with a debugger.','Use pwntools docs for packing/unpacking and process interaction in local labs.']},
   {id:'osint',icon:'09',name:'OSINT + Research',level:'Core',duration:'8–14 h',summary:'Source validation, metadata, public data correlation, search operators, timelines and uncertainty management.',
@@ -90,7 +105,7 @@ const domains = [
     ['Container inspection','The first move is often file type, dimensions, metadata and trailing data.','Compare declared size vs actual size.'],
     ['Image planes','LSB-like techniques modify low-significance bits; visual inspection may not reveal changes.','Understand channels, bit depth and pixel ordering.'],
     ['Text stego','Whitespace, capitalization, Unicode confusables and formatting can encode data.','Normalize carefully, but preserve a raw copy.'],
-    ['Audio stego','Spectral or sample-level patterns can encode hidden data.','Know that “listen to it” is only one view.'],
+    ['Audio stego','Spectral or sample-level patterns can encode hidden data.','Know that "listen to it" is only one view.'],
     ['Tool discipline','A stego tool is a hypothesis engine, not an oracle.','Check outputs against the original artifact and expected structure.']
    ],practice:['Use strings/binwalk/hexdump on local synthetic files.','Create your own whitespace-encoded message and decode it.']},
   {id:'mobile-cloud',icon:'11',name:'Mobile + Cloud + Containers',level:'Advanced',duration:'14–22 h',summary:'Android packages, app storage, tokens, cloud identity, container boundaries and modern deployment surfaces.',
@@ -105,7 +120,7 @@ const domains = [
    concepts:[
     ['Telemetry','Security events come from endpoints, identity systems, DNS, proxies, applications and network sensors.','Ask which sensor could prove or disprove a hypothesis.'],
     ['Triage','Triage is a prioritization problem: what happened, where, when, and what evidence is trustworthy?','Write a 6-line incident summary from synthetic logs.'],
-    ['ATT&CK mapping','Tactics answer “why”; techniques answer “how”. Mapping helps communicate behavior without relying on vendor names.','Map a solved challenge to one or two ATT&CK techniques where appropriate.'],
+    ['ATT&CK mapping','Tactics answer "why"; techniques answer "how". Mapping helps communicate behavior without relying on vendor names.','Map a solved challenge to one or two ATT&CK techniques where appropriate.'],
     ['Detection logic','Good detections describe observable behavior and constrain false positives.','State data source, condition, context and response.'],
     ['Recovery thinking','A CTF flag is not the end of a real incident. Defenders care about containment, eradication, recovery and lessons learned.','Write the defender action after every offensive lab.']
    ],practice:['Map the incident-triage challenge to ATT&CK.','Use NIST CSF 2.0 as a high-level risk-management lens.']}
@@ -117,7 +132,7 @@ const tools = [
   {name:'tcpdump',cat:'Network',why:'Lightweight packet capture and filtering from the command line.',linux:'tcpdump -i lo',windows:'Use Wireshark/Npcap capture',mac:'sudo tcpdump -i lo0',url:'https://www.tcpdump.org/'},
   {name:'curl',cat:'Web',why:'Make and inspect HTTP requests without hiding the protocol details.',linux:'curl -i http://127.0.0.1:3000/',windows:'curl.exe -i http://127.0.0.1:3000/',mac:'curl -i http://127.0.0.1:3000/',url:'https://curl.se/docs/'},
   {name:'Burp Suite',cat:'Web',why:'Proxy, inspect and replay application requests in authorized labs.',linux:'Launch Burp → Proxy → browser through 127.0.0.1',windows:'Launch Burp → Proxy → browser through 127.0.0.1',mac:'Launch Burp → Proxy → browser through 127.0.0.1',url:'https://portswigger.net/burp'},
-  {name:'OWASP ZAP',cat:'Web',why:'Open-source web proxy/scanner for learning and authorized application assessment.',linux:'zap.sh',windows:'zaproxy.exe',mac:'open /Applications/OWASP\ ZAP.app',url:'https://www.zaproxy.org/'},
+  {name:'OWASP ZAP',cat:'Web',why:'Open-source web proxy/scanner for learning and authorized application assessment.',linux:'zap.sh',windows:'zaproxy.exe',mac:'open /Applications/OWASP\\ ZAP.app',url:'https://www.zaproxy.org/'},
   {name:'Ghidra',cat:'Reverse',why:'Disassembly/decompilation and binary exploration across platforms.',linux:'./ghidraRun',windows:'ghidraRun.bat',mac:'./ghidraRun',url:'https://github.com/NationalSecurityAgency/ghidra'},
   {name:'gdb + extensions',cat:'Pwn / Reverse',why:'Debug local binaries, inspect registers/memory and validate hypotheses.',linux:'gdb ./binary',windows:'gdb ./binary (WSL/MSYS2)',mac:'lldb ./binary  # or gdb via package manager',url:'https://sourceware.org/gdb/'},
   {name:'pwntools',cat:'Pwn',why:'Python toolkit for packing, parsing and process interaction in CTFs.',linux:'python3 -m pip install --user pwntools',windows:'python -m pip install --user pwntools',mac:'python3 -m pip install --user pwntools',url:'https://docs.pwntools.com/'},
@@ -151,16 +166,16 @@ const challenges = [
   {id:'regex',name:'Extract the ticket',cat:'Automation',diff:'Medium',points:125,prompt:'From "INFO ticket=ABC-2417 user=demo" extract only the ticket value.',hint:['Pattern: ticket=([A-Z]+-[0-9]+).','Use a capture group.'],answer:'ABC-2417',why:'Regex is a force multiplier for repeatable evidence extraction.'},
   {id:'perm',name:'Permission math',cat:'Linux',diff:'Medium',points:100,prompt:'What permissions does 640 grant on a file?',hint:['6 = rw-, 4 = r--, 0 = ---.','Order is owner, group, other.'],answer:'owner rw-, group r--, other ---',why:'Permissions are easier once you translate the octal digits consistently.'},
   {id:'assembly',name:'Branch meaning',cat:'Reverse',diff:'Medium',points:125,prompt:'Pseudo-assembly: cmp eax, 42; jne fail; call success. What must be true to reach success?',hint:['jne means jump if not equal.','So the call occurs when the comparison finds equality.'],answer:'eax == 42',why:'Reverse engineering starts with control-flow truth tables, not decompiler magic.'},
-  {id:'stego',name:'Container clue',cat:'Stego / Forensics',diff:'Medium',points:100,prompt:'A PNG is 120 KB on disk, has valid PNG headers, and contains a large ZIP archive appended after the IEND chunk. What should you test first?',hint:['Do not assume the PNG itself is corrupted.','Treat the trailing bytes as a second artifact and inspect/extract them.'],answer:'Inspect/extract the trailing ZIP data',why:'Compound-file thinking solves many “mystery image” challenges.'},
-  {id:'osint',name:'Provenance first',cat:'OSINT',diff:'Hard',points:150,prompt:'A screenshot claims a software project released version 9.2 on March 3, but the project’s signed release page says version 9.1 on March 5. What should you do before concluding the screenshot is false?',hint:['Corroborate with another primary source, such as tags, release notes or repository history.','Check timezone/date conventions and whether the screenshot refers to a fork or pre-release.'],answer:'Corroborate with primary release artifacts and check context',why:'Strong OSINT separates observation, verification and inference.'},
+  {id:'stego',name:'Container clue',cat:'Stego / Forensics',diff:'Medium',points:100,prompt:'A PNG is 120 KB on disk, has valid PNG headers, and contains a large ZIP archive appended after the IEND chunk. What should you test first?',hint:['Do not assume the PNG itself is corrupted.','Treat the trailing bytes as a second artifact and inspect/extract them.'],answer:'Inspect/extract the trailing ZIP data',why:'Compound-file thinking solves many "mystery image" challenges.'},
+  {id:'osint',name:'Provenance first',cat:'OSINT',diff:'Hard',points:150,prompt:'A screenshot claims a software project released version 9.2 on March 3, but the project\'s signed release page says version 9.1 on March 5. What should you do before concluding the screenshot is false?',hint:['Corroborate with another primary source, such as tags, release notes or repository history.','Check timezone/date conventions and whether the screenshot refers to a fork or pre-release.'],answer:'Corroborate with primary release artifacts and check context',why:'Strong OSINT separates observation, verification and inference.'},
   {id:'incident',name:'Map the behavior',cat:'Blue Team',diff:'Hard',points:150,prompt:'A lab endpoint shows repeated credential guessing followed by successful remote login and local process discovery. Which sequence best describes the behavior?',hint:['Think in behaviors rather than malware names.','ATT&CK tactics can form a sequence.'],answer:'Credential Access → Initial Access/Valid Accounts → Discovery',why:'CTF clues become more transferable when translated into defender language.'},
-  {id:'method',name:'Choose the next move',cat:'Methodology',diff:'Hard',points:175,prompt:'You have a web app with an authenticated user and a numeric object ID in the URL. Which is the strongest next hypothesis to test in a local lab?',hint:['Authorization bugs often occur when object references are trusted without checking ownership.','Build two accounts and compare access to each other’s objects.'],answer:'Test object-level authorization with two users',why:'Good CTF solving is hypothesis-driven and testable.'}
+  {id:'method',name:'Choose the next move',cat:'Methodology',diff:'Hard',points:175,prompt:'You have a web app with an authenticated user and a numeric object ID in the URL. Which is the strongest next hypothesis to test in a local lab?',hint:['Authorization bugs often occur when object references are trusted without checking ownership.','Build two accounts and compare access to each other\'s objects.'],answer:'Test object-level authorization with two users',why:'Good CTF solving is hypothesis-driven and testable.'}
 ];
 
 const casebook = [
   {title:'Heartbleed (CVE-2014-0160)',domain:'Crypto / Protocols',lesson:'A memory-safety bug in a TLS implementation became a global security problem because a security-critical parser crossed a memory boundary without sufficient validation.',study:['bounds checking','memory disclosure','patching and validation','why crypto primitives can still fail in implementation'],source:'https://nvd.nist.gov/vuln/detail/CVE-2014-0160'},
   {title:'Shellshock (CVE-2014-6271)',domain:'Linux / Command Injection',lesson:'Bash function parsing in environment variables created command-execution paths across trust boundaries in multiple configurations.',study:['environment variables','parser boundaries','command injection concepts','defensive patching and exposure mapping'],source:'https://nvd.nist.gov/vuln/detail/CVE-2014-6271'},
-  {title:'Log4Shell (CVE-2021-44228)',domain:'Web / Java / Supply Chain',lesson:'A logging feature accepted attacker-controlled data that could trigger unexpected lookups, showing how “non-security” components can become attack surfaces.',study:['data-to-code boundaries','dependency inventory','egress controls','defense-in-depth'],source:'https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-339a'},
+  {title:'Log4Shell (CVE-2021-44228)',domain:'Web / Java / Supply Chain',lesson:'A logging feature accepted attacker-controlled data that could trigger unexpected lookups, showing how "non-security" components can become attack surfaces.',study:['data-to-code boundaries','dependency inventory','egress controls','defense-in-depth'],source:'https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-339a'},
   {title:'MOVEit Transfer (CVE-2023-34362)',domain:'Web / SQL Injection',lesson:'A SQL injection issue in a widely deployed file-transfer product was actively exploited; the case demonstrates why input validation, rapid patching and monitoring matter together.',study:['SQL injection root cause','web input validation','asset exposure','threat detection and patch management'],source:'https://www.cisa.gov/known-exploited-vulnerabilities-catalog'},
   {title:'What the cases have in common',domain:'Cross-cutting',lesson:'Different technologies fail for recurring reasons: untrusted input crossing an interpreter boundary, insufficient validation, excessive trust, weak visibility, or delayed patching.',study:['trust boundaries','secure defaults','telemetry','defense in depth'],source:'https://attack.mitre.org/'}
 ];
@@ -188,69 +203,378 @@ const glossary = [
  ['WAF','Web Application Firewall: filters or blocks web traffic based on policies and observed request characteristics.']
 ];
 
-function esc(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-function save(){localStorage.setItem('atlas-solved',JSON.stringify(state.solved));localStorage.setItem('atlas-domains',JSON.stringify(state.completedDomains));localStorage.setItem('atlas-os',state.os);localStorage.setItem('atlas-theme',state.theme);localStorage.setItem('atlas-module-query',state.moduleQuery)}
-function completion(){return Math.round((state.solved.length/challenges.length)*100)}
-function setTheme(){document.documentElement.classList.toggle('light',state.theme==='light');document.getElementById('themeToggle').textContent=state.theme==='light'?'AM':'NEON'}
-function setView(view){state.view=view;state.domain=null;document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view===view));document.getElementById('breadcrumbs').textContent={dashboard:'Dashboard',path:'Learning path',modules:'Learning modules',domains:'Learning paths',tools:'Tool lab',labs:'Micro-labs',playbook:'Methodology',casebook:'Casebook',library:'Reference vault',glossary:'Glossary'}[view]||'CTF Atlas';render();window.scrollTo({top:0,behavior:'smooth'});}
-function openDomain(id){state.view='domains';state.domain=id;document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.view==='domains'));document.getElementById('breadcrumbs').textContent='Domains / '+domains.find(d=>d.id===id).name;render();window.scrollTo({top:0,behavior:'smooth'});}
-function markDomain(id){if(!state.completedDomains.includes(id)) state.completedDomains.push(id);save();render()}
+/* ── Persistence helpers ─────────────────────────────────── */
+function save() {
+  localStorage.setItem('atlas-solved', JSON.stringify(state.solved));
+  localStorage.setItem('atlas-domains', JSON.stringify(state.completedDomains));
+  localStorage.setItem('atlas-os', state.os);
+  localStorage.setItem('atlas-theme', state.theme);
+  localStorage.setItem('atlas-module-query', state.moduleQuery);
+}
 
-function render(){
-  const view=document.getElementById('view');
-  if(state.view==='dashboard') view.innerHTML=dashboardHTML();
-  if(state.view==='path') view.innerHTML=pathHTML();
-  if(state.view==='modules') view.innerHTML=modulesHTML(state.moduleQuery);
-  if(state.view==='domains') view.innerHTML=state.domain?domainDetailHTML(state.domain):domainsHTML();
-  if(state.view==='tools') view.innerHTML=toolsHTML();
-  if(state.view==='labs') view.innerHTML=labsHTML();
-  if(state.view==='playbook') view.innerHTML=playbookHTML();
-  if(state.view==='casebook') view.innerHTML=casebookHTML();
-  if(state.view==='library') view.innerHTML=libraryHTML();
-  if(state.view==='glossary') view.innerHTML=glossaryHTML('');
-  if(state.view==='intel') view.innerHTML=intelHTML(intelCache);
+function completion() { return Math.round((state.solved.length / challenges.length) * 100); }
+
+function normalizeAnswer(s) { return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+
+function setTheme() {
+  document.documentElement.classList.toggle('light', state.theme === 'light');
+  document.getElementById('themeToggle').textContent = state.theme === 'light' ? 'AM' : 'NEON';
+}
+
+function setView(view) {
+  state.view = view; state.domain = null; state.curriculumModule = null;
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  document.getElementById('breadcrumbs').textContent = {
+    dashboard:'Dashboard', path:'Learning path', modules:'Learning modules', domains:'Learning paths',
+    tools:'Tool lab', labs:'Micro-labs', playbook:'Methodology', casebook:'Casebook',
+    library:'Reference vault', glossary:'Glossary', intel:'Live intel', curriculum:'Curriculum'
+  }[view] || 'CTF Atlas';
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openDomain(id) {
+  state.view = 'domains'; state.domain = id;
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === 'domains'));
+  document.getElementById('breadcrumbs').textContent = 'Domains / ' + domains.find(d => d.id === id)?.name;
+  render();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function markDomain(id) {
+  if (!state.completedDomains.includes(id)) state.completedDomains.push(id);
+  save(); render();
+}
+
+/* ── Main render dispatcher ──────────────────────────────── */
+function render() {
+  const view = document.getElementById('view');
+  if (state.view === 'dashboard')   view.innerHTML = dashboardHTML();
+  if (state.view === 'path')        view.innerHTML = pathHTML();
+  if (state.view === 'modules')     view.innerHTML = modulesHTML(state.moduleQuery);
+  if (state.view === 'domains')     view.innerHTML = state.domain ? domainDetailHTML(state.domain) : domainsHTML();
+  if (state.view === 'tools')       view.innerHTML = toolsHTML();
+  if (state.view === 'labs')        view.innerHTML = labsHTML();
+  if (state.view === 'playbook')    view.innerHTML = playbookHTML();
+  if (state.view === 'casebook')    view.innerHTML = casebookHTML();
+  if (state.view === 'library')     view.innerHTML = libraryHTML();
+  if (state.view === 'glossary')    view.innerHTML = glossaryHTML('');
+  if (state.view === 'intel')       view.innerHTML = intelHTML(intelCache);
+  if (state.view === 'curriculum')  view.innerHTML = curriculumHTML(intelCache);
   bindViewEvents();
-  if(state.view==='intel' && !intelCache) loadIntel();
-  document.getElementById('sidebarProgress').textContent=completion()+'%';
-  document.getElementById('sidebarProgressBar').style.width=completion()+'%';
+  if ((state.view === 'intel' || state.view === 'curriculum') && !intelCache) loadIntel();
+  document.getElementById('sidebarProgress').textContent = completion() + '%';
+  document.getElementById('sidebarProgressBar').style.width = completion() + '%';
   setTheme();
 }
 
-function dashboardHTML(){
-  const solved=state.solved.length, total=challenges.length;
+/* ══════════════════════════════════════════════════════════
+ * CURRICULUM VIEW — Textbook-Grade Module Renderer
+ * ══════════════════════════════════════════════════════════ */
+
+function curriculumHTML(intel) {
+  if (!intel) {
+    return `<div class="section-head"><div><h2>Curriculum</h2>
+      <p>Loading textbook-grade exploitation curriculum...</p></div></div>
+      <div class="empty">⏳ Fetching curriculum data...</div>`;
+  }
+
+  const modules = intel.curriculum || [];
+  if (!modules.length) {
+    return `<div class="section-head"><div><h2>Curriculum</h2>
+      <p>No curriculum modules loaded yet.</p></div></div>`;
+  }
+
+  /* If a specific module is selected, render its full detail */
+  if (state.curriculumModule) {
+    const mod = modules.find(m => m.id === state.curriculumModule);
+    if (mod) return curriculumModuleDetailHTML(mod);
+  }
+
+  /* Module listing grid */
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">TEXTBOOK-GRADE CURRICULUM // ${modules.length} ADVANCED MODULES</div>
+      <h2>Exploitation Curriculum</h2>
+      <p>Production-quality deep-dives into the six core exploitation domains. Each module contains OS internals, attack mechanics, tool command references, real-world case studies, and a browser-native terminal lab.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag accent">zero-backend</span>
+      <span class="tag success">interactive labs</span>
+      <span class="tag">textbook depth</span>
+    </div>
+  </div>
+  <div class="grid cols-2">
+    ${modules.map(mod => `
+      <button class="card" data-curriculum-module="${esc(mod.id)}" style="text-align:left;min-height:260px">
+        <div class="card-top">
+          <div>
+            <div class="domain-icon">${esc(mod.icon || '?')}</div>
+            <h3>${esc(mod.title)}</h3>
+          </div>
+          <div class="arrow">→</div>
+        </div>
+        <p style="margin-top:8px">${esc(mod.abstract || '')}</p>
+        <div class="tag-row" style="margin-top:10px">
+          <span class="tag accent">${esc(mod.category || '')}</span>
+          <span class="tag">${esc(mod.level || '')}</span>
+          <span class="tag">${esc(mod.duration || '')}</span>
+          ${mod.interactive_terminal_challenge && mod.interactive_terminal_challenge.flag
+            ? (localStorage.getItem(`atlas-term-solved-${mod.interactive_terminal_challenge.id}`) === '1'
+              ? '<span class="tag success">✓ Lab Solved</span>'
+              : '<span class="tag warn">🖥 Lab Available</span>')
+            : ''}
+        </div>
+      </button>`).join('')}
+  </div>`;
+}
+
+function curriculumModuleDetailHTML(mod) {
+  const theory   = mod.theory   || {};
+  const tools    = mod.tools    || [];
+  const caseStudy = mod.case_study || null;
+  const lab      = mod.interactive_terminal_challenge;
+
+  /* ── Section 1: Abstract ── */
+  const abstractSection = `
+  <div class="note" style="margin-bottom:24px">
+    <strong>MODULE ABSTRACT</strong><br>${esc(mod.abstract || '')}
+  </div>`;
+
+  /* ── Section 2: Theory & Internals ── */
+  const theorySections = (theory.sections || []).map(s => `
+    <div style="margin-bottom:28px">
+      <h3 style="font-family:var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--cyan);font-size:16px;margin-bottom:10px">${esc(s.heading)}</h3>
+      <p style="color:#aeb6c5;line-height:1.8;margin-bottom:12px">${esc(s.body).replace(/\n/g,'<br>')}</p>
+      ${s.code ? `<pre><code>${esc(s.code)}</code></pre>` : ''}
+    </div>`).join('');
+
+  const theorySection = `
+  <div class="section-head"><div><h2>Systems & Protocol Internals</h2>
+    <p>${esc(theory.title || '')}</p></div></div>
+  <div class="detail" style="padding:28px">${theorySections}</div>`;
+
+  /* ── Section 3: Tool Deep-Dive with Flags Table ── */
+  const toolsSection = tools.length ? `
+  <div class="section-head"><div><h2>Tool Command & Syntax Breakdown</h2>
+    <p>Flags, contexts, and offensive recipes for each tool in this module.</p></div></div>
+  ${tools.map(t => `
+    <div class="detail" style="margin-bottom:18px">
+      <div class="detail-head">
+        <h3 style="margin:0;font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--green)">${esc(t.name)}</h3>
+      </div>
+      <div class="detail-body" style="padding:0">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border)">
+              <th style="text-align:left;padding:10px 18px;color:var(--cyan);font-family:var(--display);letter-spacing:.08em;text-transform:uppercase;width:35%">Flag / Syntax</th>
+              <th style="text-align:left;padding:10px 18px;color:var(--cyan);font-family:var(--display);letter-spacing:.08em;text-transform:uppercase">Context & Effect</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(t.flags || []).map((f, i) => `
+              <tr style="border-bottom:1px dashed var(--border);background:${i%2?'#0d0d14':'transparent'}">
+                <td style="padding:10px 18px"><code style="color:var(--green);word-break:break-all">${esc(f.flag)}</code></td>
+                <td style="padding:10px 18px;color:#aeb6c5">${esc(f.context)}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`).join('')}` : '';
+
+  /* ── Section 4: Case Study ── */
+  const caseStudySection = caseStudy ? `
+  <div class="section-head"><div><h2>Real-World CTF Case Study</h2>
+    <p>${esc(caseStudy.title)}</p></div></div>
+  <div class="detail">
+    <div class="detail-head"><h3 style="margin:0">${esc(caseStudy.title)}</h3></div>
+    <div class="detail-body">
+      <p style="color:#aeb6c5;margin-bottom:16px">${esc(caseStudy.narrative || '')}</p>
+      <h4 style="font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin-bottom:12px">Step-by-Step Solve</h4>
+      <ol style="color:#aeb6c5;padding-left:20px;line-height:1.9">
+        ${(caseStudy.steps || []).map(step => `<li style="margin-bottom:6px;border-bottom:1px dashed #1e2333;padding-bottom:6px"><code style="color:var(--green)">${esc(step)}</code></li>`).join('')}
+      </ol>
+    </div>
+  </div>` : '';
+
+  /* ── Section 5: Interactive Terminal Lab ── */
+  const labSection = lab ? `
+  <div class="section-head">
+    <div>
+      <h2>Interactive Serverless Terminal Lab</h2>
+      <p>${esc(lab.description || '')}</p>
+    </div>
+    <span class="tag warn">🏆 ${esc(lab.flag || '')}</span>
+  </div>
+  <div id="terminal-lab-mount" style="margin-bottom:24px"></div>
+  <script>
+  (function() {
+    const labData = ${JSON.stringify(lab)};
+    const container = document.getElementById('terminal-lab-mount');
+    if (!container) return;
+    // Lazy-load the terminal engine
+    if (window.mountTerminal) {
+      window.mountTerminal(container, labData, function(flag) {
+        const sk = 'atlas-term-solved-' + (labData.id || 'default');
+        localStorage.setItem(sk, '1');
+      });
+    } else {
+      import('/api/portal?asset=terminal-engine').catch(function() {
+        // Fallback: load terminal-engine.js as module
+        const s = document.createElement('script');
+        s.type = 'module';
+        s.textContent = 'import { mountTerminal } from "/site-src/terminal-engine.js"; window.mountTerminal = mountTerminal; window.mountTerminal(document.getElementById("terminal-lab-mount"), ' + JSON.stringify(labData) + ', function(f){ localStorage.setItem("atlas-term-solved-" + ' + JSON.stringify(labData.id || 'default') + ', "1"); });';
+        document.head.appendChild(s);
+      });
+    }
+  })();
+  <\/script>` : `
+  <div class="note warn-note">
+    <strong>No Interactive Lab</strong> — This module's terminal lab is under construction.
+    Practice the techniques using local tools against authorized targets.
+  </div>`;
+
+  return `
+  <div class="section-head">
+    <div>
+      <div class="tag-row">
+        <span class="tag accent">${esc(mod.category || '')}</span>
+        <span class="tag">${esc(mod.level || '')}</span>
+        <span class="tag">${esc(mod.duration || '')}</span>
+      </div>
+      <h2 style="margin-top:8px">${esc(mod.icon || '')} ${esc(mod.title)}</h2>
+    </div>
+    <button class="btn outline" data-action="back-to-curriculum">← Back to Curriculum</button>
+  </div>
+  ${abstractSection}
+  ${theorySection}
+  ${toolsSection}
+  ${caseStudySection}
+  ${labSection}`;
+}
+
+/* ══════════════════════════════════════════════════════════
+ * INTEL VIEW (Live Intel feed)
+ * ══════════════════════════════════════════════════════════ */
+
+function intelHTML(intel) {
+  if (!intel) return `<div class="section-head"><div><h2>Live Intel</h2><p>Loading...</p></div></div><div class="empty">⏳ Fetching intelligence snapshot...</div>`;
+
+  const sum   = intel.summary   || {};
+  const items = intel.items     || [];
+  const sigs  = intel.topicSignals || [];
+  const srcs  = intel.sources   || [];
+  const ts    = intel.updatedAt ? new Date(intel.updatedAt).toLocaleString() : 'unknown';
+  const statusColor = intel.status === 'ok' ? 'var(--green)' : 'var(--amber)';
+
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">INTELLIGENCE SNAPSHOT</div>
+      <h2>Live Intel</h2>
+      <p>Discovery signals from CISA KEV, NVD CVE, and tool release feeds. Use these to prioritize which curriculum areas to deepen.</p>
+    </div>
+    <div>
+      <div class="update-pill"><span class="pulse"></span>Updated ${esc(ts)}</div>
+    </div>
+  </div>
+  <div class="intel-kpis">
+    <div class="intel-kpi"><span class="num">${sum.kev || 0}</span><span class="label">Known Exploited</span></div>
+    <div class="intel-kpi"><span class="num">${sum.vulnerabilities || 0}</span><span class="label">CVEs</span></div>
+    <div class="intel-kpi"><span class="num">${sum.releases || 0}</span><span class="label">Tool Releases</span></div>
+    <div class="intel-kpi"><span class="num">${sum.signals || 0}</span><span class="label">Total Signals</span></div>
+  </div>
+  ${sigs.length ? `
+  <div class="section-head" style="margin-top:24px"><div><h2>Topic Signals</h2><p>Curriculum areas with elevated recent activity.</p></div></div>
+  <div class="signal-grid">
+    ${sigs.slice(0, 9).map(s => `
+      <div class="signal-card">
+        <strong>${esc(s.topic)}</strong>
+        <span>Activity: ${s.count} signals</span>
+        <span style="font-size:11px;color:#7e8ea2;margin-top:6px;display:block">${esc(s.reason || '')}</span>
+      </div>`).join('')}
+  </div>` : ''}
+  <div class="section-head" style="margin-top:24px"><div><h2>Recent Signals</h2></div></div>
+  <div class="intel-list">
+    ${items.slice(0, 30).map(it => `
+      <div class="intel-item">
+        <div class="kind"><span class="tag ${it.kind==='KEV'?'warn':it.kind==='CVE'?'accent':'success'}">${esc(it.kind)}</span></div>
+        <div>
+          <h3>${esc(it.title)}</h3>
+          <p>${esc(it.summary || '').slice(0, 220)}${(it.summary||'').length > 220 ? '…' : ''}</p>
+          <div class="tag-row" style="margin-top:6px">
+            <span class="tag">${esc(it.topic || '')}</span>
+            ${it.severity ? `<span class="tag ${it.severity==='exploited'?'warn':''}">${esc(it.severity)}</span>` : ''}
+          </div>
+        </div>
+        <div class="meta">
+          ${it.date ? new Date(it.date).toLocaleDateString() : ''}
+          ${it.sourceUrl ? `<br><a href="${esc(it.sourceUrl)}" target="_blank" rel="noopener">→ source</a>` : ''}
+        </div>
+      </div>`).join('') || '<div class="empty">No intelligence items loaded. Run the update script to populate.</div>'}
+  </div>
+  <div class="section-head" style="margin-top:24px"><div><h2>Source Status</h2></div></div>
+  <div class="source-status">
+    ${srcs.map(s => `
+      <div class="source-status-row">
+        <b>${esc(s.name)}</b>
+        <span style="color:${s.status==='ok'?'var(--green)':'var(--amber)'}">${esc(s.status)} (${s.count} items)</span>
+      </div>`).join('')}
+  </div>`;
+}
+
+/* ── Intelligence loader ─────────────────────────────────── */
+async function loadIntel() {
+  if (intelLoading || intelCache) return;
+  intelLoading = true;
+  try {
+    const r = await fetch('/data/live-intel.json', { credentials: 'same-origin' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const json = await r.json();
+    /* api/updates.js wraps response as { ok: true, data: {...} } */
+    intelCache = (json && json.ok && json.data) ? json.data : json;
+  } catch (e) {
+    console.warn('Intel fetch failed, using bootstrap:', e);
+    intelCache = { status: 'error', summary: {}, items: [], topicSignals: [], sources: [], curriculum: [], notes: [] };
+  }
+  intelLoading = false;
+  render();
+}
+
+/* ══════════════════════════════════════════════════════════
+ * ALL EXISTING VIEWS (preserved verbatim in logic)
+ * ══════════════════════════════════════════════════════════ */
+
+function dashboardHTML() {
+  const solved = state.solved.length, total = challenges.length;
   return `<div class="hero">
     <div class="hero-main">
       <div class="eyebrow">CTF Atlas / self-paced cyber range</div>
       <h1>Understand the system. Operate the tools. Prove the idea.</h1>
       <p>A pin-to-pin CTF curriculum that fills the gaps between tutorials: foundations, Linux, networking, web, crypto, forensics, reverse engineering, pwn, OSINT, stego, modern app surfaces, and defender context — with safe hands-on practice at every stage.</p>
       <div class="tag-row"><span class="tag accent">offline-friendly</span><span class="tag accent">OS-independent</span><span class="tag success">localStorage progress</span><span class="tag">browser micro-labs</span></div>
-      <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button></div>
+      <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button><button class="btn" data-action="goto-curriculum">🎓 Curriculum</button></div>
     </div>
     <div class="hero-side">
       <div><div class="metric-label">Browser lab completion</div><div class="big-number">${solved}/${total}</div><div class="muted">micro-challenges solved</div></div>
       <div><div class="meter"><div style="width:${completion()}%"></div></div><div class="mini-stat"><span>Overall practice</span><strong>${completion()}%</strong></div></div>
     </div>
   </div>
-  <div class="section-head"><div><h2>What’s inside</h2><p>Designed to prevent the “I know the commands but not the reasoning” problem.</p></div></div>
+  <div class="section-head"><div><h2>What's inside</h2><p>Designed to prevent the "I know the commands but not the reasoning" problem.</p></div></div>
   <div class="grid cols-4">
     <div class="card"><div class="metric">12</div><div class="metric-label">learning domains</div><p style="margin-top:8px">Each has theory, workflows, practice and source material.</p></div>
-    <div class="card"><div class="metric">22</div><div class="metric-label">tool cards</div><p style="margin-top:8px">Windows / Linux / macOS command examples where practical.</p></div>
+    <div class="card"><div class="metric">6</div><div class="metric-label">textbook modules</div><p style="margin-top:8px">Exploitation curriculum with interactive terminal labs and case studies.</p></div>
     <div class="card"><div class="metric">18</div><div class="metric-label">micro-labs</div><p style="margin-top:8px">Local browser drills with instant feedback and saved progress.</p></div>
     <div class="card"><div class="metric">18+</div><div class="metric-label">reference panels</div><p style="margin-top:8px">In-site notes, formulas, workflows and local-practice recipes.</p></div>
   </div>
   <div class="section-head"><div><h2>Recommended route</h2><p>Follow the sequence, but jump directly to a domain whenever you need it.</p></div></div>
   <div class="grid cols-3">
     ${domains.slice(0,6).map((d,i)=>`<button class="card domain-card" data-domain="${d.id}" style="text-align:left"><div class="domain-icon">${d.icon}</div><div class="card-top"><div><h3>${d.name}</h3><p>${d.summary}</p></div><div class="arrow">→</div></div><div class="tag-row" style="margin-top:10px"><span class="tag">${d.level}</span><span class="tag">${d.duration}</span>${state.completedDomains.includes(d.id)?'<span class="tag success">complete</span>':''}</div></button>`).join('')}
-  </div>
-  <div class="section-head"><div><h2>Safe local practice ladder</h2><p>Start in-browser, then point tools at localhost or offline samples you control.</p></div></div>
-  <div class="grid cols-3">
-    <div class="card"><h3>Level 1 · Browser only</h3><p>Use the built-in micro-labs to learn encodings, byte reasoning, HTTP semantics, logs and binary concepts.</p></div>
-    <div class="card"><h3>Level 2 · Local tools</h3><p>Install Nmap, Wireshark, Ghidra, Python and friends. Point them at localhost or samples you control.</p></div>
-    <div class="card"><h3>Level 3 · Deliberately vulnerable apps</h3><p>Run Juice Shop or WebGoat locally and work through guided web scenarios.</p></div>
   </div>`;
 }
 
-function pathHTML(){
+function pathHTML() {
   return `<div class="section-head"><div><h2>The Atlas learning path</h2><p>Build fundamentals first; then specialize. Each stage is tied to a practical feedback loop.</p></div><div class="tag-row"><span class="tag accent">progress saved locally</span><span class="tag success">session protected</span></div></div>
   <div class="grid cols-2">
     <div class="detail"><div class="detail-head"><h3 style="margin:0 0 4px">Core spine</h3><p style="margin:0;color:var(--muted);font-size:12px">The shortest path from zero to competent CTF problem solving.</p></div><div class="detail-body">${domains.map((d,i)=>`<div class="path-node" style="padding-bottom:18px"><div class="path-row"><div class="step-badge">${String(i+1).padStart(2,'0')}</div><div class="path-content"><div class="card-top"><div><h3>${d.name}</h3><p>${d.summary}</p></div><button class="icon-btn" data-domain="${d.id}" title="Open domain">→</button></div><div class="bar-small"><span style="width:${state.completedDomains.includes(d.id)?100:0}%"></span></div><div class="tag-row" style="margin-top:8px"><span class="tag">${d.level}</span><span class="tag">${d.duration}</span>${state.completedDomains.includes(d.id)?'<span class="tag success">done</span>':''}</div></div></div></div>`).join('')}</div></div>
@@ -258,141 +582,261 @@ function pathHTML(){
   </div>`;
 }
 
-function modulesHTML(query){
-  const q=normalizeAnswer(query||'');
-  const rows=[];
-  domains.forEach(d=>d.concepts.forEach((c,i)=>rows.push({d,index:i+1,title:c[0],theory:c[1],practice:c[2],domain:d})));
-  const hits=rows.filter(r=>!q||normalizeAnswer(r.title+' '+r.theory+' '+r.practice+' '+r.domain.name).includes(q));
+function modulesHTML(query) {
+  const q = normalizeAnswer(query || '');
+  const rows = [];
+  domains.forEach(d => d.concepts.forEach((c, i) => rows.push({ d, index: i+1, title: c[0], theory: c[1], practice: c[2], domain: d })));
+  const hits = rows.filter(r => !q || normalizeAnswer(r.title + ' ' + r.theory + ' ' + r.practice + ' ' + r.domain.name).includes(q));
   return `<div class="section-head"><div><div class="eyebrow">KNOWLEDGE MATRIX / ${rows.length} MODULES</div><h2>Learning modules</h2><p>Every concept is readable here before you touch a tool. Open the domain when you want the full workflow and practice ladder.</p></div><div class="tag-row"><span class="tag accent">in-site curriculum</span><span class="tag">searchable</span></div></div>
   <div class="module-search"><span>&gt;</span><input id="moduleSearch" value="${esc(query||'')}" placeholder="search a concept, protocol, technique, or domain" autocomplete="off"><span class="cursor">█</span></div>
   <div class="module-count"><span>${hits.length}</span> modules visible</div>
-  <div class="module-grid" id="modulesGrid">${hits.map(r=>`<article class="card module-card"><div class="module-top"><span class="tag accent">${r.domain.icon} / ${r.domain.name}</span><span class="tag">M${String(r.index).padStart(2,'0')}</span></div><h3>${esc(r.title)}</h3><p>${esc(r.theory)}</p><div class="module-action"><span class="tag">practice</span><span>${esc(r.practice)}</span></div><button class="btn outline" data-domain="${r.domain.id}">open full path →</button></article>`).join('') || '<div class="empty">No modules matched. Try “HTTP”, “ELF”, “XOR”, “permissions”, or “DNS”.</div>'}</div>
+  <div class="module-grid" id="modulesGrid">${hits.map(r=>`<article class="card module-card"><div class="module-top"><span class="tag accent">${r.domain.icon} / ${r.domain.name}</span><span class="tag">M${String(r.index).padStart(2,'0')}</span></div><h3>${esc(r.title)}</h3><p>${esc(r.theory)}</p><div class="module-action"><span class="tag">practice</span><span>${esc(r.practice)}</span></div><button class="btn outline" data-domain="${r.domain.id}">open full path →</button></article>`).join('') || '<div class="empty">No modules matched. Try "HTTP", "ELF", "XOR", "permissions", or "DNS".</div>'}</div>
   <div class="note"><strong>Study contract:</strong> Read the concept, reproduce the observation in a safe lab, then explain it without looking at the text.</div>`;
 }
 
-function domainsHTML(){
+function domainsHTML() {
   return `<div class="section-head"><div><h2>Domains</h2><p>Every domain follows the same pattern: concept map → workflow → tools → practice → real-world transfer.</p></div></div><div class="grid cols-3">${domains.map(d=>`<button class="card domain-card" data-domain="${d.id}" style="text-align:left"><div class="domain-icon">${d.icon}</div><div class="card-top"><div><h3>${d.name}</h3><p>${d.summary}</p></div><div class="arrow">→</div></div><div class="tag-row" style="margin-top:10px"><span class="tag">${d.level}</span><span class="tag">${d.duration}</span>${state.completedDomains.includes(d.id)?'<span class="tag success">complete</span>':''}</div></button>`).join('')}</div>`;
 }
 
-function domainDetailHTML(id){
-  const d=domains.find(x=>x.id===id);
-  return `<div class="section-head"><div><div class="tag-row"><span class="tag accent">${d.level}</span><span class="tag">${d.duration}</span></div><h2 style="margin-top:8px">${d.name}</h2><p>${d.summary}</p></div><button class="btn primary" data-action="complete-domain" data-domain-id="${d.id}">${state.completedDomains.includes(d.id)?'Completed ✓':'Mark domain complete'}</button></div>
-  <div class="detail"><div class="detail-head"><h3 style="margin:0">Concept map</h3><p style="margin:3px 0 0;color:var(--muted);font-size:12px">Read these in order before memorizing commands.</p></div><div class="detail-body"><div class="concept-grid">${d.concepts.map((c,i)=>`<article class="concept"><div class="card-top"><h4>${i+1}. ${c[0]}</h4><span class="tag">theory</span></div><p>${c[1]}</p><ul><li>${c[2]}</li></ul></article>`).join('')}</div><div class="section-head" style="margin-top:20px"><div><h2>Practice plan</h2><p>Concrete exercises that turn the ideas into muscle memory.</p></div></div><div class="grid cols-3">${d.practice.map((p,i)=>`<div class="card"><div class="tag accent">Exercise ${i+1}</div><p style="margin-top:9px;color:var(--text)">${p}</p></div>`).join('')}</div><div class="note"><strong>Transfer rule:</strong> After solving a CTF task, write the defender view: what evidence would reveal the behavior? what control would reduce the risk? what assumption failed?</div></div></div>`;
+function domainDetailHTML(id) {
+  const d = domains.find(x => x.id === id);
+  if (!d) return '<div class="empty">Domain not found.</div>';
+  return `<div class="section-head"><div><div class="tag-row"><span class="tag accent">${d.level}</span><span class="tag">${d.duration}</span></div><h2 style="margin-top:8px">${d.name}</h2><p>${d.summary}</p></div><button class="btn primary" data-action="complete-domain" data-domain-id="${d.id}">${state.completedDomains.includes(d.id)?'Completed ✓':'Mark complete'}</button></div>
+  <div class="grid cols-2">
+    ${d.concepts.map((c,i)=>`<div class="card"><div class="card-top"><span class="tag accent">C${String(i+1).padStart(2,'0')}</span><h3 style="flex:1">${esc(c[0])}</h3></div><p style="margin-top:8px">${esc(c[1])}</p><div class="note" style="margin-top:12px"><strong>Practice:</strong> ${esc(c[2])}</div></div>`).join('')}
+  </div>
+  ${d.practice ? `<div class="section-head" style="margin-top:24px"><div><h2>Practice tasks</h2></div></div><div class="grid cols-3">${d.practice.map(p=>`<div class="card"><p>${esc(p)}</p></div>`).join('')}</div>` : ''}`;
 }
 
-function toolsHTML(){
-  return `<div class="section-head"><div><h2>Tool lab</h2><p>Tools are grouped by the question they answer. Switch OS to see platform-aware examples.</p></div><div class="os-tabs">${['linux','windows','mac'].map(o=>`<button class="os-btn ${state.os===o?'active':''}" data-os="${o}">${o==='mac'?'macOS':o[0].toUpperCase()+o.slice(1)}</button>`).join('')}</div></div>
-  <div class="tool-grid">${tools.map(t=>`<article class="tool-card"><div class="card-top"><div><h3>${t.name}</h3><div class="tool-meta"><span class="tag accent">${t.cat}</span><span class="tag">local notes</span></div></div><span class="tool-os">${state.os.toUpperCase()}</span></div><div class="why">${t.why}</div><pre>${esc(t[state.os])}</pre><div class="tool-meta"><span class="tag">use on authorized targets</span><span class="tag">read the in-site notes</span></div></article>`).join('')}</div>`;
+function toolsHTML() {
+  const os = state.os;
+  return `<div class="section-head"><div><h2>Tool lab</h2><p>Command examples for your OS. Always use against systems you own or are authorized to test.</p></div>
+  <div class="os-tabs">${['linux','windows','mac'].map(o=>`<button class="os-btn${os===o?' active':''}" data-os="${o}">${o.toUpperCase()}</button>`).join('')}</div>
+  </div>
+  <div class="tool-grid">${tools.map(t=>`<div class="tool-card"><div class="card-top"><h3>${esc(t.name)}</h3><span class="tool-os">${esc(t.cat)}</span></div><p class="why">${esc(t.why)}</p><pre><code>${esc(t[os]||t.linux)}</code></pre>${t.url?`<a class="btn outline" href="${esc(t.url)}" target="_blank" rel="noopener" style="margin-top:8px;font-size:11px">Docs →</a>`:''}</div>`).join('')}</div>`;
 }
 
-function labsHTML(){
-  return `<div class="section-head"><div><h2>Micro-labs</h2><p>Small, deterministic exercises. Submit your answer locally; progress is stored in your browser.</p></div><div class="tag-row"><span class="tag accent">${state.solved.length}/${challenges.length} solved</span><span class="tag">${challenges.reduce((a,c)=>a+c.points,0)} total points</span></div></div><div class="challenge-list">${challenges.map(c=>challengeHTML(c)).join('')}</div>`;
+function labsHTML() {
+  const os = state.os;
+  return `<div class="section-head"><div><h2>Micro-labs</h2><p>Browser-native challenges with instant feedback. Progress is saved locally.</p></div><div class="tag-row"><span class="tag accent">local only</span><span class="tag">${state.solved.length}/${challenges.length} solved</span></div></div>
+  <div class="challenge-list">${challenges.map(ch=>{
+    const solved = state.solved.includes(ch.id);
+    return `<div class="challenge-card${solved?' solved':''}">
+      <div class="card-top"><h3>${esc(ch.name)}</h3><div class="tag-row"><span class="tag">${esc(ch.cat)}</span><span class="tag${ch.diff==='Hard'?' warn':ch.diff==='Warm-up'?' success':''}">${esc(ch.diff)}</span><span class="tag accent">${ch.points} pts</span>${solved?'<span class="tag success">✓ Solved</span>':''}</div></div>
+      <p style="margin-top:10px;color:#aeb6c5">${esc(ch.prompt)}</p>
+      <div class="challenge-input"><input type="text" placeholder="Your answer…" id="ans-${esc(ch.id)}" value="${solved?esc(ch.answer):''}" ${solved?'disabled':''} autocomplete="off"></div>
+      <div class="challenge-actions">
+        <button class="btn" data-check="${esc(ch.id)}" ${solved?'disabled':''}>Submit</button>
+        <button class="btn outline" data-hint="${esc(ch.id)}">Hint</button>
+        ${solved?'<button class="btn outline" data-why="'+esc(ch.id)+'">Why</button>':''}
+      </div>
+      <div class="hint" id="hint-${esc(ch.id)}">${ch.hint.map(h=>`<div>💡 ${esc(h)}</div>`).join('')}</div>
+      <div class="result" id="res-${esc(ch.id)}">${solved?'<span class="ok">✓ Correct!</span>':''}</div>
+      ${ch.why?`<div class="note" id="why-${esc(ch.id)}" style="display:none"><strong>Why this matters:</strong> ${esc(ch.why)}</div>`:''}
+    </div>`; }).join('')}
+  </div>`;
 }
 
-function challengeHTML(c){
-  const solved=state.solved.includes(c.id);
-  return `<article class="challenge-card ${solved?'solved':''}"><div class="card-top"><div><h3>${c.name}</h3><div class="challenge-meta"><span class="tag accent">${c.cat}</span><span class="tag">${c.diff}</span><span class="tag">${c.points} pts</span></div></div><span class="tag ${solved?'success':''}">${solved?'solved':'unsolved'}</span></div><div class="challenge-prompt"><strong>Prompt</strong><pre style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px;white-space:pre-wrap;overflow:auto;font-size:11px;color:var(--text)">${esc(c.prompt)}</pre></div><input class="challenge-input" data-challenge-input="${c.id}" placeholder="Type your answer" ${solved?'disabled':''}><div class="challenge-actions"><button class="btn primary" data-check="${c.id}" ${solved?'disabled':''}>Check</button><button class="btn" data-hint="${c.id}">Hint</button><button class="btn" data-explain="${c.id}">Why this matters</button></div><div class="hint" id="hint-${c.id}"></div><div class="result" id="result-${c.id}"></div></article>`;
+function playbookHTML() {
+  const steps = [
+    {n:'01',title:'Triage',items:['Identify category (crypto, web, pwn, forensics, OSINT, stego, reverse).','Read the problem statement twice. Highlight concrete clues.','List what artifacts you have: file, URL, service, image, pcap.']},
+    {n:'02',title:'Gather evidence',items:['Run the minimal set of observation commands for the category.','Capture all output. Do not interpret yet—just collect.','Check file types, sizes, magic bytes, strings, entropy.']},
+    {n:'03',title:'Form one hypothesis',items:['State it in plain language: "This is X because I see Y."','Write the predicted evidence if the hypothesis is correct.','Rank your top two and choose the more falsifiable one.']},
+    {n:'04',title:'Test & iterate',items:['Change one variable. Run the relevant tool. Compare output to prediction.','If evidence doesn\'t match, update the hypothesis—don\'t the test.','Prefer local, reversible experiments. Keep a command log.']},
+    {n:'05',title:'Exploit & extract',items:['Apply the narrowest proof-of-concept that produces the flag.','Verify the flag format before submitting.','Record the minimal reproduction: file + one command = flag.']},
+    {n:'06',title:'Write it up',items:['Root cause → exploit chain → flag → defensive lesson.','3–8 sentences is enough. Include the key command.','Map to ATT&CK if it\'s an offensive technique.']}
+  ];
+  return `<div class="section-head"><div><h2>Methodology</h2><p>A repeatable solve loop that works across every CTF category.</p></div></div>
+  <div class="playbook">${steps.map(s=>`<div class="play-card card"><div class="card-top"><span class="tag accent">${s.n}</span><h3>${s.title}</h3></div><ol>${s.items.map(i=>`<li>${i}</li>`).join('')}</ol></div>`).join('')}</div>
+  <div class="note" style="margin-top:24px"><strong>Anti-patterns to avoid:</strong> Running every tool without a hypothesis. Accepting tool output as ground truth without verification. Giving up before checking the simplest explanation. Sharing flags or solutions in active competitions.</div>`;
 }
 
-function normalizeAnswer(s){return String(s).trim().replace(/\s+/g,' ').toLowerCase()}
-function checkAnswer(id){
-  const c=challenges.find(x=>x.id===id); const input=document.querySelector(`[data-challenge-input="${id}"]`); const result=document.getElementById(`result-${id}`); if(!c||!input)return;
-  if(normalizeAnswer(input.value)===normalizeAnswer(c.answer)){ if(!state.solved.includes(id))state.solved.push(id); save(); result.className='result ok'; result.textContent='Correct. Evidence verified locally; concept unlocked.'; render(); }
-  else { result.className='result bad'; result.textContent='Not yet. Re-check the representation, data flow, or exact wording.'; }
+function casebookHTML() {
+  return `<div class="section-head"><div><h2>Casebook</h2><p>Real incidents studied for patterns: what failed, why it mattered, and what defenders learned.</p></div></div>
+  <div class="grid cols-2">${casebook.map(c=>`<div class="card"><div class="card-top"><h3>${esc(c.title)}</h3><span class="tag">${esc(c.domain)}</span></div><p style="margin-top:8px">${esc(c.lesson)}</p><div class="note" style="margin-top:12px"><strong>Study angles:</strong> ${c.study.map(s=>`<span class="tag" style="margin:2px 4px 2px 0;display:inline-block">${esc(s)}</span>`).join('')}</div>${c.source?`<a class="btn outline" href="${esc(c.source)}" target="_blank" rel="noopener" style="margin-top:10px;font-size:11px">Source →</a>`:''}</div>`).join('')}</div>`;
 }
 
-function casebookHTML(){
-  return `<div class="section-head"><div><h2>Casebook</h2><p>Documented incidents become in-site learning anchors. Focus on root cause, evidence and defense—not exploit recipes.</p></div><span class="tag warn">high-level / in-site</span></div><div class="grid cols-2">${casebook.map((c,i)=>`<article class="card"><div class="card-top"><div><span class="tag accent">${c.domain}</span><h3 style="margin-top:8px">${c.title}</h3></div><span class="tag">case ${i+1}</span></div><p style="margin-top:8px">${c.lesson}</p><div class="tag-row" style="margin-top:10px">${c.study.map(x=>`<span class="tag">study: ${x}</span>`).join('')}</div><div class="note" style="margin-top:12px"><strong>Study focus:</strong> identify the trust boundary, attacker-controlled input, vulnerable component, observable evidence and defensive control.</div></article>`).join('')}</div><div class="note warn-note"><strong>Transfer exercise:</strong> Write a five-line root-cause summary without using an exploit payload. The goal is to explain why the system behaved unsafely.</div>`;
+function libraryHTML() {
+  const refs = [
+    {title:'Official Documentation',items:[{name:'Linux man-pages project',desc:'Authoritative reference for system calls, library functions and file formats.',url:'https://man7.org/linux/man-pages/'},{name:'POSIX.1-2017',desc:'IEEE/Open Group standard for POSIX-compliant operating systems.',url:'https://pubs.opengroup.org/onlinepubs/9699919799/'},{name:'RFC Index',desc:'IETF Internet standards. Start with RFC 791 (IP), 793 (TCP), 7230 (HTTP/1.1).',url:'https://www.rfc-editor.org/rfc-index.html'},{name:'Intel x86/x64 ISA',desc:'Complete instruction set reference. Essential for assembly reading and ROP.',url:'https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html'}]},
+    {title:'Practice Platforms',items:[{name:'pwn.college',desc:'Structured pwn and RE curriculum with kernel-isolated online containers.',url:'https://pwn.college/'},{name:'CryptoHack',desc:'Hands-on cryptography challenges from basic encodings to advanced attacks.',url:'https://cryptohack.org/'},{name:'PortSwigger Web Academy',desc:'Free web security labs from the Burp Suite team. Industry standard.',url:'https://portswigger.net/web-security'},{name:'HackTheBox',desc:'Machine-based CTF with community writeups after each machine retires.',url:'https://www.hackthebox.com/'}]},
+    {title:'Security References',items:[{name:'GTFOBins',desc:'Unix binaries exploitable for privilege escalation or restriction bypass.',url:'https://gtfobins.github.io/'},{name:'MITRE ATT&CK',desc:'Adversary tactics and techniques knowledge base. Essential for detection mapping.',url:'https://attack.mitre.org/'},{name:'OWASP Top 10',desc:'Ten most critical web application security risks with evidence and remediation.',url:'https://owasp.org/Top10/'},{name:'NIST NVD',desc:'National Vulnerability Database with CVE details, CVSS scores and patches.',url:'https://nvd.nist.gov/'}]}
+  ];
+  return `<div class="section-head"><div><h2>Reference vault</h2><p>Curated links to official documentation, practice platforms and security standards.</p></div></div>
+  ${refs.map(g=>`<div class="ref-block card" style="margin-bottom:14px"><div class="card-top"><h3>${g.title}</h3></div><div class="ref-list">${g.items.map(it=>`<div class="ref-item"><div><strong>${esc(it.name)}</strong><p>${esc(it.desc)}</p></div>${it.url?`<a href="${esc(it.url)}" target="_blank" rel="noopener" class="btn outline" style="font-size:11px;align-self:start">Open →</a>`:''}</div>`).join('')}</div></div>`).join('')}`;
 }
 
-function playbookHTML(){
-  const workflow=[['1','Scope','Confirm authorization and define the exact lab/target. Record IP/URL, credentials, files and expected objective.'],['2','Surface map','Identify protocols, inputs, files, endpoints, processes, parsers and trust boundaries.'],['3','Enumerate','Use low-noise, targeted methods. Prefer understanding over blind scanning.'],['4','Validate','Reproduce the clue with the smallest possible test and record exact evidence.'],['5','Exploit or prove','In CTFs this means obtaining the flag. In assessment work it means proving impact without unnecessary damage.'],['6','Explain','Write root cause, security property affected, evidence, impact and defensive fix.']];
-  return `<div class="section-head"><div><h2>Methodology</h2><p>A repeatable solve process matters more than memorizing a thousand commands.</p></div></div><div class="playbook">${workflow.map(x=>`<article class="play-card"><div class="tag accent">STEP ${x[0]}</div><h3 style="margin-top:8px">${x[1]}</h3><p style="color:var(--muted);font-size:12px">${x[2]}</p></article>`).join('')}<article class="play-card"><div class="tag success">ANTI-GUESSING CHECKLIST</div><h3 style="margin-top:8px">When a challenge feels impossible</h3><ol><li>Verify the file type / protocol / language.</li><li>Find one simple observable fact.</li><li>List 3 hypotheses and one test per hypothesis.</li><li>Reduce the input.</li><li>Search the exact technical term from the evidence.</li><li>Write down what you now know before continuing.</li></ol></article><article class="play-card"><div class="tag warn">REPORTING TEMPLATE</div><h3 style="margin-top:8px">Turn a solve into reusable knowledge</h3><pre style="background:var(--panel-2);padding:12px;border-radius:10px;white-space:pre-wrap;font-size:11px">Target:
-Objective:
-Observed:
-Hypothesis:
-Test:
-Result:
-Root cause:
-Impact:
-Defender view:
-Tools / references:</pre></article></div>`;
+function glossaryHTML(filter) {
+  const q = normalizeAnswer(filter);
+  const hits = glossary.filter(([t, d]) => !q || normalizeAnswer(t + ' ' + d).includes(q));
+  return `<div class="section-head"><div><h2>Glossary</h2><p>Precise definitions for terms used across all domains. Exact vocabulary reduces reasoning errors.</p></div></div>
+  <div class="glossary-search"><input id="glossarySearch" value="${esc(filter||'')}" placeholder="filter terms…" autocomplete="off"></div>
+  <div style="margin-top:16px">${hits.map(([t,d])=>`<div class="glossary-item"><strong>${esc(t)}</strong><span>${esc(d)}</span></div>`).join('') || '<div class="empty">No terms matched.</div>'}</div>`;
 }
 
-function libraryHTML(){
-  const conceptBlocks=domains.map(d=>`<article class="card ref-block"><div class="card-top"><div><span class="tag accent">${d.icon} / ${d.name}</span><h3 style="margin-top:8px">${d.name} reference</h3></div><span class="tag">${d.concepts.length} modules</span></div><div class="ref-list">${d.concepts.map((c,i)=>`<div class="ref-item"><div><strong>${i+1}. ${esc(c[0])}</strong><p>${esc(c[1])}</p></div><span class="tag">${esc(c[2])}</span></div>`).join('')}</div></article>`).join('');
-  return `<div class="section-head"><div><div class="eyebrow">LOCAL REFERENCE VAULT</div><h2>Everything you need on this site</h2><p>No training link is required to understand the core theory: the reference vault mirrors the learning path and keeps definitions, workflows, and practice cues inside the portal.</p></div><div class="tag-row"><span class="tag success">self-contained</span><span class="tag">offline-readable after login</span></div></div>
-  <div class="grid cols-2">${conceptBlocks}</div>
-  <div class="section-head"><div><h2>Local practice recipes</h2><p>Small-footprint exercises you can run without a large remote backend.</p></div></div>
-  <div class="grid cols-3"><div class="card"><span class="tag accent">WEB</span><h3 style="margin-top:8px">Synthetic HTTP lab</h3><p>Use the built-in HTTP challenges, then run a tiny localhost server and inspect requests with curl or a proxy.</p><pre>python3 -m http.server 8000
-curl -i http://127.0.0.1:8000/</pre></div><div class="card"><span class="tag accent">PCAP</span><h3 style="margin-top:8px">Packet replay study</h3><p>Open a supplied capture, isolate one conversation, identify endpoints, protocol, timing, and payload format, then document the evidence.</p><pre>wireshark sample.pcapng
-tcpdump -r sample.pcapng</pre></div><div class="card"><span class="tag accent">BINARY</span><h3 style="margin-top:8px">ELF triage</h3><p>Work from a copy of a harmless local executable and practice file type, strings, symbols, sections, control flow, and debugging concepts.</p><pre>file ./sample
-strings ./sample | head
-gdb ./sample</pre></div></div>
-  <div class="note warn-note"><strong>Operational rule:</strong> Keep practice targets local or explicitly authorized. This portal teaches concepts and safe workflows; it does not assume permission to probe third-party systems.</div>`;
-}
+/* ── Event binding ───────────────────────────────────────── */
+function bindViewEvents() {
+  const view = document.getElementById('view');
 
-function glossaryHTML(query){
-  const q=normalizeAnswer(query); const items=glossary.filter(x=>!q||normalizeAnswer(x[0]).includes(q)||normalizeAnswer(x[1]).includes(q));
-  return `<div class="section-head"><div><h2>Glossary</h2><p>Fast definitions while you work a challenge. Search by term or meaning.</p></div></div><div class="glossary-search"><input id="glossaryInput" value="${esc(query)}" placeholder="e.g. ASLR, JWT, PCAP, trust boundary"><button class="btn" data-action="glossary-search">Search</button></div><div class="card" style="margin-top:14px">${items.map(x=>`<div class="glossary-item"><strong>${x[0]}</strong><span>${x[1]}</span></div>`).join('') || '<div class="empty">No terms matched. Try a broader word.</div>'}</div>`;
-}
+  /* Navigation buttons */
+  view.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const a = btn.dataset.action;
+      if (a === 'goto-path')        setView('path');
+      if (a === 'goto-labs')        setView('labs');
+      if (a === 'goto-domains')     setView('domains');
+      if (a === 'goto-curriculum')  setView('curriculum');
+      if (a === 'back-to-curriculum') { state.curriculumModule = null; setView('curriculum'); }
+      if (a === 'complete-domain')  markDomain(btn.dataset.domainId);
+    });
+  });
 
+  /* Domain cards */
+  view.querySelectorAll('[data-domain]').forEach(btn => {
+    btn.addEventListener('click', () => openDomain(btn.dataset.domain));
+  });
 
-function intelHTML(data){
-  if(!data) return `<div class="section-head"><div><div class="eyebrow">SECURITY INTELLIGENCE PIPELINE</div><h2>Live intelligence</h2><p>Loading the latest curated signals...</p></div></div><div class="card"><div class="terminal-line"><span class="prompt">atlas@range:~$</span> <span>sync --security-intel</span><span class="cursor">█</span></div></div>`;
-  const items=(data.items||[]).slice(0,40);
-  const signals=(data.topicSignals||[]).slice(0,9);
-  const sources=(data.sources||[]);
-  const when=data.updatedAt?new Date(data.updatedAt).toLocaleString(): 'not yet reported';
-  const status=data.status||'unknown';
-  const statusClass=status==='ok'?'success':status==='partial'?'warn':'';
-  return `<div class="section-head"><div><div class="eyebrow">CURATED INTERNET SIGNALS</div><h2>Live intelligence</h2><p>The updater watches authoritative vulnerability data and selected security-project release feeds. It creates discovery signals for the curriculum without silently rewriting your core lessons.</p></div><div class="tag-row"><span class="update-pill"><i class="pulse"></i> ${status}</span><span class="tag">updated ${esc(when)}</span></div></div>
-  <div class="intel-kpis"><div class="intel-kpi"><span class="num">${data.summary?.vulnerabilities||0}</span><span class="label">CVE signals</span></div><div class="intel-kpi"><span class="num">${data.summary?.kev||0}</span><span class="label">CISA KEV</span></div><div class="intel-kpi"><span class="num">${data.summary?.releases||0}</span><span class="label">project releases</span></div><div class="intel-kpi"><span class="num">${data.summary?.signals||0}</span><span class="label">total signals</span></div></div>
-  <div class="intel-hero"><article class="card terminal"><div class="eyebrow">WHAT CHANGED</div><h3>New signals to study</h3><p>Use these as a queue for deeper reading: identify the underlying concept, map it to the relevant domain, then add or extend a local lab.</p><div class="intel-list">${items.map(x=>`<article class="intel-item"><div class="kind"><span class="tag accent">${esc(x.kind)}</span></div><div><h3>${esc(x.title||'Untitled signal')}</h3><p>${esc(x.summary||'No summary provided.')}</p><div class="tag-row"><span class="tag">${esc(x.topic||'general security')}</span>${x.cve?`<span class="tag">${esc(x.cve)}</span>`:''}</div></div><div class="meta">${esc(x.date?new Date(x.date).toLocaleDateString():'—')}<br>${esc(x.severity||'info')}</div></article>`).join('') || '<div class="empty">No signals have been published yet. Run the updater workflow once to seed the feed.</div>'}</div></article>
-  <aside class="card holographic"><div class="eyebrow">TOPIC RADAR</div><h3>Where activity is clustering</h3><div class="signal-grid">${signals.map(s=>`<div class="signal-card"><strong>${esc(s.topic)}</strong><span>${s.count} recent signal${s.count===1?'':'s'}</span><span>${esc(s.reason)}</span></div>`).join('') || '<div class="empty">Radar will populate after the first successful refresh.</div>'}</div><div class="note"><strong>Publication rule:</strong> automated signals are suggestions, not authoritative curriculum. Review them before promoting a topic into a permanent learning module.</div></aside></div>
-  <article class="card"><div class="eyebrow">SOURCE HEALTH</div><h3>Collection status</h3><div class="source-status">${sources.map(s=>`<div class="source-status-row"><span><b>${esc(s.name)}</b></span><span>${esc(s.status)} // ${s.count||0} items</span></div>`).join('') || '<div class="empty">No source status is available.</div>'}</div></article>`;
-}
+  /* Curriculum module cards */
+  view.querySelectorAll('[data-curriculum-module]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.curriculumModule = btn.dataset.curriculumModule;
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
 
-async function loadIntel(){
-  if(intelLoading) return;
-  intelLoading=true;
-  try{const r=await fetch('/api/updates',{credentials:'same-origin',cache:'no-store'});const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.error||'intel request failed');intelCache=j.data;render();}
-  catch(err){intelCache={updatedAt:null,status:'error',summary:{vulnerabilities:0,kev:0,releases:0,signals:0},items:[],topicSignals:[],sources:[],notes:[String(err?.message||err)]};render();}
-  finally{intelLoading=false;}
-}
+  /* OS selector */
+  view.querySelectorAll('[data-os]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.os = btn.dataset.os;
+      save();
+      render();
+    });
+  });
 
-function bindViewEvents(){
-  document.querySelectorAll('[data-domain]').forEach(b=>b.addEventListener('click',e=>{const id=e.currentTarget.dataset.domain;openDomain(id)}));
-  document.querySelectorAll('[data-action="goto-path"]').forEach(b=>b.addEventListener('click',()=>setView('path')));
-  document.querySelectorAll('[data-action="goto-labs"]').forEach(b=>b.addEventListener('click',()=>setView('labs')));
-  document.querySelectorAll('[data-action="goto-domains"]').forEach(b=>b.addEventListener('click',()=>setView('domains')));
-  document.querySelectorAll('[data-action="complete-domain"]').forEach(b=>b.addEventListener('click',()=>markDomain(b.dataset.domainId)));
-  document.querySelectorAll('[data-os]').forEach(b=>b.addEventListener('click',()=>{state.os=b.dataset.os;save();render()}));
-  document.querySelectorAll('[data-check]').forEach(b=>b.addEventListener('click',()=>checkAnswer(b.dataset.check)));
-  document.querySelectorAll('[data-hint]').forEach(b=>b.addEventListener('click',()=>{const c=challenges.find(x=>x.id===b.dataset.hint);const el=document.getElementById('hint-'+c.id);el.classList.add('show');el.innerHTML='<strong>Hint:</strong> '+esc(c.hint[0])+'<br><br><strong>Second hint:</strong> '+esc(c.hint[1]);}));
-  document.querySelectorAll('[data-explain]').forEach(b=>b.addEventListener('click',()=>{const c=challenges.find(x=>x.id===b.dataset.explain);openModal(c.name,'<p>'+esc(c.why)+'</p>')}));
-  const gi=document.getElementById('glossaryInput'); if(gi){gi.addEventListener('keydown',e=>{if(e.key==='Enter'){state.view='glossary';document.getElementById('view').innerHTML=glossaryHTML(gi.value);bindViewEvents()}})}
-  const mi=document.getElementById('moduleSearch'); if(mi){mi.addEventListener('input',e=>{state.moduleQuery=e.target.value;save();const grid=document.getElementById('modulesGrid');const q=normalizeAnswer(state.moduleQuery);const rows=[];domains.forEach(d=>d.concepts.forEach((c,i)=>rows.push({d,index:i+1,title:c[0],theory:c[1],practice:c[2]})));const hits=rows.filter(r=>!q||normalizeAnswer(r.title+' '+r.theory+' '+r.practice+' '+r.d.name).includes(q));document.getElementById('modulesGrid').innerHTML=hits.map(r=>`<article class=\"card module-card\"><div class=\"module-top\"><span class=\"tag accent\">${r.d.icon} / ${r.d.name}</span><span class=\"tag\">M${String(r.index).padStart(2,'0')}</span></div><h3>${esc(r.title)}</h3><p>${esc(r.theory)}</p><div class=\"module-action\"><span class=\"tag\">practice</span><span>${esc(r.practice)}</span></div><button class=\"btn outline\" data-domain=\"${r.d.id}\">open full path →</button></article>`).join('') || '<div class=\"empty\">No modules matched. Try “HTTP”, “ELF”, “XOR”, “permissions”, or “DNS”.</div>';document.querySelector('.module-count span').textContent=hits.length;bindViewEvents()})}
-  document.querySelectorAll('[data-action="glossary-search"]').forEach(b=>b.addEventListener('click',()=>{const q=document.getElementById('glossaryInput').value;document.getElementById('view').innerHTML=glossaryHTML(q);bindViewEvents()}));
-}
-
-function openModal(title,body){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modalBackdrop').hidden=false}
-function closeModal(){document.getElementById('modalBackdrop').hidden=true}
-
-document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>{setView(b.dataset.view);document.getElementById('sidebar').classList.remove('open')}));
-document.getElementById('themeToggle').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();setTheme()});
-document.getElementById('menuToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.add('open'));
-document.getElementById('mobileClose').addEventListener('click',()=>document.getElementById('sidebar').classList.remove('open'));
-document.getElementById('modalClose').addEventListener('click',closeModal);document.getElementById('modalBackdrop').addEventListener('click',e=>{if(e.target.id==='modalBackdrop')closeModal()});
-document.getElementById('globalSearch').addEventListener('input',e=>{
-  const q=normalizeAnswer(e.target.value); if(!q){setView(state.view);return}
-  const hits=[];
-  domains.forEach(d=>{if(normalizeAnswer(d.name+' '+d.summary+' '+d.concepts.map(c=>c.join(' ')).join(' ')).includes(q))hits.push({kind:'Domain',title:d.name,action:()=>openDomain(d.id)})});
-  tools.forEach(t=>{if(normalizeAnswer(t.name+' '+t.cat+' '+t.why).includes(q))hits.push({kind:'Tool',title:t.name,action:()=>{setView('tools')}})});
-  challenges.forEach(c=>{if(normalizeAnswer(c.name+' '+c.cat+' '+c.prompt).includes(q))hits.push({kind:'Lab',title:c.name,action:()=>setView('labs')})});
-  if(state.view!=='dashboard' || q){document.getElementById('view').innerHTML=`<div class="section-head"><div><h2>Search results</h2><p>${hits.length} matches for “${esc(e.target.value)}”</p></div></div>${hits.length?'<div class="grid cols-3">'+hits.slice(0,24).map((h,i)=>`<button class="card" data-search-index="${i}" style="text-align:left"><span class="tag accent">${h.kind}</span><h3 style="margin-top:8px">${esc(h.title)}</h3></button>`).join('')+'</div>':'<div class="empty">No results. Try “JWT”, “ELF”, “Nmap”, “forensics”, or “permissions”.</div>'}`;
-    document.querySelectorAll('[data-search-index]').forEach((b,i)=>b.addEventListener('click',()=>hits[i].action()));
+  /* Module search */
+  const ms = view.querySelector('#moduleSearch');
+  if (ms) {
+    ms.addEventListener('input', () => {
+      state.moduleQuery = ms.value;
+      save();
+      view.querySelector('#modulesGrid').innerHTML =
+        (() => {
+          const q = normalizeAnswer(ms.value);
+          const rows = [];
+          domains.forEach(d => d.concepts.forEach((c, i) => rows.push({ d, index: i+1, title: c[0], theory: c[1], practice: c[2], domain: d })));
+          const hits = rows.filter(r => !q || normalizeAnswer(r.title + ' ' + r.theory + ' ' + r.practice + ' ' + r.domain.name).includes(q));
+          return hits.map(r => `<article class="card module-card"><div class="module-top"><span class="tag accent">${r.domain.icon} / ${r.domain.name}</span><span class="tag">M${String(r.index).padStart(2,'0')}</span></div><h3>${esc(r.title)}</h3><p>${esc(r.theory)}</p><div class="module-action"><span class="tag">practice</span><span>${esc(r.practice)}</span></div><button class="btn outline" data-domain="${r.domain.id}">open full path →</button></article>`).join('') || '<div class="empty">No modules matched.</div>';
+        })();
+      view.querySelectorAll('[data-domain]').forEach(b => b.addEventListener('click', () => openDomain(b.dataset.domain)));
+    });
+    ms.focus();
   }
-});
 
-setTheme();render();
+  /* Glossary search */
+  const gs = view.querySelector('#glossarySearch');
+  if (gs) {
+    gs.addEventListener('input', () => {
+      const q = normalizeAnswer(gs.value);
+      const hits = glossary.filter(([t,d]) => !q || normalizeAnswer(t+' '+d).includes(q));
+      const container = gs.closest('.view') || view;
+      const listEl = container.querySelector('div[style]');
+      if (listEl) listEl.innerHTML = hits.map(([t,d]) => `<div class="glossary-item"><strong>${esc(t)}</strong><span>${esc(d)}</span></div>`).join('') || '<div class="empty">No terms matched.</div>';
+    });
+  }
+
+  /* Challenge labs */
+  view.querySelectorAll('[data-check]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id  = btn.dataset.check;
+      const ch  = challenges.find(c => c.id === id);
+      const inp = view.querySelector(`#ans-${id}`);
+      const res = view.querySelector(`#res-${id}`);
+      if (!ch || !inp || !res) return;
+      if (normalizeAnswer(inp.value) === normalizeAnswer(ch.answer)) {
+        res.innerHTML = '<span class="ok">✓ Correct!</span>';
+        if (!state.solved.includes(id)) state.solved.push(id);
+        save();
+        inp.disabled = btn.disabled = true;
+        const whyEl = view.querySelector(`#why-${id}`);
+        if (whyEl) whyEl.style.display = 'block';
+        document.getElementById('sidebarProgress').textContent = completion() + '%';
+        document.getElementById('sidebarProgressBar').style.width = completion() + '%';
+      } else {
+        res.innerHTML = '<span class="bad">✗ Not quite. Check the hint.</span>';
+      }
+    });
+  });
+
+  view.querySelectorAll('[data-hint]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = view.querySelector(`#hint-${btn.dataset.hint}`);
+      if (el) el.classList.toggle('show');
+    });
+  });
+
+  view.querySelectorAll('[data-why]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const el = view.querySelector(`#why-${btn.dataset.why}`);
+      if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    });
+  });
+
+  /* Path domain buttons */
+  view.querySelectorAll('.detail [data-domain]').forEach(btn => {
+    btn.addEventListener('click', () => openDomain(btn.dataset.domain));
+  });
+}
+
+/* ── Top-level navigation init ───────────────────────────── */
+function init() {
+  /* Sidebar nav items */
+  document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
+    btn.addEventListener('click', () => setView(btn.dataset.view));
+  });
+
+  /* Mobile menu */
+  const sidebar  = document.getElementById('sidebar');
+  const menuBtn  = document.getElementById('menuToggle');
+  const closeBtn = document.getElementById('mobileClose');
+  if (menuBtn) menuBtn.addEventListener('click', () => sidebar?.classList.add('open'));
+  if (closeBtn) closeBtn.addEventListener('click', () => sidebar?.classList.remove('open'));
+  document.addEventListener('click', e => {
+    if (sidebar?.classList.contains('open') && !sidebar.contains(e.target) && e.target !== menuBtn) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  /* Theme toggle */
+  document.getElementById('themeToggle')?.addEventListener('click', () => {
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    save();
+    setTheme();
+  });
+
+  /* Global search */
+  document.getElementById('globalSearch')?.addEventListener('input', e => {
+    const q = e.target.value.trim();
+    if (!q) return;
+    state.moduleQuery = q;
+    state.curriculumModule = null;
+    setView('modules');
+  });
+
+  /* Add Curriculum nav item if not present */
+  const mainNav = document.querySelector('.main-nav');
+  if (mainNav && !mainNav.querySelector('[data-view="curriculum"]')) {
+    const btn = document.createElement('button');
+    btn.className = 'nav-item';
+    btn.dataset.view = 'curriculum';
+    btn.innerHTML = '<span>12</span> Curriculum';
+    btn.addEventListener('click', () => setView('curriculum'));
+    mainNav.appendChild(btn);
+  }
+
+  render();
+}
+
+/* ── Boot ────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', init);
+if (document.readyState !== 'loading') init();
