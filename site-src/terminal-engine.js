@@ -349,7 +349,7 @@ export class CTFTerminalEngine {
       /* Name pattern (glob-lite: only * wildcard) */
       if (namePattern) {
         const fname = path.split('/').pop();
-        const regex = new RegExp('^' + namePattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
+        const regex = new RegExp('^' + namePattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + String.fromCharCode(36));
         if (!regex.test(fname)) continue;
       }
 
@@ -706,7 +706,7 @@ export class CTFTerminalEngine {
       files.push(a);
     }
     if (!pattern) return '<span class="term-err">grep: missing pattern</span>';
-    const regex = new RegExp(pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), caseInsensitive ? 'gi' : 'g');
+    const regex = new RegExp(pattern.replace(/[.*+?^${}()|[\]\\]/g, (m) => '\\' + m), caseInsensitive ? 'gi' : 'g');
 
     const results = [];
     for (const f of files) {

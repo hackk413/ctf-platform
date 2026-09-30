@@ -911,5 +911,11 @@ function init() {
 }
 
 /* ── Boot ────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', init);
-if (document.readyState !== 'loading') init();
+let booted = false;
+function boot() {
+  if (booted) return;
+  booted = true;
+  init();
+}
+document.addEventListener('DOMContentLoaded', boot);
+if (document.readyState !== 'loading') boot();
