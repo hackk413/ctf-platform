@@ -480,29 +480,7 @@ function curriculumModuleDetailHTML(mod) {
     </div>
     <span class="tag warn">🏆 Target: ${esc(lab.flag || '')}</span>
   </div>
-  <div id="terminal-lab-mount" style="margin-bottom:24px"></div>
-  <script>
-  (function() {
-    const labData = ${JSON.stringify(lab)};
-    const container = document.getElementById('terminal-lab-mount');
-    if (!container) return;
-    if (window.mountTerminal) {
-      window.mountTerminal(container, labData, function(flag) {
-        const sk = 'atlas-term-solved-' + (labData.id || 'default');
-        localStorage.setItem(sk, '1');
-      });
-    } else {
-      import('/site-src/terminal-engine.js').then(function(mod) {
-        window.mountTerminal = mod.mountTerminal;
-        window.mountTerminal(container, labData, function(flag) {
-          localStorage.setItem('atlas-term-solved-' + (labData.id || 'default'), '1');
-        });
-      }).catch(function(e) {
-        console.warn('Terminal engine import fallback:', e);
-      });
-    }
-  })();
-  <\/script>` : `
+  <div id="terminal-lab-mount" style="margin-bottom:24px"></div>` : `
   <div class="note warn-note">
     <strong>No Interactive Lab</strong> — Practice the techniques using local tools against authorized targets.
   </div>`;
@@ -855,6 +833,22 @@ function bindViewEvents() {
     });
   });
 
+  /* Interactive terminal lab mount */
+  const termMount = view.querySelector('#terminal-lab-mount');
+  if (termMount && state.curriculumModule) {
+    const modules = (intelCache && intelCache.curriculum) || [];
+    const mod = modules.find(m => m.id === state.curriculumModule);
+    if (mod && mod.interactive_terminal_challenge) {
+      const labData = mod.interactive_terminal_challenge;
+      if (typeof window.mountTerminal === 'function') {
+        window.mountTerminal(termMount, labData, function(flag) {
+          const sk = 'atlas-term-solved-' + (labData.id || 'default');
+          localStorage.setItem(sk, '1');
+        });
+      }
+    }
+  }
+
   /* Path domain buttons */
   view.querySelectorAll('.detail [data-domain]').forEach(btn => {
     btn.addEventListener('click', () => openDomain(btn.dataset.domain));
@@ -906,6 +900,9 @@ function init() {
     btn.addEventListener('click', () => setView('curriculum'));
     mainNav.appendChild(btn);
   }
+
+  /* Background-preload live intelligence and curriculum */
+  loadIntel();
 
   render();
 }

@@ -8,7 +8,7 @@
 
 'use strict';
 
-export class CTFTerminalEngine {
+class CTFTerminalEngine {
   /**
    * @param {Object} config
    * @param {HTMLElement} config.outputEl   - Element to write terminal output into
@@ -140,15 +140,45 @@ export class CTFTerminalEngine {
 
   _dispatch(raw) {
     const tokens  = this._tokenize(raw);
-    const cmd     = tokens[0] || '';
+    const cmdRaw  = tokens[0] || '';
     const args    = tokens.slice(1);
 
+    /* Normalize command name: e.g. /usr/local/bin/find -> find */
+    const cmdBase = cmdRaw.includes('/') ? cmdRaw.split('/').pop() : cmdRaw;
+
     /* Check custom commands first */
-    if (this.customCommands[cmd]) {
-      return this._runCustomCommand(cmd, args);
+    if (this.customCommands[cmdRaw]) {
+      return this._runCustomCommand(cmdRaw, args);
+    }
+    if (this.customCommands[cmdBase]) {
+      return this._runCustomCommand(cmdBase, args);
     }
 
-    switch (cmd) {
+    /* Check if executable path is provided and SUID is set */
+    let isSuidBin = false;
+    if (cmdRaw.includes('/')) {
+      const resolved = this._resolve(cmdRaw);
+      if (this._exists(resolved)) {
+        const node = this.vfs[resolved];
+        if (node && (node.perm || '').includes('s') && node.owner === 'root') {
+          isSuidBin = true;
+        }
+      }
+    }
+
+    const prevSuid = this._inSuidExec;
+    if (isSuidBin) this._inSuidExec = true;
+
+    try {
+      switch (cmdBase) {
+        case 'sh':
+        case 'bash':
+          if (this._inSuidExec || args.includes('-p')) {
+            this.user = 'root';
+            this._updatePrompt();
+            return '<span class="term-success">[ROOT PRIVILEGE ACQUIRED] Effective UID: 0 (root)\nInteractive root shell spawned (#). Full system access granted.</span>';
+          }
+          return `<span class="term-info">Subshell spawned. (${this.user}@${this.hostname})</span>`;
       case 'ls':        return this._cmdLs(args);
       case 'cd':        return this._cmdCd(args);
       case 'pwd':       return this._cmdPwd();
@@ -193,9 +223,12 @@ export class CTFTerminalEngine {
       case 'reset':     this.reset(); return '';
       case 'history':   return this.history.map((h,i)=>`  ${String(i+1).padStart(4)}  ${h}`).join('\n');
       default:
-        return `<span class="term-err">bash: ${this._esc(cmd)}: command not found</span>`;
+        return `<span class="term-err">bash: ${this._esc(cmdRaw)}: command not found</span>`;
     }
+  } finally {
+    this._inSuidExec = prevSuid;
   }
+}
 
   _tokenize(raw) {
     /* Simple shell tokenizer: handles quoted strings */
@@ -308,7 +341,22 @@ export class CTFTerminalEngine {
       const p = this._resolve(a);
       if (!this._exists(p)) { results.push(`<span class="term-err">cat: ${this._esc(a)}: No such file or directory</span>`); continue; }
       if (this._isDir(p))   { results.push(`<span class="term-err">cat: ${this._esc(a)}: Is a directory</span>`); continue; }
-      results.push(this._esc(this.vfs[p].content || ''));
+      const node = this.vfs[p];
+
+      /* Permission check: root-only files require root user or SUID execution */
+      const isRootOnly = node.owner === 'root' && (node.perm === '-rw-------' || p.startsWith('/root'));
+      if (isRootOnly && this.user !== 'root' && !this._inSuidExec) {
+        results.push(`<span class="term-err">cat: ${this._esc(a)}: Permission denied</span>`);
+        continue;
+      }
+
+      let content = node.content || '';
+      if (this.challenge && this.challenge.flag && content.includes(this.challenge.flag)) {
+        this.solved = true;
+        localStorage.setItem(this.storageKey, '1');
+        this.onSolve(this.challenge.flag);
+      }
+      results.push(this._esc(content));
     }
     return results.join('\n');
   }
@@ -320,6 +368,7 @@ export class CTFTerminalEngine {
     let permFilter   = null;
     let typeFilter   = null;
     let maxDepth     = Infinity;
+    let execCmd      = null;
     let i = 0;
 
     /* First positional arg is the search root if not a flag */
@@ -331,7 +380,14 @@ export class CTFTerminalEngine {
       else if (flag === '-perm') { permFilter = args[i++]; }
       else if (flag === '-type') { typeFilter = args[i++]; }
       else if (flag === '-maxdepth') { maxDepth = parseInt(args[i++], 10) || 0; }
-      else if (flag === '-exec') { /* consume until \; */ while (i < args.length && args[i++] !== '\\;') {} }
+      else if (flag === '-exec') {
+        const execTokens = [];
+        while (i < args.length && args[i] !== '\\;' && args[i] !== ';') {
+          execTokens.push(args[i++]);
+        }
+        if (i < args.length) i++; // consume terminator
+        execCmd = execTokens.join(' ');
+      }
     }
 
     const results = [];
@@ -364,8 +420,14 @@ export class CTFTerminalEngine {
         }
       }
 
-      const cls = node.type === 'dir' ? 'term-dir' : (node.perm||'').includes('s') ? 'term-suid' : 'term-file';
-      results.push(`<span class="${cls}">${this._esc(path)}</span>`);
+      if (execCmd) {
+        const toRun = execCmd.replace(/\{\}/g, path);
+        const out = this._dispatch(toRun);
+        if (out) results.push(out);
+      } else {
+        const cls = node.type === 'dir' ? 'term-dir' : (node.perm||'').includes('s') ? 'term-suid' : 'term-file';
+        results.push(`<span class="${cls}">${this._esc(path)}</span>`);
+      }
     }
 
     return results.join('\n') || '';
@@ -1078,7 +1140,7 @@ Hints available: ${hCount}  |  Type 'help' for commands  |  'hint' for first hin
  * @param {Function}    [onSolve] - Called with flag when challenge is solved
  * @returns {CTFTerminalEngine}
  */
-export function mountTerminal(container, challenge, onSolve) {
+function mountTerminal(container, challenge, onSolve) {
   container.innerHTML = `
     <div class="vterm" aria-label="Virtual terminal for ${(challenge.title||'CTF lab').replace(/"/g,'&quot;')}">
       <div class="vterm-topbar">
@@ -1130,4 +1192,12 @@ export function mountTerminal(container, challenge, onSolve) {
   container.querySelector('.vterm')?.addEventListener('click', () => inputEl?.focus());
 
   return engine;
+}
+
+if (typeof window !== 'undefined') {
+  window.CTFTerminalEngine = CTFTerminalEngine;
+  window.mountTerminal = mountTerminal;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { CTFTerminalEngine, mountTerminal };
 }
