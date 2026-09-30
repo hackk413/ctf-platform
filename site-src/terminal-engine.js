@@ -220,6 +220,15 @@ export class CTFTerminalEngine {
     const def = this.customCommands[cmd];
     if (typeof def === 'function') return def(args, this);
     if (typeof def === 'string')   return def;
+    if (Array.isArray(def)) {
+      const joined = args.join(' ');
+      for (const item of def) {
+        if (!item.match || joined.includes(item.match)) {
+          return item.output;
+        }
+      }
+      return def[def.length - 1]?.output || '';
+    }
     /* Object: { output, condition, args_match } */
     if (def && typeof def === 'object') {
       if (def.args_match) {

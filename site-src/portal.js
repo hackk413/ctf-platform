@@ -333,13 +333,15 @@ function curriculumHTML(intel) {
 function curriculumModuleDetailHTML(mod) {
   const theory   = mod.theory   || {};
   const tools    = mod.tools    || [];
+  const impact   = mod.security_impact || null;
   const caseStudy = mod.case_study || null;
   const lab      = mod.interactive_terminal_challenge;
 
-  /* ── Section 1: Abstract ── */
+  /* ── Section 1: Abstract & Objectives ── */
   const abstractSection = `
   <div class="note" style="margin-bottom:24px">
-    <strong>MODULE ABSTRACT</strong><br>${esc(mod.abstract || '')}
+    <strong style="color:var(--cyan);font-family:var(--display);letter-spacing:.08em;text-transform:uppercase">1. Module Abstract & Pedagogical Scope</strong><br>
+    <p style="margin-top:8px;color:#cbd5e1;line-height:1.7">${esc(mod.abstract || '')}</p>
   </div>`;
 
   /* ── Section 2: Theory & Internals ── */
@@ -351,61 +353,132 @@ function curriculumModuleDetailHTML(mod) {
     </div>`).join('');
 
   const theorySection = `
-  <div class="section-head"><div><h2>Systems & Protocol Internals</h2>
+  <div class="section-head"><div><div class="eyebrow">SECTION 02 // LOW-LEVEL INVARIANTS</div><h2>Systems & Protocol Internals</h2>
     <p>${esc(theory.title || '')}</p></div></div>
-  <div class="detail" style="padding:28px">${theorySections}</div>`;
+  <div class="detail" style="padding:28px;margin-bottom:24px">${theorySections}</div>`;
 
-  /* ── Section 3: Tool Deep-Dive with Flags Table ── */
+  /* ── Section 3: Security Impact & Defensive Detection ── */
+  const impactSection = impact ? `
+  <div class="section-head"><div><div class="eyebrow">SECTION 03 // BLUE TEAM CORRELATION</div><h2>Security Impact & Defensive Detection</h2>
+    <p>Connecting offensive exploitation mechanics to detection engineering, audit telemetry, and remediation.</p></div></div>
+  <div class="detail" style="padding:24px;margin-bottom:24px">
+    <div class="tag-row" style="margin-bottom:16px">
+      <span class="tag warn">ATT&amp;CK: ${esc(impact.att_ck || 'Tactic')}</span>
+      <span class="tag accent">Sensor: Telemetry</span>
+    </div>
+    <div style="margin-bottom:16px">
+      <h4 style="font-family:var(--display);color:var(--cyan);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Kernel &amp; Sensor Telemetry</h4>
+      <p style="color:#aeb6c5;line-height:1.7">${esc(impact.telemetry || '')}</p>
+    </div>
+    ${impact.detection_logic ? `
+    <div style="margin-bottom:16px">
+      <h4 style="font-family:var(--display);color:var(--green);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Detection Logic / Rules (Auditd / YARA / Sigma)</h4>
+      <pre><code>${esc(impact.detection_logic)}</code></pre>
+    </div>` : ''}
+    ${impact.hardening ? `
+    <div style="margin-top:12px">
+      <h4 style="font-family:var(--display);color:var(--amber);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Defensive Hardening &amp; Invariant Remediation</h4>
+      <p style="color:#aeb6c5;line-height:1.7">${esc(impact.hardening)}</p>
+    </div>` : ''}
+  </div>` : '';
+
+  /* ── Section 4: Deep-Dive Tools & Techniques (CLI + GUI + Speed Guide) ── */
   const toolsSection = tools.length ? `
-  <div class="section-head"><div><h2>Tool Command & Syntax Breakdown</h2>
-    <p>Flags, contexts, and offensive recipes for each tool in this module.</p></div></div>
-  ${tools.map(t => `
-    <div class="detail" style="margin-bottom:18px">
-      <div class="detail-head">
-        <h3 style="margin:0;font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--green)">${esc(t.name)}</h3>
+  <div class="section-head"><div><div class="eyebrow">SECTION 04 // OPERATIONAL CAPABILITIES</div><h2>Tool Deep-Dive &amp; Fast Execution (CLI &amp; GUI)</h2>
+    <p>How to operate essential tools with maximum velocity in tournaments and audits.</p></div></div>
+  ${tools.map(t => {
+    const cli = t.cli_usage || (t.flags ? { flags: t.flags, syntax: t.name + ' [flags]', recipes: [] } : null);
+    const gui = t.gui_usage || null;
+    return `
+    <div class="detail" style="margin-bottom:24px">
+      <div class="detail-head" style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h3 style="margin:0;font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--green)">${esc(t.name)}</h3>
+          <span style="font-size:12px;color:var(--muted)">${esc(t.category || 'Security Tool')}</span>
+        </div>
+        <div class="tag-row">
+          ${cli ? '<span class="tag accent">CLI Available</span>' : ''}
+          ${gui ? '<span class="tag success">GUI Available</span>' : ''}
+        </div>
       </div>
-      <div class="detail-body" style="padding:0">
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead>
-            <tr style="border-bottom:1px solid var(--border)">
-              <th style="text-align:left;padding:10px 18px;color:var(--cyan);font-family:var(--display);letter-spacing:.08em;text-transform:uppercase;width:35%">Flag / Syntax</th>
-              <th style="text-align:left;padding:10px 18px;color:var(--cyan);font-family:var(--display);letter-spacing:.08em;text-transform:uppercase">Context & Effect</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${(t.flags || []).map((f, i) => `
-              <tr style="border-bottom:1px dashed var(--border);background:${i%2?'#0d0d14':'transparent'}">
-                <td style="padding:10px 18px"><code style="color:var(--green);word-break:break-all">${esc(f.flag)}</code></td>
-                <td style="padding:10px 18px;color:#aeb6c5">${esc(f.context)}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>
-    </div>`).join('')}` : '';
+      <div class="detail-body" style="padding:20px">
+        ${t.speed_guide ? `
+        <div class="note" style="margin-bottom:18px;border-left:3px solid var(--green)">
+          <strong style="color:var(--green);font-family:var(--display);letter-spacing:.06em">⚡ HOW TO USE IT FAST (SPEED CHEATSHEET)</strong>
+          <p style="margin-top:6px;color:#e2e8f0">${esc(t.speed_guide)}</p>
+        </div>` : ''}
 
-  /* ── Section 4: Case Study ── */
+        ${cli ? `
+        <div style="margin-bottom:20px">
+          <h4 style="font-family:var(--display);color:var(--cyan);letter-spacing:.07em;text-transform:uppercase;font-size:14px;margin-bottom:10px">🖥️ Command-Line Interface (CLI) Operation</h4>
+          ${cli.syntax ? `<div style="margin-bottom:10px"><code style="color:var(--cyan);font-size:13px">Syntax: ${esc(cli.syntax)}</code></div>` : ''}
+          ${(cli.flags && cli.flags.length) ? `
+          <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border)">
+                <th style="text-align:left;padding:8px 12px;color:var(--cyan);font-family:var(--display);letter-spacing:.08em;text-transform:uppercase;width:35%">Flag / Parameter</th>
+                <th style="text-align:left;padding:8px 12px;color:var(--cyan);font-family:var(--display);letter-spacing:.08em;text-transform:uppercase">Context &amp; Effect</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${cli.flags.map((f, i) => `
+                <tr style="border-bottom:1px dashed var(--border);background:${i%2?'#0d0d14':'transparent'}">
+                  <td style="padding:8px 12px"><code style="color:var(--green);word-break:break-all">${esc(f.flag)}</code></td>
+                  <td style="padding:8px 12px;color:#aeb6c5">${esc(f.context)}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>` : ''}
+          ${(cli.recipes && cli.recipes.length) ? `
+          <div style="margin-top:10px">
+            <span style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:bold">Offensive Command Recipes:</span>
+            ${cli.recipes.map(r => `<pre style="margin-top:6px"><code>${esc(r)}</code></pre>`).join('')}
+          </div>` : ''}
+        </div>` : ''}
+
+        ${gui ? `
+        <div style="margin-top:20px;padding-top:16px;border-top:1px dashed var(--border)">
+          <h4 style="font-family:var(--display);color:var(--amber);letter-spacing:.07em;text-transform:uppercase;font-size:14px;margin-bottom:8px">🖱️ Graphical User Interface (GUI) Operation</h4>
+          <p style="color:#aeb6c5;margin-bottom:10px;line-height:1.7">${esc(gui.overview || '')}</p>
+          ${gui.fast_shortcuts ? `
+          <div class="note warn-note" style="margin-bottom:12px">
+            <strong>GUI Speed Shortcuts:</strong> ${esc(gui.fast_shortcuts)}
+          </div>` : ''}
+          ${(gui.step_by_step && gui.step_by_step.length) ? `
+          <div style="margin-top:10px">
+            <span style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:bold">Step-by-Step Visual Walkthrough:</span>
+            <ul style="color:#aeb6c5;padding-left:18px;margin-top:6px;line-height:1.8">
+              ${gui.step_by_step.map(s => `<li>${esc(s)}</li>`).join('')}
+            </ul>
+          </div>` : ''}
+        </div>` : ''}
+      </div>
+    </div>`;
+  }).join('')}` : '';
+
+  /* ── Section 5: Real-World Case Study ── */
   const caseStudySection = caseStudy ? `
-  <div class="section-head"><div><h2>Real-World CTF Case Study</h2>
+  <div class="section-head"><div><div class="eyebrow">SECTION 05 // REAL-WORLD WARFARE</div><h2>Real-World CTF Case Study</h2>
     <p>${esc(caseStudy.title)}</p></div></div>
-  <div class="detail">
+  <div class="detail" style="margin-bottom:24px">
     <div class="detail-head"><h3 style="margin:0">${esc(caseStudy.title)}</h3></div>
-    <div class="detail-body">
-      <p style="color:#aeb6c5;margin-bottom:16px">${esc(caseStudy.narrative || '')}</p>
-      <h4 style="font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin-bottom:12px">Step-by-Step Solve</h4>
+    <div class="detail-body" style="padding:20px">
+      <p style="color:#aeb6c5;margin-bottom:16px;line-height:1.7">${esc(caseStudy.narrative || '')}</p>
+      <h4 style="font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--cyan);margin-bottom:12px">Step-by-Step Exploitation Sequence</h4>
       <ol style="color:#aeb6c5;padding-left:20px;line-height:1.9">
         ${(caseStudy.steps || []).map(step => `<li style="margin-bottom:6px;border-bottom:1px dashed #1e2333;padding-bottom:6px"><code style="color:var(--green)">${esc(step)}</code></li>`).join('')}
       </ol>
     </div>
   </div>` : '';
 
-  /* ── Section 5: Interactive Terminal Lab ── */
+  /* ── Section 6: Interactive Terminal Lab ── */
   const labSection = lab ? `
   <div class="section-head">
     <div>
+      <div class="eyebrow">SECTION 06 // HANDS-ON RANGE</div>
       <h2>Interactive Serverless Terminal Lab</h2>
       <p>${esc(lab.description || '')}</p>
     </div>
-    <span class="tag warn">🏆 ${esc(lab.flag || '')}</span>
+    <span class="tag warn">🏆 Target: ${esc(lab.flag || '')}</span>
   </div>
   <div id="terminal-lab-mount" style="margin-bottom:24px"></div>
   <script>
@@ -413,26 +486,25 @@ function curriculumModuleDetailHTML(mod) {
     const labData = ${JSON.stringify(lab)};
     const container = document.getElementById('terminal-lab-mount');
     if (!container) return;
-    // Lazy-load the terminal engine
     if (window.mountTerminal) {
       window.mountTerminal(container, labData, function(flag) {
         const sk = 'atlas-term-solved-' + (labData.id || 'default');
         localStorage.setItem(sk, '1');
       });
     } else {
-      import('/api/portal?asset=terminal-engine').catch(function() {
-        // Fallback: load terminal-engine.js as module
-        const s = document.createElement('script');
-        s.type = 'module';
-        s.textContent = 'import { mountTerminal } from "/site-src/terminal-engine.js"; window.mountTerminal = mountTerminal; window.mountTerminal(document.getElementById("terminal-lab-mount"), ' + JSON.stringify(labData) + ', function(f){ localStorage.setItem("atlas-term-solved-" + ' + JSON.stringify(labData.id || 'default') + ', "1"); });';
-        document.head.appendChild(s);
+      import('/site-src/terminal-engine.js').then(function(mod) {
+        window.mountTerminal = mod.mountTerminal;
+        window.mountTerminal(container, labData, function(flag) {
+          localStorage.setItem('atlas-term-solved-' + (labData.id || 'default'), '1');
+        });
+      }).catch(function(e) {
+        console.warn('Terminal engine import fallback:', e);
       });
     }
   })();
   <\/script>` : `
   <div class="note warn-note">
-    <strong>No Interactive Lab</strong> — This module's terminal lab is under construction.
-    Practice the techniques using local tools against authorized targets.
+    <strong>No Interactive Lab</strong> — Practice the techniques using local tools against authorized targets.
   </div>`;
 
   return `
@@ -449,6 +521,7 @@ function curriculumModuleDetailHTML(mod) {
   </div>
   ${abstractSection}
   ${theorySection}
+  ${impactSection}
   ${toolsSection}
   ${caseStudySection}
   ${labSection}`;

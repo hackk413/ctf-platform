@@ -1,0 +1,410 @@
+{
+  "generatedAt": "2026-09-30T10:30:00.000Z",
+  "toolCount": 13,
+  "skippedCount": 0,
+  "tools": [
+    {
+      "tool": "find",
+      "synopsis": "find [-H] [-L] [-P] [-D debugopts] [-Olevel] [starting-point...] [expression]",
+      "description": "GNU find searches the directory tree rooted at each given starting-point by evaluating the given expression from left to right, according to the rules of precedence, until the outcome is known, at which point find moves on to the next file name.",
+      "security_considerations": "The -exec action executes arbitrary commands with the privileges of the invoking user. When find possesses the SetUID bit, -exec spawns processes with elevated effective user IDs, enabling privilege escalation via GTFOBins.",
+      "flags": [
+        {
+          "flag": "-perm -4000",
+          "context": "Search for files with the SetUID bit set."
+        },
+        {
+          "flag": "-perm /6000",
+          "context": "Search for files with either SetUID or SetGID set."
+        },
+        {
+          "flag": "-type f",
+          "context": "File is a regular file."
+        },
+        {
+          "flag": "-exec command {} ;",
+          "context": "Execute command on each matched file."
+        },
+        {
+          "flag": "-maxdepth levels",
+          "context": "Descend at most levels of directories below the starting-points."
+        },
+        {
+          "flag": "-newer file",
+          "context": "File was modified more recently than file."
+        },
+        {
+          "flag": "-writable",
+          "context": "Matches files which are writable by the current user."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "EXAMPLES",
+        "SECURITY CONSIDERATIONS"
+      ]
+    },
+    {
+      "tool": "grep",
+      "synopsis": "grep [OPTION...] PATTERNS [FILE...]",
+      "description": "grep searches for PATTERNS in each FILE. PATTERNS is one or more patterns separated by newline characters, and grep prints each line that matches a pattern.",
+      "security_considerations": "Grepping recursively across /proc or /sys can hang on infinite virtual file streams. Use --exclude-dir and -I to skip binary or device files.",
+      "flags": [
+        {
+          "flag": "-r, --recursive",
+          "context": "Read all files under each directory, recursively."
+        },
+        {
+          "flag": "-i, --ignore-case",
+          "context": "Ignore case distinctions in patterns and input data."
+        },
+        {
+          "flag": "-n, --line-number",
+          "context": "Prefix each line of output with the 1-based line number within its input file."
+        },
+        {
+          "flag": "-E, --extended-regexp",
+          "context": "Interpret PATTERNS as extended regular expressions (EREs)."
+        },
+        {
+          "flag": "-l, --files-with-matches",
+          "context": "Suppress normal output; instead print the name of each input file from which output would normally have been printed."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "awk",
+      "synopsis": "gawk [ POSIX or GNU style options ] -f program-file [ -- ] file ...",
+      "description": "Gawk is the GNU Project's implementation of the AWK programming language. It is a powerful pattern scanning and text processing language commonly used for columnar data parsing and protocol dissection.",
+      "security_considerations": "Awk can execute system commands using the system() function or pipes, which can lead to command injection if input parameters are not sanitized.",
+      "flags": [
+        {
+          "flag": "-F fs",
+          "context": "Use fs for the input field separator (the value of the FS predefined variable)."
+        },
+        {
+          "flag": "-v var=val",
+          "context": "Assign the value val to the variable var before execution of the program begins."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "sed",
+      "synopsis": "sed [OPTION]... {script-only-if-no-other-script} [input-file]...",
+      "description": "Sed is a stream editor used to perform basic text transformations on an input stream (a file or input from a pipeline).",
+      "security_considerations": "The 'e' flag in substitution commands executes the replacement text in a shell. In SUID contexts or scripts, this can lead to arbitrary code execution.",
+      "flags": [
+        {
+          "flag": "-i[SUFFIX]",
+          "context": "Edit files in place (makes backup if SUFFIX supplied)."
+        },
+        {
+          "flag": "-e script",
+          "context": "Add the script to the commands to be executed."
+        },
+        {
+          "flag": "-n, --quiet",
+          "context": "Suppress automatic printing of pattern space."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "exiftool",
+      "synopsis": "exiftool [OPTIONS] [-TAG...] [--TAG...] FILE...",
+      "description": "ExifTool is a platform-independent Perl library plus a command-line application for reading, writing and manipulating metadata in a wide variety of files.",
+      "security_considerations": "Past vulnerabilities (e.g. CVE-2021-22204) in DjVu and other parser modules allowed unauthenticated remote code execution via malformed metadata chunks.",
+      "flags": [
+        {
+          "flag": "-all",
+          "context": "Extract all metadata tags."
+        },
+        {
+          "flag": "-gps:all",
+          "context": "Display only GPS-related tags."
+        },
+        {
+          "flag": "-c FORMAT",
+          "context": "Set format for GPS coordinates (e.g. '%.6f')."
+        },
+        {
+          "flag": "-a -u",
+          "context": "Allow duplicate tags and extract unknown tags."
+        },
+        {
+          "flag": "-all=",
+          "context": "Strip all metadata from file."
+        },
+        {
+          "flag": "-csv",
+          "context": "Export metadata to CSV format."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS",
+        "SECURITY CONSIDERATIONS"
+      ]
+    },
+    {
+      "tool": "binwalk",
+      "synopsis": "binwalk [OPTIONS] [FILE...]",
+      "description": "Binwalk is a fast, easy to use tool for analyzing, reverse engineering, and extracting firmware images and arbitrary binary streams.",
+      "security_considerations": "Unpacking untrusted firmware archives with -e can expose path traversal vulnerabilities or trigger malicious symlinks. Always extract inside an isolated unprivileged directory.",
+      "flags": [
+        {
+          "flag": "-B, --signature",
+          "context": "Scan target file(s) for file signatures."
+        },
+        {
+          "flag": "-e, --extract",
+          "context": "Automatically extract known file types."
+        },
+        {
+          "flag": "-E, --entropy",
+          "context": "Calculate file entropy to locate compressed or encrypted streams."
+        },
+        {
+          "flag": "-M, --matryoshka",
+          "context": "Recursively scan and extract discovered files."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "steghide",
+      "synopsis": "steghide [extract|embed|info] [options]",
+      "description": "Steghide is a steganography program that is able to hide data in various kinds of image and audio files (BMP, JPEG, WAV, AU).",
+      "security_considerations": "Steghide uses graph theory and Rijndael encryption. Brute-forcing passwords against steghide files requires tools like stegcracker.",
+      "flags": [
+        {
+          "flag": "extract -sf file",
+          "context": "Extract embedded data from stego file."
+        },
+        {
+          "flag": "info file",
+          "context": "Display information about an image/audio file and whether it contains hidden data."
+        },
+        {
+          "flag": "-p passphrase",
+          "context": "Specify passphrase for decryption."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "tshark",
+      "synopsis": "tshark [ -i <capture interface> ] [ -r <infile> ] [ -f <capture filter> ] [ -Y <display filter> ]",
+      "description": "TShark is a network protocol analyzer. It lets you capture packet data from a live network, or read packets from a previously saved capture file.",
+      "security_considerations": "Complex protocol dissectors parsing malformed network frames may trigger memory corruption bugs. Run tshark under unprivileged service accounts without root permissions.",
+      "flags": [
+        {
+          "flag": "-r infile",
+          "context": "Read packet data from infile (pcap/pcapng)."
+        },
+        {
+          "flag": "-Y display filter",
+          "context": "Apply display filter (Wireshark filter syntax)."
+        },
+        {
+          "flag": "-T fields",
+          "context": "Output format: fields (used with -e for custom columns)."
+        },
+        {
+          "flag": "-e fieldname",
+          "context": "Select specific packet field to extract (e.g. http.request.uri)."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "openssl",
+      "synopsis": "openssl command [ command_opts ] [ command_args ]",
+      "description": "The OpenSSL command line tool provides rich cryptographic functionality including cipher suites, public key generation, X.509 certificate management, and PRNG testing.",
+      "security_considerations": "Weak key generation (e.g. RSA keys < 2048 bits or deterministic entropy sources) severely degrades asymmetric cryptosystem security.",
+      "flags": [
+        {
+          "flag": "rsa -text -noout",
+          "context": "Print RSA key components in human-readable hexadecimal format."
+        },
+        {
+          "flag": "pkeyutl -decrypt",
+          "context": "Decrypt binary payload using private key."
+        },
+        {
+          "flag": "prime -generate",
+          "context": "Generate cryptographically strong prime numbers."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "curl",
+      "synopsis": "curl [options / URLs]",
+      "description": "curl is a tool for transferring data from or to a server using one of the supported protocols (HTTP, HTTPS, FTP, etc.).",
+      "security_considerations": "curl sends credentials in cleartext over unencrypted HTTP. Use --tlsv1.2 or higher for secure communications.",
+      "flags": [
+        {
+          "flag": "-v, --verbose",
+          "context": "Make the operation more talkative (prints HTTP request and response headers)."
+        },
+        {
+          "flag": "-X, --request",
+          "context": "Specifies a custom HTTP request method (e.g. POST, PUT, DELETE)."
+        },
+        {
+          "flag": "-H, --header",
+          "context": "Extra header to include in the request when sending HTTP to a server."
+        },
+        {
+          "flag": "-d, --data",
+          "context": "Sends the specified data in a POST request to the HTTP server."
+        },
+        {
+          "flag": "-i, --include",
+          "context": "Include HTTP response headers in the output."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "socat",
+      "synopsis": "socat [options] <address1> <address2>",
+      "description": "socat is a relay for bidirectional data transfer between two independent data channels. Each channel can be a file, pipe, device, socket, or process.",
+      "security_considerations": "socat can be used to spawn encrypted or unencrypted reverse shells (e.g. TCP-LISTEN:port,exec:/bin/bash).",
+      "flags": [
+        {
+          "flag": "TCP-LISTEN:port,fork",
+          "context": "Listen on specified TCP port and fork a child process for each incoming connection."
+        },
+        {
+          "flag": "EXEC:/bin/sh",
+          "context": "Spawn process and bind its standard I/O streams to the socket."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "nmap",
+      "synopsis": "nmap [Scan Type...] [Options] {target specification}",
+      "description": "Nmap (Network Mapper) is an open source tool for network exploration and security auditing. It was designed to rapidly scan large networks.",
+      "security_considerations": "Aggressive scanning (-A, -T4) generates high packet volumes easily detected by IDS/IPS systems. NSE scripts may trigger unintended service crashes on legacy systems.",
+      "flags": [
+        {
+          "flag": "-sS",
+          "context": "TCP SYN stealth scan (default scan when run with root privileges)."
+        },
+        {
+          "flag": "-sV",
+          "context": "Probe open ports to determine service and version info."
+        },
+        {
+          "flag": "-sC",
+          "context": "Scan with default set of NSE scripts."
+        },
+        {
+          "flag": "-p <range>",
+          "context": "Only scan specified ports (e.g. -p 1-65535 or -p-)."
+        },
+        {
+          "flag": "-oN <file>",
+          "context": "Output scan in normal human-readable format to file."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    },
+    {
+      "tool": "gdb",
+      "synopsis": "gdb [-help] [-nx] [-q] [-batch] [-cd=dir] [-f] [-b bps] [-tty=dev] [-s symfile] [-e prog] [-se prog] [-c core] [-x file] [--args prog [arglist]] [prog|prog procID|prog core]",
+      "description": "The purpose of a debugger such as GDB is to allow you to see what is going on `inside' another program while it executes -- or what another program was doing at the moment it crashed.",
+      "security_considerations": "GDB attaches to processes via the ptrace system call. ptrace allows arbitrary memory read and write, register modification, and execution redirection.",
+      "flags": [
+        {
+          "flag": "-q, --quiet",
+          "context": "Do not print introductory and copyright messages on startup."
+        },
+        {
+          "flag": "--args prog [args]",
+          "context": "Pass arguments directly to the program being debugged."
+        },
+        {
+          "flag": "-x file",
+          "context": "Execute GDB commands from file."
+        },
+        {
+          "flag": "-batch",
+          "context": "Run in batch mode; exit with code after processing commands."
+        }
+      ],
+      "sections": [
+        "NAME",
+        "SYNOPSIS",
+        "DESCRIPTION",
+        "OPTIONS"
+      ]
+    }
+  ],
+  "skipped": [],
+  "notes": [
+    "Man pages are parsed and normalized for core CTF tools.",
+    "Flag entries provide context and security implications.",
+    "Generated for CTF Atlas."
+  ]
+}
