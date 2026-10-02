@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-01T04:12:49.124Z",
+  "updatedAt": "2026-10-02T04:12:18.446Z",
   "status": "partial",
   "summary": {
     "vulnerabilities": 0,
@@ -883,6 +883,19 @@
   ],
   "items": [
     {
+      "id": "kev:CVE-2026-104286",
+      "kind": "KEV",
+      "title": "Fortinet FortiMail Path Traversal Vulnerability",
+      "summary": "Fortinet FortiMail contains a path traversal and an improper neutralization of NULL byte or NULL character vulnerability that may allow an unauthenticated attacker to write arbitrary files on the underlying system via crafted HTTP or HTTPS requests.",
+      "date": "2026-10-01T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "web security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-104286",
+      "cve": "CVE-2026-104286",
+      "product": "FortiMail"
+    },
+    {
       "id": "kev:CVE-2026-76504",
       "kind": "KEV",
       "title": "Cisco Catalyst SD-WAN Manager Hex Encoding Vulnerability",
@@ -1237,19 +1250,6 @@
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-42018",
       "cve": "CVE-2026-42018",
       "product": "Artifactory"
-    },
-    {
-      "id": "kev:CVE-2026-85706",
-      "kind": "KEV",
-      "title": "GitLab Community Edition and Enterprise Edition Path Traversal Vulnerability",
-      "summary": "GitLab Community Edition and Enterprise Edition contains a path traversal vulnerability that allows an unauthenticated user to read arbitrary files due to an improper path confinement and missing authentication enforcement in the repository commits API.",
-      "date": "2026-09-11T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "web security",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-85706",
-      "cve": "CVE-2026-85706",
-      "product": "Community Edition and Enterprise Edition"
     },
     {
       "id": "release:radare2:2026-09-06T17:32:21.000Z",
