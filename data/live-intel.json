@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-02T04:12:18.446Z",
+  "updatedAt": "2026-10-03T09:42:27.017Z",
   "status": "partial",
   "summary": {
     "vulnerabilities": 0,
@@ -883,6 +883,32 @@
   ],
   "items": [
     {
+      "id": "kev:CVE-2026-102490",
+      "kind": "KEV",
+      "title": "Zammad GmbH Zammad Improper Privilege Management Vulnerability",
+      "summary": "Zammad GmbH Zammad contains an improper privilege management vulnerability that can allow the local zammad user to escalate privileges to root. This vulnerability can be chained with CVE-2026-102489.",
+      "date": "2026-10-02T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "binary exploitation",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-102490",
+      "cve": "CVE-2026-102490",
+      "product": "Zammad"
+    },
+    {
+      "id": "kev:CVE-2026-102489",
+      "kind": "KEV",
+      "title": "Zammad GmbH Zammad Session Fixation Vulnerability",
+      "summary": "Zammad GmbH Zammad contains a session fixation vulnerability that can lead to remote code execution as the zammad user. This vulnerability can be chained with CVE-2026-102490.",
+      "date": "2026-10-02T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "general security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-102489",
+      "cve": "CVE-2026-102489",
+      "product": "Zammad"
+    },
+    {
       "id": "kev:CVE-2026-104286",
       "kind": "KEV",
       "title": "Fortinet FortiMail Path Traversal Vulnerability",
@@ -1224,32 +1250,6 @@
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-84869",
       "cve": "CVE-2026-84869",
       "product": "ScreenConnect"
-    },
-    {
-      "id": "kev:CVE-2026-42016",
-      "kind": "KEV",
-      "title": "JFrog Artifactory Incorrect Authorization Vulnerability",
-      "summary": "JFrog Artifactory contains an incorrect authorization vulnerability that leads to a privilege escalation attack due to a validation check of the token signature/issuer and not the token’s scope.",
-      "date": "2026-09-11T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "identity and access",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-42016",
-      "cve": "CVE-2026-42016",
-      "product": "Artifactory"
-    },
-    {
-      "id": "kev:CVE-2026-42018",
-      "kind": "KEV",
-      "title": "JFrog Artifactory Improper Authentication Vulnerability",
-      "summary": "JFrog Artifactory contains an improper authentication vulnerability that could return an internal anonymous-user token to an unauthenticated caller when anonymous access is disabled, potentially exposing sensitive resources.",
-      "date": "2026-09-11T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "web security",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-42018",
-      "cve": "CVE-2026-42018",
-      "product": "Artifactory"
     },
     {
       "id": "release:radare2:2026-09-06T17:32:21.000Z",
@@ -1926,17 +1926,17 @@
   "topicSignals": [
     {
       "topic": "web security",
-      "count": 48,
+      "count": 47,
       "reason": "Recent source activity is clustering around web security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "binary exploitation",
-      "count": 33,
+      "count": 34,
       "reason": "Recent source activity is clustering around binary exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "general security",
-      "count": 9,
+      "count": 10,
       "reason": "Recent source activity is clustering around general security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
@@ -1945,14 +1945,14 @@
       "reason": "Recent source activity is clustering around cryptography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "identity and access",
-      "count": 4,
-      "reason": "Recent source activity is clustering around identity and access. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
-    },
-    {
       "topic": "linux and systems",
       "count": 3,
       "reason": "Recent source activity is clustering around linux and systems. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "identity and access",
+      "count": 3,
+      "reason": "Recent source activity is clustering around identity and access. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "reverse engineering",
