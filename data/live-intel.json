@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-04T10:26:25.701Z",
+  "updatedAt": "2026-10-05T11:13:14.052Z",
   "status": "partial",
   "summary": {
     "vulnerabilities": 0,
@@ -883,6 +883,19 @@
   ],
   "items": [
     {
+      "id": "kev:CVE-2026-88779",
+      "kind": "KEV",
+      "title": "Citrix NetScaler Improper Restriction of Operations within the Bounds of a Memory Buffer Vulnerability",
+      "summary": "Citrix NetScaler ADC (formerly Citrix ADC) and Citrix NetScaler Gateway (formerly Citrix Gateway) contain an improper restriction of operations within the bounds of a memory buffer vulnerability that could allow for a denial of service.",
+      "date": "2026-10-04T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "binary exploitation",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-88779",
+      "cve": "CVE-2026-88779",
+      "product": "NetScaler"
+    },
+    {
       "id": "kev:CVE-2026-102490",
       "kind": "KEV",
       "title": "Zammad GmbH Zammad Improper Privilege Management Vulnerability",
@@ -1237,19 +1250,6 @@
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-76461",
       "cve": "CVE-2026-76461",
       "product": "Secure Email Gateway"
-    },
-    {
-      "id": "kev:CVE-2026-84869",
-      "kind": "KEV",
-      "title": "ConnectWise ScreenConnect Improper Privilege Management and Missing Authorization Vulnerability",
-      "summary": "ConnectWise ScreenConnect contains both an improper privilege management and missing authorization vulnerability that may allow an attacker to transfer and execute files through an active remote session without authorization or host confirmation.",
-      "date": "2026-09-11T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "identity and access",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-84869",
-      "cve": "CVE-2026-84869",
-      "product": "ScreenConnect"
     },
     {
       "id": "release:radare2:2026-09-06T17:32:21.000Z",
@@ -1931,7 +1931,7 @@
     },
     {
       "topic": "binary exploitation",
-      "count": 34,
+      "count": 35,
       "reason": "Recent source activity is clustering around binary exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
@@ -1951,7 +1951,7 @@
     },
     {
       "topic": "identity and access",
-      "count": 3,
+      "count": 2,
       "reason": "Recent source activity is clustering around identity and access. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
