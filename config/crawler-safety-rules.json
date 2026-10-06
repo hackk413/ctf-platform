@@ -79,6 +79,41 @@
       "url": "https://raw.githubusercontent.com/reddelexc/hackerone-reports/master/tops_by_bug_type/TOPALLREPORTS.md",
       "type": "bugbounty_feed",
       "ethical_mandate": "Responsible disclosure writeups demonstrating triage and remediation."
+    },
+    {
+      "id": "google-project-zero",
+      "name": "Google Project Zero Vulnerability Research",
+      "url": "https://googleprojectzero.blogspot.com/feeds/posts/default",
+      "type": "blog_feed",
+      "ethical_mandate": "Authoritative root-cause analysis of zero-day vulnerabilities and memory safety research."
+    },
+    {
+      "id": "portswigger-research",
+      "name": "PortSwigger Web Security Research",
+      "url": "https://portswigger.net/research/rss",
+      "type": "blog_feed",
+      "ethical_mandate": "Cutting-edge web application security and parser exploitation research."
+    },
+    {
+      "id": "cisa-advisories",
+      "name": "CISA Cybersecurity Advisories & ICS Alerts",
+      "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml",
+      "type": "advisory_feed",
+      "ethical_mandate": "Government cyber defense advisories providing remediation mandates."
+    },
+    {
+      "id": "the-hacker-news",
+      "name": "The Hacker News Threat Intelligence",
+      "url": "https://feeds.feedburner.com/TheHackersNews",
+      "type": "news_feed",
+      "ethical_mandate": "Timely reporting on vulnerability discoveries and patch releases."
+    },
+    {
+      "id": "bleepingcomputer",
+      "name": "BleepingComputer Security Disclosures",
+      "url": "https://www.bleepingcomputer.com/feed/",
+      "type": "news_feed",
+      "ethical_mandate": "Incident disclosures, patch notifications, and vulnerability analysis."
     }
   ],
   "required_criteria": {

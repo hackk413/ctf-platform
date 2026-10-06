@@ -96,6 +96,36 @@ const sources = [
     url:  'https://github.com/danielmiessler/SecLists/releases.atom',
   },
   {
+    id:   'cisa-advisories',
+    name: 'CISA Cybersecurity Advisories (US-CERT)',
+    type: 'xml-feed',
+    url:  'https://www.cisa.gov/cybersecurity-advisories/all.xml',
+  },
+  {
+    id:   'project-zero',
+    name: 'Google Project Zero 0-Day & Memory Research',
+    type: 'xml-feed',
+    url:  'https://googleprojectzero.blogspot.com/atom.xml',
+  },
+  {
+    id:   'portswigger',
+    name: 'PortSwigger Web Security Research',
+    type: 'xml-feed',
+    url:  'https://portswigger.net/research/rss',
+  },
+  {
+    id:   'the-hacker-news',
+    name: 'The Hacker News Threat Intelligence',
+    type: 'xml-feed',
+    url:  'https://thehackernews.com/feeds/posts/default',
+  },
+  {
+    id:   'bleepingcomputer',
+    name: 'BleepingComputer Vulnerability Disclosures',
+    type: 'xml-feed',
+    url:  'https://www.bleepingcomputer.com/feed/',
+  },
+  {
     id:   'hydra',
     name: 'THC Hydra Releases (Network Login Cracker)',
     type: 'github-atom',
@@ -211,7 +241,7 @@ function validateItem(raw) {
 
   return {
     id:        String(raw.id).trim().slice(0, 200),
-    kind:      ['KEV','CVE','RELEASE','TECHNIQUE','WRITEUP'].includes(raw.kind) ? raw.kind : 'CVE',
+    kind:      ['KEV','CVE','RELEASE','TECHNIQUE','WRITEUP','ADVISORY','RESEARCH'].includes(raw.kind) ? raw.kind : 'CVE',
     title:     String(raw.title).trim().slice(0, 300),
     summary:   String(raw.summary || '').trim().slice(0, 500),
     date:      isoOrNull(raw.date),
@@ -223,6 +253,7 @@ function validateItem(raw) {
     ...(raw.cve     ? { cve:     String(raw.cve).trim()     } : {}),
     ...(raw.product ? { product: String(raw.product).trim() } : {}),
     ...(raw.score   ? { score:   Number(raw.score)          } : {}),
+    details:   String(raw.details || raw.summary || '').trim().slice(0, 1000),
   };
 }
 
@@ -287,74 +318,103 @@ async function readNvd(src) {
   }).filter(Boolean);
 }
 
-function parseAtom(xml, src) {
-  const entries = [...xml.matchAll(/<entry[\s\S]*?<\/entry>/gi)].map(m => m[0]);
+function parseXmlFeed(xml, src) {
+  const entries = [...xml.matchAll(/<(?:entry|item)[\s\S]*?<\/(?:entry|item)>/gi)].map(m => m[0]);
 
   return entries.slice(0, 15).map(e => {
-    const text    = tag => { const m = e.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i')); return m ? stripHtml(m[1]) : ''; };
-    const linkm   = e.match(/<link[^>]+href=["']([^"']+)["']/i);
+    const text = tag => {
+      const m = e.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'));
+      return m ? stripHtml(m[1]) : '';
+    };
+
+    const linkAttrMatch = e.match(/<link[^>]+href=["']([^"']+)["']/i);
+    const linkTagMatch  = e.match(/<link[^>]*>([^\s<]+)<\/link>/i);
+    const url = linkAttrMatch?.[1] || linkTagMatch?.[1] || src.url;
+
     const title   = text('title');
-    const summary = text('summary') || text('content');
-    const date    = isoOrNull(text('updated') || text('published'));
-    const url     = linkm?.[1] || src.url;
+    const summary = text('summary') || text('content') || text('description');
+    const rawDate = text('updated') || text('published') || text('pubDate') || text('dc:date');
+    const date    = isoOrNull(rawDate);
     const topic   = topicFor(`${title} ${summary}`);
 
+    const cveMatch = (title + ' ' + summary).match(/CVE-\d{4}-\d{4,7}/i);
+    const cveId = cveMatch ? cveMatch[0].toUpperCase() : null;
+
+    let kind = 'RESEARCH';
+    if (cveId) kind = 'CVE';
+    else if (src.id.includes('cisa')) kind = 'ADVISORY';
+    else if (src.id.includes('nuclei') || src.id.includes('seclists') || src.id.includes('pwntools') || src.id.includes('ghidra')) kind = 'RELEASE';
+
+    const severity = cveId ? 'high' : (src.id.includes('cisa') ? 'high' : 'info');
+
     return validateItem({
-      id:        `release:${src.id}:${date || title}`,
-      kind:      'RELEASE',
+      id:        `signal:${src.id}:${cveId || (date || title).replace(/\W+/g, '-').slice(0, 40)}`,
+      kind,
       title,
-      summary:   summary.slice(0, 400),
+      summary:   summary.slice(0, 460),
       date,
-      severity:  'info',
+      severity,
       topic:     topic.label,
       source:    src.name,
       sourceUrl: url,
+      ...(cveId ? { cve: cveId } : {}),
+      details:   summary.slice(0, 800),
     });
   }).filter(Boolean);
 }
 
-async function readAtom(src) {
-  return parseAtom(await fetchText(src.url), src);
+async function readXmlFeed(src) {
+  return parseXmlFeed(await fetchText(src.url), src);
 }
 
 async function readGtfobins(src) {
-  /**
-   * GTFOBins exposes a JSON index at /index.json listing binaries
-   * and their abuse categories. We convert each to a TECHNIQUE item.
-   */
-  const text = await fetchText(src.url);
-  let bins;
-  try { bins = JSON.parse(text); }
-  catch (_) {
-    // Fallback: parse from HTML index
-    const matches = [...text.matchAll(/href="\/([^/"]+)\/"\s*>([^<]+)</g)];
-    bins = matches.map(m => ({ name: m[2].trim(), functions: [] }));
-  }
-
-  if (!Array.isArray(bins)) return [];
-
-  return bins.slice(0, 30).map(b => {
-    const name  = b.name || b.binary || String(b);
-    const funcs = Array.isArray(b.functions) ? b.functions.map(f => f.type || f).join(', ') : '';
-    return validateItem({
-      id:        `gtfobins:${name}`,
-      kind:      'TECHNIQUE',
-      title:     `GTFOBins: ${name}`,
-      summary:   `${name} can be exploited for: ${funcs || 'privilege escalation and file operations'}. Cross-reference with SUID enumeration (find / -perm -4000 -type f).`,
-      date:      now.toISOString(),
-      severity:  'high',
-      topic:     'linux and systems',
-      source:    src.name,
-      sourceUrl: `https://gtfobins.github.io/${name}/`,
+  try {
+    const r = await fetch('https://api.github.com/repos/GTFOBins/GTFOBins.github.io/contents/_gtfobins', {
+      headers: { 'user-agent': UA },
+      signal: AbortSignal.timeout(6000),
     });
-  }).filter(Boolean);
+    if (r.ok) {
+      const items = await r.json();
+      if (Array.isArray(items)) {
+        return items.slice(0, 30).map(file => {
+          const binName = file.name.replace(/\.md$/i, '');
+          return validateItem({
+            id:        `gtfobins:${binName}`,
+            kind:      'TECHNIQUE',
+            title:     `GTFOBins: ${binName}`,
+            summary:   `${binName} can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.`,
+            date:      now.toISOString(),
+            severity:  'high',
+            topic:     'systems and exploitation',
+            source:    src.name,
+            sourceUrl: `https://gtfobins.github.io/gtfobins/${binName}/`,
+          });
+        }).filter(Boolean);
+      }
+    }
+  } catch (_) {}
+
+  // Fallback curated list of essential GTFOBins binaries
+  const coreBins = ['find', 'vim', 'awk', 'python3', 'tar', 'base64', 'curl', 'wget', 'cp', 'nano', 'gdb', 'env', 'less', 'more', 'perl'];
+  return coreBins.map(name => validateItem({
+    id:        `gtfobins:${name}`,
+    kind:      'TECHNIQUE',
+    title:     `GTFOBins: ${name}`,
+    summary:   `${name} binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.`,
+    date:      now.toISOString(),
+    severity:  'high',
+    topic:     'systems and exploitation',
+    source:    src.name,
+    sourceUrl: `https://gtfobins.github.io/gtfobins/${name}/`,
+  })).filter(Boolean);
 }
 
 async function readSource(src) {
-  if (src.type === 'kev')         return readKev(src);
-  if (src.type === 'nvd')         return readNvd(src);
-  if (src.type === 'github-atom') return readAtom(src);
-  if (src.type === 'gtfobins')    return readGtfobins(src);
+  if (src.type === 'kev')                 return readKev(src);
+  if (src.type === 'nvd')                 return readNvd(src);
+  if (src.type === 'github-atom' ||
+      src.type === 'xml-feed')            return readXmlFeed(src);
+  if (src.type === 'gtfobins')            return readGtfobins(src);
   throw new Error(`Unknown source type: ${src.type}`);
 }
 

@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-10-06T11:02:42.214Z",
+  "updatedAt": "2026-10-06T09:44:18.174Z",
   "status": "partial",
   "summary": {
-    "vulnerabilities": 0,
+    "vulnerabilities": 29,
     "kev": 25,
-    "releases": 80,
-    "techniques": 0,
-    "signals": 105
+    "releases": 30,
+    "techniques": 30,
+    "signals": 198
   },
   "curriculum": [
     {
@@ -883,26 +883,762 @@
   ],
   "items": [
     {
-      "id": "release:sqlmap:2026-10-05T21:46:59.000Z",
-      "kind": "RELEASE",
+      "id": "signal:bleepingcomputer:2026-10-06T14-00-10-000Z",
+      "kind": "RESEARCH",
+      "title": "How to secure RMM software: 8 controls MSPs should test",
+      "summary": "",
+      "date": "2026-10-06T14:00:10.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/how-to-secure-rmm-software-8-controls-msps-should-test/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-06T11-57-00-000Z",
+      "kind": "RESEARCH",
+      "title": "LibreOffice and OpenOffice Flaws Let Malicious Spreadsheets Run Code Without Macro Warnings",
+      "summary": "",
+      "date": "2026-10-06T11:57:00.000Z",
+      "severity": "info",
+      "topic": "cloud and containers",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/libreoffice-and-openoffice-flaws-let.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-06T11-31-48-000Z",
+      "kind": "RESEARCH",
+      "title": "Wikimedia: Rogue OpenAI agents behind unauthorized Wikipedia edits",
+      "summary": "",
+      "date": "2026-10-06T11:31:48.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/rogue-openai-agents-behind-potentially-malicious-wikipedia-edits/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-06T11-26-25-000Z",
+      "kind": "RESEARCH",
+      "title": "Wikimedia Says OpenAI Agents Tried to Compromise Etherpad and Use Wiki Tools as Proxies",
+      "summary": "",
+      "date": "2026-10-06T11:26:25.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/wikimedia-says-openai-agents-tried-to.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-06T11-02-30-000Z",
+      "kind": "RESEARCH",
+      "title": "Welcome to the Jungle: What We Found Inside 15,465 Public MCP Servers",
+      "summary": "",
+      "date": "2026-10-06T11:02:30.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/welcome-to-jungle-what-we-found-inside.html",
+      "details": ""
+    },
+    {
+      "id": "gtfobins:7z",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: 7z",
+      "summary": "7z can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/7z/",
+      "details": "7z can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:R",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: R",
+      "summary": "R can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/R/",
+      "details": "R can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:aa-exec",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: aa-exec",
+      "summary": "aa-exec can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/aa-exec/",
+      "details": "aa-exec can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:ab",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: ab",
+      "summary": "ab can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/ab/",
+      "details": "ab can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:acr",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: acr",
+      "summary": "acr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/acr/",
+      "details": "acr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:agetty",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: agetty",
+      "summary": "agetty can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/agetty/",
+      "details": "agetty can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:alpine",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: alpine",
+      "summary": "alpine can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/alpine/",
+      "details": "alpine can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:ansible-playbook",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: ansible-playbook",
+      "summary": "ansible-playbook can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/ansible-playbook/",
+      "details": "ansible-playbook can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:ansible-test",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: ansible-test",
+      "summary": "ansible-test can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/ansible-test/",
+      "details": "ansible-test can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:aoss",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: aoss",
+      "summary": "aoss can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/aoss/",
+      "details": "aoss can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:apache2",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: apache2",
+      "summary": "apache2 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/apache2/",
+      "details": "apache2 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:apache2ctl",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: apache2ctl",
+      "summary": "apache2ctl can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/apache2ctl/",
+      "details": "apache2ctl can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:apport-cli",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: apport-cli",
+      "summary": "apport-cli can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/apport-cli/",
+      "details": "apport-cli can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:apt",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: apt",
+      "summary": "apt can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/apt/",
+      "details": "apt can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:apt-get",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: apt-get",
+      "summary": "apt-get can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/apt-get/",
+      "details": "apt-get can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:aptitude",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: aptitude",
+      "summary": "aptitude can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/aptitude/",
+      "details": "aptitude can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:ar",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: ar",
+      "summary": "ar can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/ar/",
+      "details": "ar can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:arch-nspawn",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: arch-nspawn",
+      "summary": "arch-nspawn can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/arch-nspawn/",
+      "details": "arch-nspawn can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:aria2c",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: aria2c",
+      "summary": "aria2c can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/aria2c/",
+      "details": "aria2c can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:arj",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: arj",
+      "summary": "arj can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/arj/",
+      "details": "arj can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:arp",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: arp",
+      "summary": "arp can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/arp/",
+      "details": "arp can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:as",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: as",
+      "summary": "as can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/as/",
+      "details": "as can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:ascii-xfr",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: ascii-xfr",
+      "summary": "ascii-xfr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/ascii-xfr/",
+      "details": "ascii-xfr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:ascii85",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: ascii85",
+      "summary": "ascii85 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/ascii85/",
+      "details": "ascii85 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:ash",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: ash",
+      "summary": "ash can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/ash/",
+      "details": "ash can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:aspell",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: aspell",
+      "summary": "aspell can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/aspell/",
+      "details": "aspell can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:asterisk",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: asterisk",
+      "summary": "asterisk can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/asterisk/",
+      "details": "asterisk can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:at",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: at",
+      "summary": "at can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/at/",
+      "details": "at can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:atobm",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: atobm",
+      "summary": "atobm can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/atobm/",
+      "details": "atobm can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "gtfobins:autoconf",
+      "kind": "TECHNIQUE",
+      "title": "GTFOBins: autoconf",
+      "summary": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
+      "date": "2026-10-06T09:44:18.174Z",
+      "severity": "high",
+      "topic": "systems and exploitation",
+      "source": "GTFOBins technique list",
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/autoconf/",
+      "details": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-06T09-25-50-000Z",
+      "kind": "RESEARCH",
+      "title": "Nikkei discloses breaches of employees’ Microsoft, Google email accounts",
+      "summary": "",
+      "date": "2026-10-06T09:25:50.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/nikkei-discloses-breaches-of-employees-microsoft-google-email-accounts/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-06T09-21-47-000Z",
+      "kind": "RESEARCH",
+      "title": "Google Pauses OSS Product Bug Bounty Rewards After Surge in Invalid Automated Reports",
+      "summary": "",
+      "date": "2026-10-06T09:21:47.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/google-pauses-oss-product-bug-bounty.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-06T08-19-24-000Z",
+      "kind": "RESEARCH",
+      "title": "Engineer sentenced for locking over 3,000 devices on employer network",
+      "summary": "",
+      "date": "2026-10-06T08:19:24.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/engineer-sentenced-for-locking-thousands-of-devices-on-employer-network/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-06T06-58-56-000Z",
+      "kind": "RESEARCH",
+      "title": "Critical Atlassian Flaw Lets Unauthenticated Attackers Read Known Files Across 8 Products",
+      "summary": "",
+      "date": "2026-10-06T06:58:56.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/critical-atlassian-flaw-lets.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-06T06-56-57-000Z",
+      "kind": "RESEARCH",
+      "title": "FBI Removes Accenture Contractor After Patch Failure Led to ShinyHunters Breach",
+      "summary": "",
+      "date": "2026-10-06T06:56:57.000Z",
+      "severity": "info",
+      "topic": "reverse engineering",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/fbi-removes-accenture-contractor-after.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-06T06-00-30-000Z",
+      "kind": "RESEARCH",
+      "title": "Denmark Says Attackers Accessed CPR Data for 8.8 Million People via Company Account",
+      "summary": "",
+      "date": "2026-10-06T06:00:30.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/denmark-says-attackers-accessed-cpr.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-06T05-22-55-000Z",
+      "kind": "RESEARCH",
+      "title": "ClickFix Smuggles Payloads Through Browser Cache to Bypass Windows Run Limits",
+      "summary": "",
+      "date": "2026-10-06T05:22:55.000Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/clickfix-smuggles-payloads-through.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T22-46-33-000Z",
+      "kind": "RESEARCH",
+      "title": "OpenAI is adding invisible watermarks to ChatGPT and Codex text in the EU",
+      "summary": "",
+      "date": "2026-10-05T22:46:33.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-is-adding-invisible-watermarks-to-chatgpt-and-codex-text-in-the-eu/",
+      "details": ""
+    },
+    {
+      "id": "signal:sqlmap:2026-10-05T21-46-59-000Z",
+      "kind": "RESEARCH",
       "title": "1.10.10",
       "summary": "<p>Fixes <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"5705513248\" data-permission-text=\"Title is private\" data-url=\"https://github.com/sqlmapproject/sqlmap/issues/6137\" data-hovercard-type=\"issue\" data-hovercard-url=\"/sqlmapproject/sqlmap/issues/6137/hovercard\" href=\"https://github.com/sqlmapproject/sqlmap/issues/6137\">#6137</a></p>",
       "date": "2026-10-05T21:46:59.000Z",
       "severity": "info",
       "topic": "web security",
       "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.10"
+      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.10",
+      "details": "<p>Fixes <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"5705513248\" data-permission-text=\"Title is private\" data-url=\"https://github.com/sqlmapproject/sqlmap/issues/6137\" data-hovercard-type=\"issue\" data-hovercard-url=\"/sqlmapproject/sqlmap/issues/6137/hovercard\" href=\"https://github.com/sqlmapproject/sqlmap/issues/6137\">#6137</a></p>"
     },
     {
-      "id": "release:radare2:2026-10-05T19:52:50.000Z",
-      "kind": "RELEASE",
+      "id": "signal:bleepingcomputer:2026-10-05T20-20-05-000Z",
+      "kind": "RESEARCH",
+      "title": "Rejetto HFS servers now actively scanned for critical RCE flaw",
+      "summary": "",
+      "date": "2026-10-05T20:20:05.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/rejetto-hfs-servers-now-actively-scanned-for-critical-rce-flaw/",
+      "details": ""
+    },
+    {
+      "id": "signal:radare2:2026-10-05T19-52-50-000Z",
+      "kind": "RESEARCH",
       "title": "6.2.4",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"The Magnetician\"<br> Version: 6.2.4<br> Previous: 6.2.2<br> AbiDiff: 142-152 (10)<br> Commits: 453<br> Contributors: 18</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.4/radare2-6.2.4.tar.xz | tar xJv radare2-6.2",
+      "summary": "<h2>Release Notes</h2> <p>Codename: \"The Magnetician\"<br> Version: 6.2.4<br> Previous: 6.2.2<br> AbiDiff: 142-152 (10)<br> Commits: 453<br> Contributors: 18</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.4/radare2-6.2.4.tar.xz | tar xJv radare2-6.2.4/sys/install.sh\"><pre>curl -Ls https://github.com/radareor",
       "date": "2026-10-05T19:52:50.000Z",
       "severity": "info",
       "topic": "cryptography",
       "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.2.4"
+      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.2.4",
+      "details": "<h2>Release Notes</h2> <p>Codename: \"The Magnetician\"<br> Version: 6.2.4<br> Previous: 6.2.2<br> AbiDiff: 142-152 (10)<br> Commits: 453<br> Contributors: 18</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.4/radare2-6.2.4.tar.xz | tar xJv radare2-6.2.4/sys/install.sh\"><pre>curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.4/radare2-6.2.4.tar.xz <span class=\"pl-k\">|</span> tar xJv radare2-6.2.4/sys/install.sh</pre></div> <h2>Highlights</h2> <details><summary>More details</summary><p> </p><h2>Authors</h2> <p><a href=\"mailto:85984486+AbhiTheModder@users.noreply.github.com\">Abhi</a> <a href=\"mailto:angeloayton@gmail.com\">Angelo"
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T17-19-53-000Z",
+      "kind": "RESEARCH",
+      "title": "IQVIA fined $7.8 million for failing to properly anonymize health data",
+      "summary": "",
+      "date": "2026-10-05T17:19:53.000Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/iqvia-fined-78-million-for-failing-to-properly-anonymize-health-data/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-05T16-21-52-000Z",
+      "kind": "RESEARCH",
+      "title": "Microsoft Exchange Flaw Lets Authenticated Attackers Read Other Users' Mailboxes",
+      "summary": "",
+      "date": "2026-10-05T16:21:52.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/microsoft-exchange-flaw-lets.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T15-21-10-000Z",
+      "kind": "RESEARCH",
+      "title": "Denmark population registry data breach affects 8.8 million people",
+      "summary": "",
+      "date": "2026-10-05T15:21:10.000Z",
+      "severity": "info",
+      "topic": "digital forensics",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/denmark-population-registry-data-breach-affects-88-million-people/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T14-53-06-000Z",
+      "kind": "RESEARCH",
+      "title": "New Dell System Update flaw lets hackers gain root privileges",
+      "summary": "",
+      "date": "2026-10-05T14:53:06.000Z",
+      "severity": "info",
+      "topic": "identity and access",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/new-dell-system-update-flaw-lets-hackers-gain-root-privileges/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T14-22-12-000Z",
+      "kind": "RESEARCH",
+      "title": "South Korea probes bank breaches amid suspected AI-powered attacks",
+      "summary": "",
+      "date": "2026-10-05T14:22:12.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/south-korea-probes-bank-breaches-amid-suspected-ai-powered-attacks/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T13-33-42-000Z",
+      "kind": "RESEARCH",
+      "title": "tenfold CE: Our free Identity Governance tool just got 2 new features",
+      "summary": "",
+      "date": "2026-10-05T13:33:42.000Z",
+      "severity": "info",
+      "topic": "identity and access",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/tenfold-ce-our-free-identity-governance-tool-just-got-2-new-features/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T13-01-45-000Z",
+      "kind": "RESEARCH",
+      "title": "Alleged dev of Ploutus ATM malware appears in US court after arrest",
+      "summary": "",
+      "date": "2026-10-05T13:01:45.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/suspected-dev-of-ploutus-atm-malware-appears-in-us-court-after-arrest/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-05T11-55-00-000Z",
+      "kind": "RESEARCH",
+      "title": "The Credential Layer Is Expanding Faster Than Security Teams Can See It",
+      "summary": "",
+      "date": "2026-10-05T11:55:00.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/the-credential-layer-is-expanding.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-05T11-46-25-000Z",
+      "kind": "RESEARCH",
+      "title": "Realtek Jungle SDK Exploit Attempts Deliver Cling Botnet With STUN-Based C2",
+      "summary": "",
+      "date": "2026-10-05T11:46:25.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/realtek-jungle-sdk-exploit-attempts.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-05T10-38-50-000Z",
+      "kind": "RESEARCH",
+      "title": "Apple Plans Tighter macOS Full Disk Access Controls Over AI Agent Data Access",
+      "summary": "",
+      "date": "2026-10-05T10:38:50.000Z",
+      "severity": "info",
+      "topic": "digital forensics",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/apple-plans-tighter-macos-full-disk.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T10-28-45-000Z",
+      "kind": "RESEARCH",
+      "title": "OpenAI will show visual ads in ChatGPT while you generate images",
+      "summary": "",
+      "date": "2026-10-05T10:28:45.000Z",
+      "severity": "info",
+      "topic": "steganography",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/artificial-intelligence/openai-will-show-visual-ads-in-chatgpt-while-you-generate-images/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T09-37-56-000Z",
+      "kind": "RESEARCH",
+      "title": "Microsoft: Windows KB5124010 update crashes some games and apps",
+      "summary": "",
+      "date": "2026-10-05T09:37:56.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/microsoft/microsoft-windows-kb5124010-update-crashes-some-games-and-apps/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-10-05T08-27-46-000Z",
+      "kind": "RESEARCH",
+      "title": "Google halts open-source bug bounty program amid AI spam surge",
+      "summary": "",
+      "date": "2026-10-05T08:27:46.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/google/google-halts-open-source-bug-bounty-program-amid-ai-spam-surge/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-05T08-09-23-000Z",
+      "kind": "RESEARCH",
+      "title": "Attackers Target Rejetto HFS Flaw That Enables Admin Session Forgery and RCE",
+      "summary": "",
+      "date": "2026-10-05T08:09:23.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/attackers-target-rejetto-hfs-flaw-that.html",
+      "details": ""
+    },
+    {
+      "id": "signal:nuclei-templates:CVE-2026-87902",
+      "kind": "CVE",
+      "title": "Nuclei Templates v10.5.0 - Release Notes",
+      "summary": "<h3>New Templates Added: <code>295</code> | CVEs Added: <code>36</code> | First-time contributions: <code>11</code></h3> <h3>🔥 Release Highlights 🔥</h3> <ul> <li>[CVE-2026-87902] WordPress Core - PHP Template Path Traversal (<a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/Hadrian/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/Hadrian\">@Hadrian</a>,",
+      "date": "2026-10-05T07:28:47.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "ProjectDiscovery Nuclei Vulnerability Templates",
+      "sourceUrl": "https://github.com/projectdiscovery/nuclei-templates/releases/tag/v10.5.0",
+      "cve": "CVE-2026-87902",
+      "details": "<h3>New Templates Added: <code>295</code> | CVEs Added: <code>36</code> | First-time contributions: <code>11</code></h3> <h3>🔥 Release Highlights 🔥</h3> <ul> <li>[CVE-2026-87902] WordPress Core - PHP Template Path Traversal (<a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/Hadrian/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/Hadrian\">@Hadrian</a>,FLX) [critical] (kev) (vKEV) 🔥</li> <li>[<a title=\"CVE-2026-86218\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-5f24-g9g9-m3v8/hovercard\" href=\"https://github.com/advisories/GHSA-5f24-g9g9-m3v8\">CVE-2026-86218</a>] N-able N-central <2026.3.1.14 - Pre-Authentication Remote Code Execution (<a class=\"user-mention notr"
+    },
+    {
+      "id": "signal:the-hacker-news:2026-10-05T06-40-19-000Z",
+      "kind": "RESEARCH",
+      "title": "New NetScaler Zero-Day Exploited in Targeted Attacks Can Knock SAML Deployments Offline",
+      "summary": "",
+      "date": "2026-10-05T06:40:19.000Z",
+      "severity": "info",
+      "topic": "identity and access",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/10/new-netscaler-zero-day-exploited-in.html",
+      "details": ""
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-88779",
+      "kind": "CVE",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "<p class=\"text-align-justify\">CISA has added one new vulnerability to its&nbsp;<a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul type=\"disc\"> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-88779\">CVE-2026-88779</a> Citrix NetScaler Improper Restriction of Operations within the Bounds of a Memory Buffer Vulnerability</li> </ul> <",
+      "date": "2026-10-04T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/10/04/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "cve": "CVE-2026-88779",
+      "details": "<p class=\"text-align-justify\">CISA has added one new vulnerability to its&nbsp;<a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul type=\"disc\"> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-88779\">CVE-2026-88779</a> Citrix NetScaler Improper Restriction of Operations within the Bounds of a Memory Buffer Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise.</p> <p><a href=\"https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk\">Binding Operational Directive (BOD) 26-04: Prioritizing Security"
     },
     {
       "id": "kev:CVE-2026-88779",
@@ -915,7 +1651,21 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-88779",
       "cve": "CVE-2026-88779",
-      "product": "NetScaler"
+      "product": "NetScaler",
+      "details": "Citrix NetScaler ADC (formerly Citrix ADC) and Citrix NetScaler Gateway (formerly Citrix Gateway) contain an improper restriction of operations within the bounds of a memory buffer vulnerability that could allow for a denial of service."
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-102489",
+      "kind": "CVE",
+      "title": "CISA Adds Two Known Exploited Vulnerabilities to Catalog",
+      "summary": "<p>CISA has added two new vulnerabilities to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-102489\" target=\"_blank\">CVE-2026-102489</a> Zammad GmbH Zammad Session Fixation Vulnerability</li> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-102490\" target=\"_blank\">CVE-2",
+      "date": "2026-10-02T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/10/02/cisa-adds-two-known-exploited-vulnerabilities-catalog",
+      "cve": "CVE-2026-102489",
+      "details": "<p>CISA has added two new vulnerabilities to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-102489\" target=\"_blank\">CVE-2026-102489</a> Zammad GmbH Zammad Session Fixation Vulnerability</li> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-102490\" target=\"_blank\">CVE-2026-102490</a> Zammad GmbH Zammad Improper Privilege Management Vulnerability</li> </ul> <p>These types of vulnerabilities are frequent attack vectors for malicious cyber actors and pose significant risks to the federal enterprise.&nbsp;</p> <p><a href=\"https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioriti"
     },
     {
       "id": "kev:CVE-2026-102490",
@@ -928,7 +1678,8 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-102490",
       "cve": "CVE-2026-102490",
-      "product": "Zammad"
+      "product": "Zammad",
+      "details": "Zammad GmbH Zammad contains an improper privilege management vulnerability that can allow the local zammad user to escalate privileges to root. This vulnerability can be chained with CVE-2026-102489."
     },
     {
       "id": "kev:CVE-2026-102489",
@@ -941,7 +1692,112 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-102489",
       "cve": "CVE-2026-102489",
-      "product": "Zammad"
+      "product": "Zammad",
+      "details": "Zammad GmbH Zammad contains a session fixation vulnerability that can lead to remote code execution as the zammad user. This vulnerability can be chained with CVE-2026-102490."
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-64893",
+      "kind": "CVE",
+      "title": "Johnson Controls EasyIO Neo Series EC and CW Controllers",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-05.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of this vulnerability could allow an attacker tointercept and read sensitive information, including credentials andsession data.</strong></p> <p>The following versions of Johnson Controls EasyIO Neo Series EC and CW Controllers are affected:</p> <ul> <li>EasyIO Neo Seri",
+      "date": "2026-10-01T12:00:00.000Z",
+      "severity": "high",
+      "topic": "cryptography",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-274-05",
+      "cve": "CVE-2026-64893",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-05.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of this vulnerability could allow an attacker tointercept and read sensitive information, including credentials andsession data.</strong></p> <p>The following versions of Johnson Controls EasyIO Neo Series EC and CW Controllers are affected:</p> <ul> <li>EasyIO Neo Series EC Controllers V3.3b62 (CVE-2026-64893)</li> <li>EasyIO Neo Series EC Controllers V3.3b63 (CVE-2026-64893)</li> <li>EasyIO Neo Series CW Controllers V3.3b24 (CVE-2026-64893)</li> <li>EasyIO Neo Series CW Controllers V3.3b25 (CVE-2026-64893)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"s"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-101104",
+      "kind": "CVE",
+      "title": "Meari IoT Cloud Platform OpenAPI Service",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-06.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow attackers to manipulate device configurations, trigger unauthorized behaviors, and access sensitive information such as device credentials, owner details, and network data without proper authorization.</strong></p> <p>The following v",
+      "date": "2026-10-01T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-274-06",
+      "cve": "CVE-2026-101104",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-06.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow attackers to manipulate device configurations, trigger unauthorized behaviors, and access sensitive information such as device credentials, owner details, and network data without proper authorization.</strong></p> <p>The following versions of Meari IoT Cloud Platform OpenAPI Service are affected:</p> <ul> <li>IoT Cloud Platform OpenAPI Service vers:all/* (CVE-2026-101104, CVE-2026-96613)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-prior"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-95102",
+      "kind": "CVE",
+      "title": "Monta monta.app",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-02.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could enable attackers to gain unauthorized administrative control over vulnerable charging stations or disrupt charging services through denial-of-service attacks.</strong></p> <p>The following versions of Monta monta.app are affected:</p> <ul>",
+      "date": "2026-10-01T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-274-02",
+      "cve": "CVE-2026-95102",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-02.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could enable attackers to gain unauthorized administrative control over vulnerable charging stations or disrupt charging services through denial-of-service attacks.</strong></p> <p>The following versions of Monta monta.app are affected:</p> <ul> <li>monta.app vers:all/* (CVE-2026-95102, CVE-2026-97363, CVE-2026-97212, CVE-2026-93474)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th> <th role=\"columnheader\">Vendor</th> <th role"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2023-46604",
+      "kind": "CVE",
+      "title": "Armatura LLC Armatura One",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-01.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to gain unauthorized access to the database, execute arbitrary code on the host with the highest level of privilege, or gain control of the physical access-control system.</strong></p> <p>The following versions of Armatur",
+      "date": "2026-10-01T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-274-01",
+      "cve": "CVE-2023-46604",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-01.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to gain unauthorized access to the database, execute arbitrary code on the host with the highest level of privilege, or gain control of the physical access-control system.</strong></p> <p>The following versions of Armatura LLC Armatura One are affected:</p> <ul> <li>Armatura One <4.7.2 (CVE-2023-46604, CVE-2026-94591, CVE-2026-94592, CVE-2026-94593, CVE-2026-94594)</li> <li>Armatura One (USA) <4.6.1 (CVE-2023-46604, CVE-2026-94591, CVE-2026-94592, CVE-2026-94593, CVE-2026-94594)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" da"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-15952",
+      "kind": "CVE",
+      "title": "ABB Protection and Control IED Manager PCM600",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-03.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to escalate privileges or overwrite files.</strong></p> <p>The following versions of ABB Protection and Control IED Manager PCM600 are affected:</p> <ul> <li>Protection and Control IED Manager PCM600 <=2.14 (CVE-2026-1595",
+      "date": "2026-10-01T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-274-03",
+      "cve": "CVE-2026-15952",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-03.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to escalate privileges or overwrite files.</strong></p> <p>The following versions of ABB Protection and Control IED Manager PCM600 are affected:</p> <ul> <li>Protection and Control IED Manager PCM600 <=2.14 (CVE-2026-15952, CVE-2026-15953)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th> <th role=\"columnheader\">Vendor</th> <th role=\"columnheader\">Equipment</th> <th role=\"columnheader\">Vulnerabilities</"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-64892",
+      "kind": "CVE",
+      "title": "Johnson Controls EasyIO Neo Series EC and CW Controllers",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-04.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of this vulnerability could allow an attacker to gain access to sensitive information that could be used to conduct further attacks against the system.</strong></p> <p>The following versions of Johnson Controls EasyIO Neo Series EC and CW Controllers are affected:</p> <",
+      "date": "2026-10-01T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-274-04",
+      "cve": "CVE-2026-64892",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-274-04.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of this vulnerability could allow an attacker to gain access to sensitive information that could be used to conduct further attacks against the system.</strong></p> <p>The following versions of Johnson Controls EasyIO Neo Series EC and CW Controllers are affected:</p> <ul> <li>EasyIO Neo Series EC Controllers V3.3b63 (CVE-2026-64892)</li> <li>EasyIO Neo Series EC Controllers V3.3b62 (CVE-2026-64892)</li> <li>EasyIO Neo Series CW Controllers V3.3b25 (CVE-2026-64892)</li> <li>EasyIO Neo Series CW Controllers V3.3b24 (CVE-2026-64892)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-104286",
+      "kind": "CVE",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "<p>CISA has added one new vulnerability to its <a href=\"https://edit.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul type=\"disc\"> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-104286\">CVE-2026-104286</a> Fortinet FortiMail Path Traversal Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cyber actors",
+      "date": "2026-10-01T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/10/01/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "cve": "CVE-2026-104286",
+      "details": "<p>CISA has added one new vulnerability to its <a href=\"https://edit.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul type=\"disc\"> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-104286\">CVE-2026-104286</a> Fortinet FortiMail Path Traversal Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise.&nbsp;</p> <p><a href=\"https://edit.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk\">Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk</a> establishes vulnerability management requirements f"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-90443",
+      "kind": "CVE",
+      "title": "CISA Malcolm",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-254-01.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p>The following versions of CISA Malcolm are affected:</p> <ul> <li>Malcolm</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th> <th role=\"columnheader\"",
+      "date": "2026-10-01T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-254-01",
+      "cve": "CVE-2026-90443",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-254-01.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p>The following versions of CISA Malcolm are affected:</p> <ul> <li>Malcolm</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th> <th role=\"columnheader\">Vendor</th> <th role=\"columnheader\">Equipment</th> <th role=\"columnheader\">Vulnerabilities</th> </tr> </thead> <tbody> <tr> <td>v3 8.8</td> <td>CISA</td> <td>CISA Malcolm</td> <td>Improper Neutralization of Input During Web Page Generation (&#039;Cross-site Scripting&#039;), Improper Neutralization of Special Elements used in an OS Comma"
     },
     {
       "id": "kev:CVE-2026-104286",
@@ -954,7 +1810,21 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-104286",
       "cve": "CVE-2026-104286",
-      "product": "FortiMail"
+      "product": "FortiMail",
+      "details": "Fortinet FortiMail contains a path traversal and an improper neutralization of NULL byte or NULL character vulnerability that may allow an unauthenticated attacker to write arbitrary files on the underlying system via crafted HTTP or HTTPS requests."
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-76504",
+      "kind": "CVE",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "<p>CISA has added one new vulnerability to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-76504\" target=\"_blank\">CVE-2026-76504</a> Cisco Catalyst SD-WAN Manager Hex Encoding Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cyb",
+      "date": "2026-09-30T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/09/30/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "cve": "CVE-2026-76504",
+      "details": "<p>CISA has added one new vulnerability to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-76504\" target=\"_blank\">CVE-2026-76504</a> Cisco Catalyst SD-WAN Manager Hex Encoding Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise.&nbsp;</p> <p><a href=\"https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk\">Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk</a> establishes vulnerability management requi"
     },
     {
       "id": "kev:CVE-2026-76504",
@@ -967,7 +1837,60 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-76504",
       "cve": "CVE-2026-76504",
-      "product": "Catalyst SD-WAN Manager"
+      "product": "Catalyst SD-WAN Manager",
+      "details": "Cisco Catalyst SD-WAN Manager contains a hex encoding vulnerability that could allow an unauthenticated, remote attacker to access an affected system with privileges of the admin user due to improper handling of URI encoding in an HTTP request."
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-84409",
+      "kind": "CVE",
+      "title": "Lantronix G520 Series Cellular Gateway",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-272-01.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to replace software and execute arbitrary code with root privileges.</strong></p> <p>The following versions of Lantronix G520 Series Cellular Gateway are affected:</p> <ul> <li>G520 Series 2.6.0.4R6_stable (CVE-2026-84409",
+      "date": "2026-09-29T12:00:00.000Z",
+      "severity": "high",
+      "topic": "cryptography",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-01",
+      "cve": "CVE-2026-84409",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-272-01.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to replace software and execute arbitrary code with root privileges.</strong></p> <p>The following versions of Lantronix G520 Series Cellular Gateway are affected:</p> <ul> <li>G520 Series 2.6.0.4R6_stable (CVE-2026-84409, CVE-2026-91191)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th> <th role=\"columnheader\">Vendor</th> <th role=\"columnheader\">Equipment</th> <th role=\"columnheader\">Vulnerabilities</t"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-86950",
+      "kind": "CVE",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "<p>CISA has added one new vulnerability to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-86950\" target=\"_blank\">CVE-2026-86950</a> Apple Multiple Products Out-of-Bounds Write Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cy",
+      "date": "2026-09-29T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/09/29/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "cve": "CVE-2026-86950",
+      "details": "<p>CISA has added one new vulnerability to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-86950\" target=\"_blank\">CVE-2026-86950</a> Apple Multiple Products Out-of-Bounds Write Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise.&nbsp;</p> <p><a href=\"https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk\">Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk</a> establishes vulnerability management requ"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-71379",
+      "kind": "CVE",
+      "title": "Toptech TMS7 and TopHAT",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-272-02.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to access critical data or execute arbitrary code.</strong></p> <p>The following versions of Toptech TMS7 and TopHAT are affected:</p> <ul> <li>TMS7 7.6.3 (CVE-2026-71379, CVE-2026-70356, CVE-2026-72510, CVE-2026-63713, C",
+      "date": "2026-09-29T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-02",
+      "cve": "CVE-2026-71379",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-272-02.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to access critical data or execute arbitrary code.</strong></p> <p>The following versions of Toptech TMS7 and TopHAT are affected:</p> <ul> <li>TMS7 7.6.3 (CVE-2026-71379, CVE-2026-70356, CVE-2026-72510, CVE-2026-63713, CVE-2026-68954, CVE-2026-68068, CVE-2026-72507, CVE-2026-71302, CVE-2026-69662, CVE-2026-71189)</li> <li>TopHAT 7.6.3 (CVE-2026-71379, CVE-2026-70356, CVE-2026-72510, CVE-2026-63713, CVE-2026-68954, CVE-2026-68068, CVE-2026-72507, CVE-2026-71302, CVE-2026-69662, CVE-2026-71189)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tab"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-94204",
+      "kind": "CVE",
+      "title": "Viidure Dashcam Android Application",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-272-07.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow attackers to access, modify, or delete sensitive user data and critical system files, potentially compromising the operation of the entire platform.</strong></p> <p>The following versions of Viidure Dashcam Android Application are af",
+      "date": "2026-09-29T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-272-07",
+      "cve": "CVE-2026-94204",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-272-07.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow attackers to access, modify, or delete sensitive user data and critical system files, potentially compromising the operation of the entire platform.</strong></p> <p>The following versions of Viidure Dashcam Android Application are affected:</p> <ul> <li>Dashcam Android Application <=3.3.1.260403 (CVE-2026-94204, CVE-2026-96587)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th> <th role=\"columnheader\">Vendor</th> <t"
     },
     {
       "id": "kev:CVE-2026-86950",
@@ -980,7 +1903,8 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-86950",
       "cve": "CVE-2026-86950",
-      "product": "Multiple Products"
+      "product": "Multiple Products",
+      "details": "Apple iOS, macOS, and iPadOS contain an out-of-bounds write vulnerability in CoreGraphics that may lead to arbitrary code execution."
     },
     {
       "id": "kev:CVE-2026-88772",
@@ -993,7 +1917,8 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-88772",
       "cve": "CVE-2026-88772",
-      "product": "NetScaler"
+      "product": "NetScaler",
+      "details": "Citrix NetScaler ADC and NetScaler Gateway contain an improper restriction of operations within the bounds of a memory buffer vulnerability that could allow for remote code execution or denial of service"
     },
     {
       "id": "kev:CVE-2026-88771",
@@ -1006,7 +1931,8 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-88771",
       "cve": "CVE-2026-88771",
-      "product": "NetScaler"
+      "product": "NetScaler",
+      "details": "Citrix NetScaler ADC and NetScaler Gateway contain an improper input validation vulnerability that could allow an unauthenticated attacker to execute arbitrary commands."
     },
     {
       "id": "kev:CVE-2026-67279",
@@ -1019,7 +1945,8 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-67279",
       "cve": "CVE-2026-67279",
-      "product": "RouterOS"
+      "product": "RouterOS",
+      "details": "Mikrotik RouterOS contains an improper enforcement of behavioral workflow vulnerability that could allow an unauthenticated client to open a session channel and send an exec request. This vulnerability can be chained to achieve unauthenticated exploitation of CVE-2026-86060."
     },
     {
       "id": "kev:CVE-2026-65660",
@@ -1032,7 +1959,8 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-65660",
       "cve": "CVE-2026-65660",
-      "product": "SharePoint"
+      "product": "SharePoint",
+      "details": "Microsoft SharePoint contains a code injection vulnerability which could allow an authorized attacker to execute code over a network."
     },
     {
       "id": "kev:CVE-2026-87902",
@@ -1045,7 +1973,8 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-87902",
       "cve": "CVE-2026-87902",
-      "product": "Core"
+      "product": "Core",
+      "details": "WordPress Core contains a remote file inclusion vulnerability which could allow an unauthenticated attacker to make page-template resolution include a chosen readable local `.php` file outside the active theme directories, leading to remote code execution."
     },
     {
       "id": "kev:CVE-2026-5430",
@@ -1058,7 +1987,8 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-5430",
       "cve": "CVE-2026-5430",
-      "product": "Multiple Products"
+      "product": "Multiple Products",
+      "details": "WSO2 API Control Plane, API Manager, Traffic Manager & Universal Gateway contain a path traversal vulnerability that could allow for unrestricted file upload and lead to remote code execution."
     },
     {
       "id": "kev:CVE-2026-71362",
@@ -1071,893 +2001,65 @@
       "source": "CISA Known Exploited Vulnerabilities",
       "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-71362",
       "cve": "CVE-2026-71362",
-      "product": "Commerce and Magento"
-    },
-    {
-      "id": "kev:CVE-2026-93952",
-      "kind": "KEV",
-      "title": "Arista VeloCloud Orchestrator Improper Input Validation Vulnerability",
-      "summary": "Arista VeloCloud Orchestrator (VCO) on-prem contains an improper input validation vulnerability that may allow a remote attacker to access privileged internal functionality and impact the VCO host. Successful exploitation may compromise the confidentiality, integrity, and availability of the orchestrator and data managed by the orchestrator.",
-      "date": "2026-09-22T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "binary exploitation",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-93952",
-      "cve": "CVE-2026-93952",
-      "product": "VeloCloud Orchestrator"
-    },
-    {
-      "id": "kev:CVE-2026-94127",
-      "kind": "KEV",
-      "title": "F5 BIG-IP APM Heap-based Buffer Overflow Vulnerability",
-      "summary": "F5 BIG-IP APM contains a heap-based buffer overflow vulnerability when access policy and an OAuth profile are configured on a virtual server. This vulnerability could allow an unauthenticated attacker to perform remote code execution.",
-      "date": "2026-09-22T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "binary exploitation",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-94127",
-      "cve": "CVE-2026-94127",
-      "product": "BIG-IP APM"
-    },
-    {
-      "id": "kev:CVE-2026-93616",
-      "kind": "KEV",
-      "title": "Check Point Multiple Products Path Traversal Vulnerability",
-      "summary": "Check Point Security Management Server, Multi-Domain Security Management Server, Log Server, Multi-Domain Log Server, and SmartEvent contain a path traversal vulnerability that allows an unauthenticated attacker to upload and execute arbitrary scripts.",
-      "date": "2026-09-22T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "cryptography",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-93616",
-      "cve": "CVE-2026-93616",
-      "product": "Multiple Products"
-    },
-    {
-      "id": "kev:CVE-2026-85102",
-      "kind": "KEV",
-      "title": "Check Point Multiple Products Improper Certificate Validation Vulnerability",
-      "summary": "Check Point Security Gateway and Check Point Spark Firewall using Site to Site VPN or Remote Access VPN contain an improper certificate validation vulnerability which could allow an unauthenticated remote attacker to execute arbitrary code on the Gateway.",
-      "date": "2026-09-22T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "cryptography",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-85102",
-      "cve": "CVE-2026-85102",
-      "product": "Multiple Products"
-    },
-    {
-      "id": "release:ghidra:2026-09-21T17:38:59.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.1.4",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.4_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.4_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/National",
-      "date": "2026-09-21T17:38:59.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.4_build"
-    },
-    {
-      "id": "kev:CVE-2026-7273",
-      "kind": "KEV",
-      "title": "Zyxel GS1900 Series Switches Stack-Based Buffer Overflow Vulnerability",
-      "summary": "Zyxel GS1900 series switches contain a stack-based buffer overflow vulnerability in the CGI program which could allow a LAN-based, unauthenticated attacker to exploit the flaw and potentially execute OS commands via a crafted HTTP request.",
-      "date": "2026-09-21T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "binary exploitation",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-7273",
-      "cve": "CVE-2026-7273",
-      "product": "GS1900 Series Switches"
-    },
-    {
-      "id": "release:pwndbg:2026-09-20T19:57:40.000Z",
-      "kind": "RELEASE",
-      "title": "2026.07.29",
-      "summary": "<p><strong>This release brings:</strong> <code>exithandlers</code> command to inspect glibc exit handlers, Linux kernel task introspection without typeinfo (<code>kstack</code>, <code>kseccomp</code>, <code>ksighand</code>, <code>knamespace</code>), glibc 2.43 heap inspection improvements, heap tracker allocation call sites (<code>track-heap --where</code>), a much richer <code>procinfo</code> out",
-      "date": "2026-09-20T19:57:40.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2026.07.29"
-    },
-    {
-      "id": "release:pwndbg:2026-09-20T17:09:03.000Z",
-      "kind": "RELEASE",
-      "title": "2026.09.15",
-      "summary": "<p><strong>This release brings lots of disassembly improvements: backwards disassembly in context and <code>nearpc</code>, better indirect jumps display and <code>nearpc -f|--function</code> working without debugging symbols; new <code>stack-vis</code> command to visualize stack frames (similarly to <code>vis-heap-chunks</code>); emulation working with x64 kernels; <code>v2p</code>, <code>p2v</cod",
-      "date": "2026-09-20T17:09:03.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2026.09.15"
-    },
-    {
-      "id": "release:cyberchef:2026-09-18T11:54:23.000Z",
-      "kind": "RELEASE",
-      "title": "v11.5.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-09-18T11:54:23.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.5.0"
-    },
-    {
-      "id": "kev:CVE-2025-39964",
-      "kind": "KEV",
-      "title": "Linux Kernel Race Condition Vulnerability",
-      "summary": "Linux Kernel contains a race condition vulnerability which allows concurrent writes to the same AF_ALG socket causing data to be unpredictably interleaved and creating inconsistencies in the socket's internal state.",
-      "date": "2026-09-18T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "linux and systems",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2025-39964",
-      "cve": "CVE-2025-39964",
-      "product": "Kernel"
-    },
-    {
-      "id": "kev:CVE-2026-53266",
-      "kind": "KEV",
-      "title": "Linux Kernel Out-of-Bounds Write Vulnerability",
-      "summary": "Linux Kernel contains an out-of-bounds write vulnerability in the ebtables SNAT target which allows an ARP sender hardware address rewrite to write directly into a nonlinear socket-buffer fragment backed by a splice-imported file page. The impacted product(s) could be end-of-life (EoL) and/or end-of-service (EoS). Users are advised to discontinue use and/or transition to a supported version.",
-      "date": "2026-09-18T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "linux and systems",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-53266",
-      "cve": "CVE-2026-53266",
-      "product": "Kernel"
-    },
-    {
-      "id": "kev:CVE-2025-39682",
-      "kind": "KEV",
-      "title": "Linux Kernel Improper Check for Unusual or Exceptional Conditions Vulnerability",
-      "summary": "Linux Kernel contains an improper check for unusual or exceptional conditions vulnerability in the TLS receive path which allows a zero-length record retrieved from the rx_list to bypass the intended recvmsg() record-type handling, potentially causing subsequent TLS records to be processed using incorrect zero-copy and queuing assumptions. The impacted product(s) could be end-of-life (EoL) and/or end-of-service (EoS). Users are advised to discontinue use and/or transition to a supported version.",
-      "date": "2026-09-18T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "linux and systems",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2025-39682",
-      "cve": "CVE-2025-39682",
-      "product": "Kernel"
-    },
-    {
-      "id": "kev:CVE-2026-58704",
-      "kind": "KEV",
-      "title": "Google Pixel Improper Authorization Vulnerability",
-      "summary": "Google Pixel devices contain an improper authorization vulnerability in the cellular modem. A logic error may allow an attacker to bypass permission checks and escalate privileges.",
-      "date": "2026-09-16T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "identity and access",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-58704",
-      "cve": "CVE-2026-58704",
-      "product": "Pixel"
-    },
-    {
-      "id": "kev:CVE-2026-76460",
-      "kind": "KEV",
-      "title": "Cisco Identity Services Engine Incorrect Use of Privileged APIs Vulnerability",
-      "summary": "Cisco Identity Services Engine (ISE) and Cisco ISE Passive Identity Connector (ISE-PIC) contain an incorrect use of privileged APIs vulnerability that could allow an unauthenticated, remote attacker to gain unauthorized access to the affected device by bypassing the web-based management interface.",
-      "date": "2026-09-16T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "web security",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-76460",
-      "cve": "CVE-2026-76460",
-      "product": "Identity Services Engine"
-    },
-    {
-      "id": "kev:CVE-2026-87886",
-      "kind": "KEV",
-      "title": "Acronis Backup Incorrect Default Permissions Vulnerability",
-      "summary": "Acronis Backup plugin for cPanel & WHM and extension for Plesk contains an incorrect default permissions vulnerability that could allow for privilege escalation.",
-      "date": "2026-09-16T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "identity and access",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-87886",
-      "cve": "CVE-2026-87886",
-      "product": "Backup"
-    },
-    {
-      "id": "kev:CVE-2026-76461",
-      "kind": "KEV",
-      "title": "Cisco Secure Email Gateway SQL Injection Vulnerability",
-      "summary": "Cisco AsyncOS software for Cisco Secure Email Gateway (SEG) contains a SQL injection vulnerability that could allow an unauthenticated, remote attacker to execute arbitrary commands with root privileges on the underlying operating system.",
-      "date": "2026-09-14T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "web security",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-76461",
-      "cve": "CVE-2026-76461",
-      "product": "Secure Email Gateway"
-    },
-    {
-      "id": "release:radare2:2026-09-06T17:32:21.000Z",
-      "kind": "RELEASE",
-      "title": "6.2.2",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"infandmore\"<br> Version: 6.2.2<br> Previous: 6.2.0<br> AbiDiff: 132-142 (10)<br> Commits: 388<br> Contributors: 22</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.2/radare2-6.2.2.tar.xz | tar xJv radare2-6.2.2/sy",
-      "date": "2026-09-06T17:32:21.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.2.2"
-    },
-    {
-      "id": "release:sqlmap:2026-09-02T05:42:40.000Z",
-      "kind": "RELEASE",
-      "title": "1.10.9",
-      "summary": "<p>Salvaging (and verified) what's useful from <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"5317063518\" data-permission-text=\"Title is private\" data-url=\"https://github.com/sqlmapproject/sqlmap/issues/6103\" data-hovercard-type=\"pull_request\" data-hovercard-url=\"/sqlmapproject/sqlmap/pull/6103/hovercard\" href=\"https://github.com/sqlmapproject/sqlmap/pull/6103\"",
-      "date": "2026-09-02T05:42:40.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.9"
-    },
-    {
-      "id": "release:cyberchef:2026-08-18T18:50:39.000Z",
-      "kind": "RELEASE",
-      "title": "v11.4.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-08-18T18:50:39.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.4.0"
-    },
-    {
-      "id": "release:ghidra:2026-08-18T16:19:52.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.1.3",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.3_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.3_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/National",
-      "date": "2026-08-18T16:19:52.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.3_build"
-    },
-    {
-      "id": "release:radare2:2026-08-07T19:21:51.000Z",
-      "kind": "RELEASE",
-      "title": "6.2.0",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"Febrer Deams\"<br> Version: 6.2.0<br> Previous: 6.1.8<br> AbiDiff: 110-132 (22)<br> Commits: 503<br> Contributors: 25</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.0/radare2-6.2.0.tar.xz | tar xJv radare2-6.2.0/",
-      "date": "2026-08-07T19:21:51.000Z",
-      "severity": "info",
-      "topic": "cryptography",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.2.0"
-    },
-    {
-      "id": "release:sqlmap:2026-08-04T15:02:57.000Z",
-      "kind": "RELEASE",
-      "title": "1.10.8",
-      "summary": "<p>Couple of trivial bug fixes</p>",
-      "date": "2026-08-04T15:02:57.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.8"
-    },
-    {
-      "id": "release:cyberchef:2026-07-24T07:23:41.000Z",
-      "kind": "RELEASE",
-      "title": "v11.3.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-07-24T07:23:41.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.3.0"
-    },
-    {
-      "id": "release:sqlmap:2026-07-01T08:14:11.000Z",
-      "kind": "RELEASE",
-      "title": "1.10.7",
-      "summary": "<p>Minor optimization</p>",
-      "date": "2026-07-01T08:14:11.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.7"
-    },
-    {
-      "id": "release:radare2:2026-06-23T12:51:51.000Z",
-      "kind": "RELEASE",
-      "title": "6.1.8",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"Exploit Twist\"<br> Version: 6.1.8<br> Previous: 6.1.6<br> AbiDiff: 107-110 (3)<br> Commits: 236<br> Contributors: 18</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.1.8/radare2-6.1.8.tar.xz | tar xJv radare2-6.1.8/",
-      "date": "2026-06-23T12:51:51.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.1.8"
-    },
-    {
-      "id": "release:cyberchef:2026-06-17T11:26:07.000Z",
-      "kind": "RELEASE",
-      "title": "v11.2.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-06-17T11:26:07.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.2.0"
-    },
-    {
-      "id": "release:cyberchef:2026-06-13T08:52:50.000Z",
-      "kind": "RELEASE",
-      "title": "v11.1.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-06-13T08:52:50.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.1.0"
-    },
-    {
-      "id": "release:ghidra:2026-06-05T18:24:35.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.1.2",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.2_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1.2_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/National",
-      "date": "2026-06-05T18:24:35.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.2_build"
-    },
-    {
-      "id": "release:radare2:2026-06-02T23:07:09.000Z",
-      "kind": "RELEASE",
-      "title": "6.1.6",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"lospatos2\"<br> Version: 6.1.6<br> Previous: 6.1.4<br> AbiDiff: 83-107 (24)<br> Commits: 455<br> Contributors: 25</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.1.6/radare2-6.1.6.tar.xz | tar xJv radare2-6.1.6/sys/",
-      "date": "2026-06-02T23:07:09.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.1.6"
-    },
-    {
-      "id": "release:sqlmap:2026-06-02T11:06:29.000Z",
-      "kind": "RELEASE",
-      "title": "1.10.6",
-      "summary": "<p>Fix WebSocket request traffic logging</p>",
-      "date": "2026-06-02T11:06:29.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.6"
-    },
-    {
-      "id": "release:ghidra:2026-05-27T18:21:37.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra_12.1.1_build",
-      "summary": "<p>GP-1 Additional ChangeHistory revision for 12.1.1 release</p>",
-      "date": "2026-05-27T18:21:37.000Z",
-      "severity": "info",
-      "topic": "reverse engineering",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1.1_build"
-    },
-    {
-      "id": "release:ghidra:2026-05-13T19:48:27.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.1",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.1_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/NationalSecu",
-      "date": "2026-05-13T19:48:27.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.1_build"
-    },
-    {
-      "id": "release:hydra:2026-05-03T20:16:09.000Z",
-      "kind": "RELEASE",
-      "title": "v9.7",
-      "summary": "<h3>Release 9.7</h3> <ul> <li>GTK3 support for xhydra by elboulangero</li> <li>mongo v2 support (thanks to devjunix)</li> <li>POP3 buffer overflow fix</li> <li>several other small fixes and enhancements through PRs - thank you!</li> </ul>",
-      "date": "2026-05-03T20:16:09.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "THC Hydra Releases (Network Login Cracker)",
-      "sourceUrl": "https://github.com/vanhauser-thc/thc-hydra/releases/tag/v9.7"
-    },
-    {
-      "id": "release:sqlmap:2026-05-02T06:59:38.000Z",
-      "kind": "RELEASE",
-      "title": "1.10.5",
-      "summary": "<p>Minor update</p>",
-      "date": "2026-05-02T06:59:38.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.5"
-    },
-    {
-      "id": "release:cyberchef:2026-04-28T15:02:46.000Z",
-      "kind": "RELEASE",
-      "title": "v11.0.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-04-28T15:02:46.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v11.0.0"
-    },
-    {
-      "id": "release:cyberchef:2026-04-27T13:31:17.000Z",
-      "kind": "RELEASE",
-      "title": "v10.24.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-04-27T13:31:17.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v10.24.0"
-    },
-    {
-      "id": "release:radare2:2026-04-13T21:02:49.000Z",
-      "kind": "RELEASE",
-      "title": "6.1.4",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"CottonMouse\"<br> Version: 6.1.4<br> Previous: 6.1.2<br> AbiDiff: 77-83 (6)<br> Commits: 340<br> Contributors: 20</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.1.4/radare2-6.1.4.tar.xz | tar xJv radare2-6.1.4/sys/",
-      "date": "2026-04-13T21:02:49.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.1.4"
-    },
-    {
-      "id": "release:sqlmap:2026-04-09T16:01:47.000Z",
-      "kind": "RELEASE",
-      "title": "1.10.4",
-      "summary": "<p>Fixes <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"4228698877\" data-permission-text=\"Title is private\" data-url=\"https://github.com/sqlmapproject/sqlmap/issues/6043\" data-hovercard-type=\"issue\" data-hovercard-url=\"/sqlmapproject/sqlmap/issues/6043/hovercard\" href=\"https://github.com/sqlmapproject/sqlmap/issues/6043\">#6043</a></p>",
-      "date": "2026-04-09T16:01:47.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.4"
-    },
-    {
-      "id": "release:cyberchef:2026-04-07T08:47:11.000Z",
-      "kind": "RELEASE",
-      "title": "v10.23.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-04-07T08:47:11.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v10.23.0"
-    },
-    {
-      "id": "release:seclists:2026-03-23T06:16:08.000Z",
-      "kind": "RELEASE",
-      "title": "2026.1",
-      "summary": "<h1>Highlights</h1> <h2>🔥 New wordlists</h2> <ul> <li><strong>🔥 feat(wordlist): Created 2025 most used passwords wordlist (PR <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"3639550843\" data-permission-text=\"Title is private\" data-url=\"https://github.com/danielmiessler/SecLists/issues/1263\" data-hovercard-type=\"pull_request\" data-hovercard-url=\"/danielmiessler",
-      "date": "2026-03-23T06:16:08.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "SecLists Payloads & Dictionaries",
-      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2026.1"
-    },
-    {
-      "id": "release:radare2:2026-03-19T12:34:50.000Z",
-      "kind": "RELEASE",
-      "title": "6.1.2",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"Brainroot\"<br> Version: 6.1.2<br> Previous: 6.1.0<br> AbiDiff: 70-77 (7)<br> Commits: 224<br> Contributors: 15</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.1.2/radare2-6.1.2.tar.xz | tar xJv radare2-6.1.2/sys/in",
-      "date": "2026-03-19T12:34:50.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.1.2"
-    },
-    {
-      "id": "release:sqlmap:2026-03-10T13:42:51.000Z",
-      "kind": "RELEASE",
-      "title": "1.10.3",
-      "summary": "<p>Minor improvement of ERROR_PARSING_REGEXES</p>",
-      "date": "2026-03-10T13:42:51.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.3"
-    },
-    {
-      "id": "release:ghidra:2026-03-04T09:55:58.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.0.4",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0.4_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0.4_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/National",
-      "date": "2026-03-04T09:55:58.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0.4_build"
-    },
-    {
-      "id": "release:pwndbg:2026-02-19T17:09:34.000Z",
-      "kind": "RELEASE",
-      "title": "2026.02.18",
-      "summary": "<p><em>This is a hotfix release for the <a href=\"https://github.com/pwndbg/pwndbg/releases/tag/2026.02.17\">2026.02.17</a> recent release.</em></p> <p><strong>This release brings A LOT:</strong> radare2-inspired branch visualization in <code>nearpc</code> disassembly, new decompiler integration (supporting IDA, Binary Ninja, Ghidra and angr), stack variable annotations from debug info, new kernel d",
-      "date": "2026-02-19T17:09:34.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2026.02.18"
-    },
-    {
-      "id": "release:pwndbg:2026-02-18T14:55:13.000Z",
-      "kind": "RELEASE",
-      "title": "2026.02.17",
-      "summary": "<p>Please use <a href=\"https://github.com/pwndbg/pwndbg/releases/tag/2026.02.18\">2026.02.18</a> release</p>",
-      "date": "2026-02-18T14:55:13.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2026.02.17"
-    },
-    {
-      "id": "release:radare2:2026-02-17T11:02:48.000Z",
-      "kind": "RELEASE",
-      "title": "6.1.0",
-      "summary": "<h2>Release Notes</h2> <p>Codename: The Low Table<br> Version: 6.1.0<br> Previous: 6.0.8<br> AbiDiff: 54-70 (16)<br> Commits: 346<br> Contributors: 24</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.1.0/radare2-6.1.0.tar.xz | tar xJv radare2-6.1.0/sys",
-      "date": "2026-02-17T11:02:48.000Z",
-      "severity": "info",
-      "topic": "cryptography",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.1.0"
-    },
-    {
-      "id": "release:cyberchef:2026-02-12T10:37:39.000Z",
-      "kind": "RELEASE",
-      "title": "v10.22.1",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-02-12T10:37:39.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v10.22.1"
-    },
-    {
-      "id": "release:cyberchef:2026-02-11T15:59:34.000Z",
-      "kind": "RELEASE",
-      "title": "v10.22.0",
-      "summary": "<p>See the <a href=\"https://github.com/gchq/CyberChef/blob/master/CHANGELOG.md\">CHANGELOG</a> and <a href=\"https://github.com/gchq/CyberChef/commits/master\">commit messages</a> for details.</p>",
-      "date": "2026-02-11T15:59:34.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "sourceUrl": "https://github.com/gchq/CyberChef/releases/tag/v10.22.0"
-    },
-    {
-      "id": "release:ghidra:2026-02-11T10:30:37.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.0.3",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0.3_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0.3_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/National",
-      "date": "2026-02-11T10:30:37.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0.3_build"
-    },
-    {
-      "id": "release:sqlmap:2026-02-01T21:57:47.000Z",
-      "kind": "RELEASE",
-      "title": "1.10.2",
-      "summary": "<p>Improving keep-alive support</p>",
-      "date": "2026-02-01T21:57:47.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.2"
-    },
-    {
-      "id": "release:ghidra:2026-01-30T18:13:31.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.0.2",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0.2_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0.2_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/National",
-      "date": "2026-01-30T18:13:31.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0.2_build"
-    },
-    {
-      "id": "release:ghidra:2026-01-15T10:15:50.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.0.1",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0.1_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0.1_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/National",
-      "date": "2026-01-15T10:15:50.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0.1_build"
-    },
-    {
-      "id": "release:sqlmap:2026-01-01T18:27:27.000Z",
-      "kind": "RELEASE",
-      "title": "Tiarsus Helexina",
-      "summary": "<p>Stable version 1.10 (<a href=\"https://github.com/sqlmapproject/sqlmap/compare/1.9...1.10\">changeset</a>)</p>",
-      "date": "2026-01-01T18:27:27.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10"
-    },
-    {
-      "id": "release:radare2:2025-12-30T23:38:50.000Z",
-      "kind": "RELEASE",
-      "title": "6.0.8",
-      "summary": "<h2>Release Notes</h2> <p>Codename: CleanWheat<br> Version: 6.0.8<br> Previous: 6.0.7<br> AbiDiff: 39-54 (15)<br> Commits: 291<br> Contributors: 11</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.0.8/radare2-6.0.8.tar.xz | tar xJv radare2-6.0.8/sys/in",
-      "date": "2025-12-30T23:38:50.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.0.8"
-    },
-    {
-      "id": "release:ghidra:2025-12-08T18:41:17.000Z",
-      "kind": "RELEASE",
-      "title": "Ghidra 12.0",
-      "summary": "<ul> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0_build/Ghidra/Configurations/Public_Release/src/global/docs/WhatsNew.md\">What's New</a></li> <li><a href=\"https://github.com/NationalSecurityAgency/ghidra/blob/Ghidra_12.0_build/Ghidra/Configurations/Public_Release/src/global/docs/ChangeHistory.md\">Change History</a></li> <li><a href=\"https://github.com/NationalSecu",
-      "date": "2025-12-08T18:41:17.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "NSA Ghidra Releases (Reverse Engineering)",
-      "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0_build"
-    },
-    {
-      "id": "release:radare2:2025-11-23T20:10:45.000Z",
-      "kind": "RELEASE",
-      "title": "6.0.7",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"sixseven\"<br> Version: 6.0.7<br> Previous: 6.0.6<br> AbiDiff: 39-39 (0)<br> Commits: 4<br> Contributors: 2</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.0.7/radare2-6.0.7.tar.xz | tar xJv radare2-6.0.7/sys/instal",
-      "date": "2025-11-23T20:10:45.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.0.7"
-    },
-    {
-      "id": "release:pwndbg:2025-11-11T15:18:55.000Z",
-      "kind": "RELEASE",
-      "title": "2025.04.13",
-      "summary": "<p><strong>This release introduces breakpoints display in disasm view (shown as \"b+\" by default), new command (<code>libcinfo</code>), improved LLDB support (CTRL+C cancellation and programmatic controls of debugger) as well as <a href=\"https://pwndbg.re/dev/\" rel=\"nofollow\">better docs</a> and commands &amp; UI fixes and improvements.</strong></p> <p>This is also the first release that ships a po",
-      "date": "2025-11-11T15:18:55.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2025.04.13"
-    },
-    {
-      "id": "release:pwndbg:2025-11-11T15:18:43.000Z",
-      "kind": "RELEASE",
-      "title": "2025.04.18",
-      "summary": "<p><strong>This is a hotfix release for the <a href=\"https://github.com/pwndbg/pwndbg/releases/tag/2025.04.13\">2025.04.13</a> recent release.</strong> Since we made a breaking change of renaming commands with <code>_</code> to <code>-</code>, we added the previous command name aliases which inform about it (<a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"3002689",
-      "date": "2025-11-11T15:18:43.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2025.04.18"
-    },
-    {
-      "id": "release:pwndbg:2025-11-11T15:18:18.000Z",
-      "kind": "RELEASE",
-      "title": "2025.10.10",
-      "summary": "<p>This release brings major <strong>improvements to LLDB support</strong> (Objective-C + Mach-O support on Darwin, better <code>vmmap</code>, <code>commpage</code> command, fzf tab completion &amp; more), <strong>improved Linux kernel debugging</strong> without <code>.debuginfo</code> and other enhancements (better <code>vmmap</code>, new commands for dmesg/modules/config/syscall/task info dumpin",
-      "date": "2025-11-11T15:18:18.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2025.10.10"
-    },
-    {
-      "id": "release:pwndbg:2025-11-11T15:17:11.000Z",
-      "kind": "RELEASE",
-      "title": "2025.10.20",
-      "summary": "<p><strong>This release brings improved disassembly and architecture handling (including fixes for s390x and ARM), enhanced page marker detection, new kernel BPF (<code>kbpf</code>) command, and various stability fixes and cleanups.</strong></p> <p>Want to support us or buy us a coffee? Visit our <a href=\"https://github.com/sponsors/pwndbg\">Pwndbg sponsors page</a>!</p> <hr> <h2>Quick install</h2>",
-      "date": "2025-11-11T15:17:11.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2025.10.20"
-    },
-    {
-      "id": "release:pwntools:2025-10-12T15:16:44.000Z",
-      "kind": "RELEASE",
-      "title": "Release 4.15.0",
-      "summary": "<h1>This is the last release supporting Python 2 and Python <3.10. See <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"2614216428\" data-permission-text=\"Title is private\" data-url=\"https://github.com/Gallopsled/pwntools/issues/2495\" data-hovercard-type=\"issue\" data-hovercard-url=\"/Gallopsled/pwntools/issues/2495/hovercard\" href=\"https://github.com/Gallopsled/pwn",
-      "date": "2025-10-12T15:16:44.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwntools Releases (Binary Exploitation)",
-      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.15.0"
-    },
-    {
-      "id": "release:seclists:2025-09-19T05:50:22.000Z",
-      "kind": "RELEASE",
-      "title": "2025.3",
-      "summary": "<h1>Important changes</h1> <h2>📛 Deprecated DirBuster wordlists</h2> <p>The dirbuster wordlists were made in 2007, and are now considered obsolete. Instead, these wordlists are recommended for testing modern web environments:</p> <ul> <li>Discovery/Web-Content/combined_words.txt</li> <li>Discovery/Web-Content/combined_directories.txt</li> </ul> <p>Both of these wordlists are composed of various o",
-      "date": "2025-09-19T05:50:22.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "SecLists Payloads & Dictionaries",
-      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2025.3"
-    },
-    {
-      "id": "release:hydra:2025-09-03T08:04:06.000Z",
-      "kind": "RELEASE",
-      "title": "hydra 9.6",
-      "summary": "<p>Hydra Release 9.6</p> <ul> <li>freerdp v2 -> v3</li> <li>compile fixes (eg. gcc-15)</li> <li>pop3 capability fix</li> <li>mysql library upgrade</li> <li>http-form fixes</li> <li>postgres custom port support</li> <li>smb better expired support</li> <li>ssh legacy cipher support</li> <li>http 403 support<br> ! Thanks for all the pull requests!</li> </ul>",
-      "date": "2025-09-03T08:04:06.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "THC Hydra Releases (Network Login Cracker)",
-      "sourceUrl": "https://github.com/vanhauser-thc/thc-hydra/releases/tag/v9.6"
-    },
-    {
-      "id": "release:pwndbg:2025-06-01T00:05:57.000Z",
-      "kind": "RELEASE",
-      "title": "2025.05.30",
-      "summary": "<p><strong>This release brings an \"✘\" marker for branches that won't be taken, new Linux kernel debugging commands (<code>buddydump</code>, <code>msr</code>) and improvements to the <code>slab</code> command, new <code>dump-register-frame</code> command helpful when dealing with ARM Cortex-M exceptions, improved disassembly for LoongArch64, ARM, MIPS architectures as well as initial s390x architec",
-      "date": "2025-06-01T00:05:57.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2025.05.30"
-    },
-    {
-      "id": "release:seclists:2025-04-25T23:58:52.000Z",
-      "kind": "RELEASE",
-      "title": "2025.2",
-      "summary": "<p>🎉 The second release of 2025! 🎉<br> Lead Contributor: <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/ItsIgnacioPortal/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/ItsIgnacioPortal\">@ItsIgnacioPortal</a></p> <h1>Highlights</h1> <p>🌟 Two new tools for creating and manipulating wordlis",
-      "date": "2025-04-25T23:58:52.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "SecLists Payloads & Dictionaries",
-      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2025.2"
-    },
-    {
-      "id": "release:pwndbg:2025-04-11T22:20:39.000Z",
-      "kind": "RELEASE",
-      "title": "2025.02.19 Release",
-      "summary": "<p><strong>This release features commands for dumping Linux kernel nftables internals, initial support for LoongArch64 architecture, fix for GDB 16+, improved LLDB support, few commands improvements as well as lots of fixes!</strong></p> <p>See <strong>What's changed</strong> and <strong>Community Contributions</strong> for a summary of user-facing changes from this release and a list of other rel",
-      "date": "2025-04-11T22:20:39.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwndbg Releases (GDB Pwn Extension)",
-      "sourceUrl": "https://github.com/pwndbg/pwndbg/releases/tag/2025.02.19"
-    },
-    {
-      "id": "release:pwntools:2025-03-24T12:31:25.000Z",
-      "kind": "RELEASE",
-      "title": "Release 4.15.0beta1",
-      "summary": "<h2>What's Changed</h2> <ul> <li>Poll before reading /proc/maps in <code>process.libs()</code> to avoid race condition by <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/peace-maker/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/peace-maker\">@peace-maker</a> in <a class=\"issue-link js-issue-",
-      "date": "2025-03-24T12:31:25.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwntools Releases (Binary Exploitation)",
-      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.15.0beta1"
-    },
-    {
-      "id": "release:pwntools:2025-03-24T12:20:07.000Z",
-      "kind": "RELEASE",
-      "title": "Release 4.14.1",
-      "summary": "<h2>What's Changed</h2> <ul> <li>Poll before reading /proc/maps in <code>process.libs()</code> to avoid race condition by <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/peace-maker/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/peace-maker\">@peace-maker</a> in <a class=\"issue-link js-issue-",
-      "date": "2025-03-24T12:20:07.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwntools Releases (Binary Exploitation)",
-      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.14.1"
-    },
-    {
-      "id": "release:seclists:2025-02-22T09:24:01.000Z",
-      "kind": "RELEASE",
-      "title": "2025.1",
-      "summary": "<p>🎉 The first release of 2025! 🎉<br> <em>Lead Contributor: <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/ItsIgnacioPortal/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/ItsIgnacioPortal\">@ItsIgnacioPortal</a></em></p> <h1>Highlights</h1> <p>This release adds <strong>new documentation</s",
-      "date": "2025-02-22T09:24:01.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "SecLists Payloads & Dictionaries",
-      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2025.1"
-    },
-    {
-      "id": "release:pwntools:2025-01-16T11:19:40.000Z",
-      "kind": "RELEASE",
-      "title": "Release 4.14.0beta0",
-      "summary": "<h2>What's Changed</h2> <ul> <li>Add local libc database provider for libcdb by <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/the-soloist/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/the-soloist\">@the-soloist</a> in <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load titl",
-      "date": "2025-01-16T11:19:40.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwntools Releases (Binary Exploitation)",
-      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.14.0beta0"
-    },
-    {
-      "id": "release:pwntools:2025-01-16T11:19:05.000Z",
-      "kind": "RELEASE",
-      "title": "Release 4.14.0",
-      "summary": "<h2>What's Changed</h2> <ul> <li>Return buffered data on first EOF in tube.readline() by <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/peace-maker/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/peace-maker\">@peace-maker</a> in <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to",
-      "date": "2025-01-16T11:19:05.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwntools Releases (Binary Exploitation)",
-      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.14.0"
-    },
-    {
-      "id": "release:pwntools:2025-01-15T08:27:36.000Z",
-      "kind": "RELEASE",
-      "title": "Release 4.15.0beta0",
-      "summary": "<h2>What's Changed</h2> <ul> <li>Deprecate 'keepends' argument in favor of 'drop' by <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/MrQubo/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/MrQubo\">@MrQubo</a> in <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id",
-      "date": "2025-01-15T08:27:36.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwntools Releases (Binary Exploitation)",
-      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.15.0beta0"
-    },
-    {
-      "id": "release:seclists:2024-11-20T10:42:28.000Z",
-      "kind": "RELEASE",
-      "title": "2024.4",
-      "summary": "<p>Fourth (and final) release of 2024!<br> 🎉 This release includes <a href=\"https://github.com/danielmiessler/SecLists/compare/2024.3...2024.4\">multiple updates</a> from the community =)<br> 🥇 Thank you everyone <3</p> <p>Shout-out to: <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/Dec0y-jb/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dim",
-      "date": "2024-11-20T10:42:28.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "SecLists Payloads & Dictionaries",
-      "sourceUrl": "https://github.com/danielmiessler/SecLists/releases/tag/2024.4"
-    },
-    {
-      "id": "release:pwntools:2024-09-29T22:43:59.000Z",
-      "kind": "RELEASE",
-      "title": "Release 4.14.0beta1",
-      "summary": "<h2>What's Changed</h2> <ul> <li>Fix parsing the PLT on Windows by <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/peace-maker/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/peace-maker\">@peace-maker</a> in <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"2",
-      "date": "2024-09-29T22:43:59.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwntools Releases (Binary Exploitation)",
-      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.14.0beta1"
-    },
-    {
-      "id": "release:pwntools:2024-09-29T21:50:10.000Z",
-      "kind": "RELEASE",
-      "title": "Release 4.13.1",
-      "summary": "<h2>What's Changed</h2> <ul> <li>Fix parsing the PLT on Windows by <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/peace-maker/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/peace-maker\">@peace-maker</a> in <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"2",
-      "date": "2024-09-29T21:50:10.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "pwntools Releases (Binary Exploitation)",
-      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.13.1"
+      "product": "Commerce and Magento",
+      "details": "Adobe Commerce and Magento contains an incorrect authorization vulnerability that could allow an attacker to leverage this vulnerability to gain elevated access to sensitive resources without any user interaction."
     }
   ],
   "topicSignals": [
     {
       "topic": "web security",
-      "count": 47,
+      "count": 73,
       "reason": "Recent source activity is clustering around web security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "binary exploitation",
-      "count": 34,
+      "count": 36,
       "reason": "Recent source activity is clustering around binary exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
+      "topic": "systems and exploitation",
+      "count": 30,
+      "reason": "Recent source activity is clustering around systems and exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
       "topic": "general security",
-      "count": 10,
+      "count": 29,
       "reason": "Recent source activity is clustering around general security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "cryptography",
-      "count": 8,
+      "count": 10,
       "reason": "Recent source activity is clustering around cryptography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "linux and systems",
-      "count": 3,
+      "count": 8,
       "reason": "Recent source activity is clustering around linux and systems. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "identity and access",
-      "count": 2,
+      "count": 6,
       "reason": "Recent source activity is clustering around identity and access. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "reverse engineering",
-      "count": 1,
+      "count": 2,
       "reason": "Recent source activity is clustering around reverse engineering. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "digital forensics",
+      "count": 2,
+      "reason": "Recent source activity is clustering around digital forensics. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "cloud and containers",
+      "count": 1,
+      "reason": "Recent source activity is clustering around cloud and containers. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "steganography",
+      "count": 1,
+      "reason": "Recent source activity is clustering around steganography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     }
   ],
   "sources": [
@@ -2011,11 +2113,61 @@
       "url": "https://github.com/sqlmapproject/sqlmap/releases.atom"
     },
     {
+      "id": "nuclei-templates",
+      "name": "ProjectDiscovery Nuclei Vulnerability Templates",
+      "status": "ok",
+      "count": 10,
+      "url": "https://github.com/projectdiscovery/nuclei-templates/releases.atom"
+    },
+    {
+      "id": "owasp-cheatsheets",
+      "name": "OWASP Security Cheat Sheets",
+      "status": "ok",
+      "count": 0,
+      "url": "https://github.com/OWASP/CheatSheetSeries/releases.atom"
+    },
+    {
       "id": "seclists",
       "name": "SecLists Payloads & Dictionaries",
       "status": "ok",
       "count": 10,
       "url": "https://github.com/danielmiessler/SecLists/releases.atom"
+    },
+    {
+      "id": "cisa-advisories",
+      "name": "CISA Cybersecurity Advisories (US-CERT)",
+      "status": "ok",
+      "count": 15,
+      "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml"
+    },
+    {
+      "id": "project-zero",
+      "name": "Google Project Zero 0-Day & Memory Research",
+      "status": "ok",
+      "count": 10,
+      "url": "https://googleprojectzero.blogspot.com/atom.xml"
+    },
+    {
+      "id": "portswigger",
+      "name": "PortSwigger Web Security Research",
+      "status": "error",
+      "count": 0,
+      "url": "https://portswigger.net/research/rss",
+      "error": "fetch failed"
+    },
+    {
+      "id": "the-hacker-news",
+      "name": "The Hacker News Threat Intelligence",
+      "status": "ok",
+      "count": 14,
+      "url": "https://thehackernews.com/feeds/posts/default"
+    },
+    {
+      "id": "bleepingcomputer",
+      "name": "BleepingComputer Vulnerability Disclosures",
+      "status": "ok",
+      "count": 15,
+      "url": "https://www.bleepingcomputer.com/feed/"
     },
     {
       "id": "hydra",
@@ -2027,10 +2179,9 @@
     {
       "id": "gtfobins",
       "name": "GTFOBins technique list",
-      "status": "error",
-      "count": 0,
-      "url": "https://gtfobins.github.io/index.json",
-      "error": "HTTP 404 Not Found"
+      "status": "ok",
+      "count": 30,
+      "url": "https://gtfobins.github.io/index.json"
     }
   ],
   "notes": [
