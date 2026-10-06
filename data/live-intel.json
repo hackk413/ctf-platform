@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-05T11:13:14.052Z",
+  "updatedAt": "2026-10-06T11:02:42.214Z",
   "status": "partial",
   "summary": {
     "vulnerabilities": 0,
@@ -883,6 +883,28 @@
   ],
   "items": [
     {
+      "id": "release:sqlmap:2026-10-05T21:46:59.000Z",
+      "kind": "RELEASE",
+      "title": "1.10.10",
+      "summary": "<p>Fixes <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"5705513248\" data-permission-text=\"Title is private\" data-url=\"https://github.com/sqlmapproject/sqlmap/issues/6137\" data-hovercard-type=\"issue\" data-hovercard-url=\"/sqlmapproject/sqlmap/issues/6137/hovercard\" href=\"https://github.com/sqlmapproject/sqlmap/issues/6137\">#6137</a></p>",
+      "date": "2026-10-05T21:46:59.000Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "sqlmap Releases (Web Application Security)",
+      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.10"
+    },
+    {
+      "id": "release:radare2:2026-10-05T19:52:50.000Z",
+      "kind": "RELEASE",
+      "title": "6.2.4",
+      "summary": "<h2>Release Notes</h2> <p>Codename: \"The Magnetician\"<br> Version: 6.2.4<br> Previous: 6.2.2<br> AbiDiff: 142-152 (10)<br> Commits: 453<br> Contributors: 18</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.4/radare2-6.2.4.tar.xz | tar xJv radare2-6.2",
+      "date": "2026-10-05T19:52:50.000Z",
+      "severity": "info",
+      "topic": "cryptography",
+      "source": "radare2 / Cutter Releases (Binary Analysis)",
+      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.2.4"
+    },
+    {
       "id": "kev:CVE-2026-88779",
       "kind": "KEV",
       "title": "Citrix NetScaler Improper Restriction of Operations within the Bounds of a Memory Buffer Vulnerability",
@@ -1681,17 +1703,6 @@
       "sourceUrl": "https://github.com/NationalSecurityAgency/ghidra/releases/tag/Ghidra_12.0_build"
     },
     {
-      "id": "release:sqlmap:2025-12-02T20:04:05.000Z",
-      "kind": "RELEASE",
-      "title": "1.9.12",
-      "summary": "<p>Fixes <a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"3686506037\" data-permission-text=\"Title is private\" data-url=\"https://github.com/sqlmapproject/sqlmap/issues/5985\" data-hovercard-type=\"pull_request\" data-hovercard-url=\"/sqlmapproject/sqlmap/pull/5985/hovercard\" href=\"https://github.com/sqlmapproject/sqlmap/pull/5985\">#5985</a></p>",
-      "date": "2025-12-02T20:04:05.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.9.12"
-    },
-    {
       "id": "release:radare2:2025-11-23T20:10:45.000Z",
       "kind": "RELEASE",
       "title": "6.0.7",
@@ -1701,17 +1712,6 @@
       "topic": "web security",
       "source": "radare2 / Cutter Releases (Binary Analysis)",
       "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.0.7"
-    },
-    {
-      "id": "release:radare2:2025-11-23T10:50:02.000Z",
-      "kind": "RELEASE",
-      "title": "6.0.6",
-      "summary": "<h2>Release Notes</h2> <p>Version: 6.0.6<br> Previous: 6.0.4<br> AbiDiff: 24-39<br> Commits: 331<br> Contributors: 28</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.0.6/radare2-6.0.6.tar.xz | tar xJv radare2-6.0.6/sys/install.sh\"><pre>curl -Ls https:",
-      "date": "2025-11-23T10:50:02.000Z",
-      "severity": "info",
-      "topic": "binary exploitation",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.0.6"
     },
     {
       "id": "release:pwndbg:2025-11-11T15:18:55.000Z",
@@ -1931,7 +1931,7 @@
     },
     {
       "topic": "binary exploitation",
-      "count": 35,
+      "count": 34,
       "reason": "Recent source activity is clustering around binary exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
@@ -1941,7 +1941,7 @@
     },
     {
       "topic": "cryptography",
-      "count": 7,
+      "count": 8,
       "reason": "Recent source activity is clustering around cryptography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
