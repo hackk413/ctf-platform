@@ -48,9 +48,10 @@ window.addEventListener('DOMContentLoaded', () => {{
     log('INITIAL_VIEW:' + state.view);
     log('TEXTBOOK_CHAPTERS_COUNT:' + Object.keys(window.TEXTBOOK_CHAPTERS || {{}}).length);
     log('TOURNAMENT_WRITEUPS_COUNT:' + (window.TOURNAMENT_WRITEUPS || []).length);
+    log('CTF_TRICKS_DATA_COUNT:' + (window.CTF_TRICKS_DATA || []).length);
 
-    // 2. Test Navigation to all 12 views
-    const views = ['path', 'modules', 'domains', 'tools', 'labs', 'playbook', 'casebook', 'library', 'glossary', 'intel', 'curriculum', 'dashboard'];
+    // 2. Test Navigation to all 13 views
+    const views = ['path', 'modules', 'domains', 'tools', 'labs', 'playbook', 'casebook', 'library', 'glossary', 'intel', 'curriculum', 'tricks', 'dashboard'];
     for (const v of views) {{
       const btn = document.querySelector(`.nav-item[data-view="${{v}}"]`);
       if (!btn) {{ log(`MISSING_NAV_BTN:${{v}}`); continue; }}
@@ -150,6 +151,52 @@ window.addEventListener('DOMContentLoaded', () => {{
         const hasFlag = termText.includes('CTF{{SUID_GT_F0_Bins_R00t}}');
         log('TERMINAL_EXPLOIT_FLAG_SOLVED:' + hasFlag);
       }}
+    }}
+
+    // 7. Test Tricks & Tips View
+    const tricksNavBtn = document.querySelector('.nav-item[data-view="tricks"]');
+    if (tricksNavBtn) {{
+      tricksNavBtn.click();
+      const trickCards = document.querySelectorAll('.writeup-card');
+      log('TRICKS_INITIAL_COUNT:' + trickCards.length);
+
+      // Test filter by chaining tab
+      const chainingTabBtn = document.querySelector('[data-tricks-tab="chaining"]');
+      if (chainingTabBtn) {{
+        chainingTabBtn.click();
+        const chainingCards = document.querySelectorAll('.writeup-card');
+        log('TRICKS_CHAINING_TAB_CLICK:count=' + chainingCards.length + ',tab=' + state.tricksTab);
+      }}
+
+      // Test filter by whitespace tab
+      const whitespaceTabBtn = document.querySelector('[data-tricks-tab="whitespace"]');
+      if (whitespaceTabBtn) {{
+        whitespaceTabBtn.click();
+        const wsCards = document.querySelectorAll('.writeup-card');
+        log('TRICKS_WHITESPACE_TAB_CLICK:count=' + wsCards.length + ',tab=' + state.tricksTab);
+      }}
+
+      // Test search filter for '$IFS' while on whitespace tab
+      const tsInput = document.getElementById('tricksSearch');
+      if (tsInput) {{
+        tsInput.value = '$IFS';
+        tsInput.dispatchEvent(new Event('input', {{ bubbles: true }}));
+        const wsSearchCards = document.querySelectorAll('.writeup-card');
+        log('TRICKS_SEARCH_IFS_IN_WHITESPACE:count=' + wsSearchCards.length);
+      }}
+
+      // Switch back to all tab and search for '; ls'
+      const allTabBtn = document.querySelector('[data-tricks-tab="all"]');
+      if (allTabBtn) allTabBtn.click();
+      const tsInputAll = document.getElementById('tricksSearch');
+      if (tsInputAll) {{
+        tsInputAll.value = '; ls';
+        tsInputAll.dispatchEvent(new Event('input', {{ bubbles: true }}));
+        const searchCards = document.querySelectorAll('.writeup-card');
+        log('TRICKS_SEARCH_SEMICOLON_LS_IN_ALL:count=' + searchCards.length);
+      }}
+    }} else {{
+      log('MISSING_TRICKS_NAV_BTN');
     }}
 
     // Output Final Results

@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "title": "CTF Atlas — Ethical Crawler Safety & Content Moderation Policy",
+  "description": "Rules, allowed sources, and blocked keywords enforcing ethical cybersecurity training. Rejects weaponized malware, ransomware, destructive wipers, and unauthorized credential dumps.",
+  "policy": {
+    "scope": "Educational Capture-The-Flag (CTF) training, defensive engineering, and authorized security research.",
+    "strict_rule": "Under no circumstances should weaponized malware binaries, destructive wiper payloads, ransomware kits, unauthorized credentials, or illegal carding material be indexed."
+  },
+  "blocked_keywords": [
+    "ransomware",
+    "ransom note",
+    "ransomware-as-a-service",
+    "raas",
+    "wiper malware",
+    "destructive wiper",
+    "hermeticwiper",
+    "caddywiper",
+    "carding",
+    "cvv dump",
+    "credit card dump",
+    "stealer log",
+    "redline stealer",
+    "vidar stealer",
+    "raccoon stealer",
+    "lumma stealer",
+    "botnet c2 setup",
+    "ddos booter",
+    "ddos stresser",
+    "rat builder",
+    "fud crypter",
+    "fully undetectable crypter",
+    "credential leak dump",
+    "combo list",
+    "darknet market vendor",
+    "stolen database leak",
+    "identity theft kit",
+    "atm jackpotting"
+  ],
+  "allowed_sources": [
+    {
+      "id": "cisa-kev",
+      "name": "CISA Known Exploited Vulnerabilities",
+      "url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+      "type": "cve_catalog",
+      "ethical_mandate": "Defensive catalog providing authoritative patch deadlines for enterprise defenders."
+    },
+    {
+      "id": "nvd-cve",
+      "name": "NIST National Vulnerability Database",
+      "url": "https://services.nvd.nist.gov/rest/json/cves/2.0",
+      "type": "nvd_feed",
+      "ethical_mandate": "Standardized CVE identification and CVSS severity metrics."
+    },
+    {
+      "id": "gtfobins",
+      "name": "GTFOBins Unix Binary Security Research",
+      "url": "https://gtfobins.github.io/index.json",
+      "type": "technique_catalog",
+      "ethical_mandate": "Curated Unix binary permission configuration guidance for systems hardening."
+    },
+    {
+      "id": "projectdiscovery",
+      "name": "ProjectDiscovery Nuclei Vulnerability Templates",
+      "url": "https://github.com/projectdiscovery/nuclei-templates/releases.atom",
+      "type": "github-atom",
+      "ethical_mandate": "Community vulnerability detection signatures for asset discovery."
+    },
+    {
+      "id": "owasp-cheatsheets",
+      "name": "OWASP Cheat Sheet Series Releases",
+      "url": "https://github.com/OWASP/CheatSheetSeries/releases.atom",
+      "type": "github-atom",
+      "ethical_mandate": "Authoritative enterprise defensive guidance and architecture patterns."
+    },
+    {
+      "id": "hackerone-disclosures",
+      "name": "Bug Bounty Public Disclosures & Writeups",
+      "url": "https://raw.githubusercontent.com/reddelexc/hackerone-reports/master/tops_by_bug_type/TOPALLREPORTS.md",
+      "type": "bugbounty_feed",
+      "ethical_mandate": "Responsible disclosure writeups demonstrating triage and remediation."
+    }
+  ],
+  "required_criteria": {
+    "must_have_defensive_context": true,
+    "must_have_cve_or_technique_id": true,
+    "disallow_raw_executable_links": true,
+    "require_educational_framing": true
+  }
+}

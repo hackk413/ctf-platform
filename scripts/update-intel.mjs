@@ -78,6 +78,18 @@ const sources = [
     url:  'https://github.com/sqlmapproject/sqlmap/releases.atom',
   },
   {
+    id:   'nuclei-templates',
+    name: 'ProjectDiscovery Nuclei Vulnerability Templates',
+    type: 'github-atom',
+    url:  'https://github.com/projectdiscovery/nuclei-templates/releases.atom',
+  },
+  {
+    id:   'owasp-cheatsheets',
+    name: 'OWASP Security Cheat Sheets',
+    type: 'github-atom',
+    url:  'https://github.com/OWASP/CheatSheetSeries/releases.atom',
+  },
+  {
     id:   'seclists',
     name: 'SecLists Payloads & Dictionaries',
     type: 'github-atom',
@@ -96,6 +108,20 @@ const sources = [
     url:  'https://gtfobins.github.io/index.json',
   },
 ];
+
+/* ── Crawler Safety & Moderation Policy ─────────────────── */
+let safetyRules = { blocked_keywords: [] };
+try {
+  const safetyData = await fs.readFile(path.join(ROOT, 'config', 'crawler-safety-rules.json'), 'utf8');
+  safetyRules = JSON.parse(safetyData);
+} catch (e) {
+  safetyRules = {
+    blocked_keywords: [
+      'ransomware', 'carding', 'wiper malware', 'stealer log', 'redline stealer',
+      'cvv dump', 'combo list', 'botnet c2 setup', 'fud crypter', 'atm jackpotting'
+    ]
+  };
+}
 
 /* ── Topic taxonomy for auto-classification ─────────────── */
 const taxonomy = [
@@ -171,6 +197,17 @@ function validateItem(raw) {
   if (!raw.id || typeof raw.id !== 'string' || !raw.id.trim()) return null;
   if (!raw.title || typeof raw.title !== 'string')             return null;
   if (raw.title.trim().length < 3)        return null;
+
+  /* Safety & ethical policy check: drop weaponized/malicious content */
+  const textToCheck = `${raw.title || ''} ${raw.summary || ''}`.toLowerCase();
+  for (const badKw of (safetyRules.blocked_keywords || [])) {
+    if (badKw && textToCheck.includes(badKw.toLowerCase())) {
+      if (VERBOSE) {
+        console.warn(`    [SAFETY-FILTER] Dropped item violating ethical rules ("${badKw}"): ${raw.title}`);
+      }
+      return null;
+    }
+  }
 
   return {
     id:        String(raw.id).trim().slice(0, 200),

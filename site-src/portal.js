@@ -17,6 +17,8 @@ const state = {
   curriculumModule: null,
   casebookTab: 'all',
   casebookQuery: '',
+  tricksTab: 'all',
+  tricksQuery: '',
 };
 
 let intelCache = null;
@@ -467,7 +469,8 @@ function setView(view) {
   document.getElementById('breadcrumbs').textContent = {
     dashboard:'Dashboard', path:'Learning path', modules:'Learning modules', domains:'Learning paths',
     tools:'Tool lab', labs:'Micro-labs', playbook:'Methodology', casebook:'Casebook',
-    library:'Reference vault', glossary:'Glossary', intel:'Live intel', curriculum:'Curriculum'
+    library:'Reference vault', glossary:'Glossary', intel:'Live intel', curriculum:'Curriculum',
+    tricks:'Tricks & tips'
   }[view] || 'CTF Atlas';
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -501,6 +504,7 @@ function render() {
   if (state.view === 'glossary')    view.innerHTML = glossaryHTML('');
   if (state.view === 'intel')       view.innerHTML = intelHTML(intelCache);
   if (state.view === 'curriculum')  view.innerHTML = curriculumHTML(intelCache);
+  if (state.view === 'tricks')      view.innerHTML = tricksHTML();
   bindViewEvents();
   if ((state.view === 'intel' || state.view === 'curriculum') && !intelCache) loadIntel();
   document.getElementById('sidebarProgress').textContent = completion() + '%';
@@ -845,7 +849,7 @@ function dashboardHTML() {
       <h1>Understand the system. Operate the tools. Prove the idea.</h1>
       <p>A pin-to-pin CTF curriculum that fills the gaps between tutorials: foundations, Linux, networking, web, crypto, forensics, reverse engineering, pwn, OSINT, stego, modern app surfaces, and defender context — with safe hands-on practice at every stage.</p>
       <div class="tag-row"><span class="tag accent">offline-friendly</span><span class="tag accent">OS-independent</span><span class="tag success">localStorage progress</span><span class="tag">browser micro-labs</span></div>
-      <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button><button class="btn" data-action="goto-curriculum">🎓 Curriculum</button></div>
+      <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button><button class="btn" data-action="goto-curriculum">🎓 Curriculum</button><button class="btn" data-action="goto-tricks">⚡ Tricks &amp; tips</button></div>
     </div>
     <div class="hero-side">
       <div><div class="metric-label">Browser lab completion</div><div class="big-number">${solved}/${total}</div><div class="muted">micro-challenges solved</div></div>
@@ -1107,6 +1111,97 @@ function casebookHTML() {
   `;
 }
 
+function tricksHTML() {
+  const allTricks = window.CTF_TRICKS_DATA || [];
+  const tab = state.tricksTab || 'all';
+  const query = (state.tricksQuery || '').trim().toLowerCase();
+
+  const filtered = allTricks.filter(t => {
+    const matchesTab = (tab === 'all') || (t.category === tab);
+    if (!matchesTab) return false;
+    if (!query) return true;
+    const hay = `${t.title} ${t.categoryLabel} ${t.payload} ${t.context} ${t.why} ${t.internals} ${t.mitigation}`.toLowerCase();
+    return hay.includes(query);
+  });
+
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">TACTICAL CHEAT SHEET // CTF PAYLOADS &amp; ESCAPES</div>
+      <h2>Tricks, Payloads &amp; Command Injection Vault</h2>
+      <p>Curated catalog of command separators, whitespace bypasses, keyword obfuscation, SUID exploits, and web injection techniques. Explains why each trick functions, its underlying OS/parser mechanics, and defensive mitigations.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag accent">${filtered.length} active tricks</span>
+      <span class="tag warn">educational lab scope</span>
+      <span class="tag success">mitigation included</span>
+    </div>
+  </div>
+
+  <div class="module-search" style="margin-bottom:14px">
+    <span>&gt;</span>
+    <input id="tricksSearch" value="${esc(state.tricksQuery || '')}" placeholder="search tricks by payload (e.g. '; ls', '$IFS'), technique, or evasion context..." autocomplete="off">
+    <span class="cursor">█</span>
+  </div>
+
+  <div class="os-tabs" style="margin-bottom:18px">
+    ${[
+      ['all', 'All Tricks & Payloads'],
+      ['chaining', 'Command Chaining (; && ||)'],
+      ['whitespace', 'Whitespace Evasion ($IFS)'],
+      ['obfuscation', 'Keyword Evasion (c\\at glob)'],
+      ['web', 'Web & Injection (SQLi/XSS/SSRF)'],
+      ['privesc', 'SUID & GTFOBins'],
+      ['shells', 'Interactive Shells & PTY']
+    ].map(([catKey, label]) => `
+      <button class="os-btn${tab === catKey ? ' active' : ''}" data-tricks-tab="${catKey}">${label}</button>
+    `).join('')}
+  </div>
+
+  <div class="writeups-list">
+    ${filtered.map(t => `
+      <article class="writeup-card">
+        <div class="card-top" style="align-items:flex-start">
+          <div>
+            <div class="tag-row" style="margin-bottom:6px">
+              <span class="tag accent">${esc(t.categoryLabel.toUpperCase())}</span>
+              <span class="tag">${esc(t.category)}</span>
+            </div>
+            <h3 style="font-size:18px;color:var(--fg);margin:0 0 6px">${esc(t.title)}</h3>
+          </div>
+          <button class="btn outline copy-btn" data-copy-trick="${esc(t.id)}">📋 Copy Payload</button>
+        </div>
+
+        <div style="margin:10px 0">
+          <span style="font-family:var(--display);color:var(--cyan);font-size:11px;letter-spacing:.08em;text-transform:uppercase">// Payload Expression</span>
+          <pre class="code-block" style="background:#090d16;padding:12px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code id="trick-code-${esc(t.id)}" style="color:#00ff88;font-size:13px;font-weight:bold;font-family:var(--mono)">${esc(t.payload)}</code></pre>
+        </div>
+
+        <div style="margin:12px 0">
+          <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Vulnerable Execution Context</h4>
+          <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(t.context)}</p>
+        </div>
+
+        <div class="note" style="margin:12px 0;border-left-color:var(--cyan)">
+          <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Offensive Mechanics &amp; Why It Works</h4>
+          <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(t.why)}</p>
+        </div>
+
+        <div style="margin:12px 0">
+          <h4 style="font-family:var(--display);color:var(--amber);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">OS Kernel &amp; Lexer Internals</h4>
+          <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(t.internals)}</p>
+        </div>
+
+        <div class="note warn-note" style="margin-top:12px">
+          <h4 style="font-family:var(--display);color:var(--pink);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Defensive Mitigation &amp; Safe Coding</h4>
+          <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(t.mitigation)}</p>
+        </div>
+      </article>
+    `).join('') || '<div class="empty">No tricks or payloads matched this query.</div>'}
+  </div>
+  `;
+}
+
 function libraryHTML() {
   const refs = [
     {title:'Official Documentation',items:[{name:'Linux man-pages project',desc:'Authoritative reference for system calls, library functions and file formats.',url:'https://man7.org/linux/man-pages/'},{name:'POSIX.1-2017',desc:'IEEE/Open Group standard for POSIX-compliant operating systems.',url:'https://pubs.opengroup.org/onlinepubs/9699919799/'},{name:'RFC Index',desc:'IETF Internet standards. Start with RFC 791 (IP), 793 (TCP), 7230 (HTTP/1.1).',url:'https://www.rfc-editor.org/rfc-index.html'},{name:'Intel x86/x64 ISA',desc:'Complete instruction set reference. Essential for assembly reading and ROP.',url:'https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html'}]},
@@ -1137,6 +1232,7 @@ function bindViewEvents() {
       if (a === 'goto-labs')        setView('labs');
       if (a === 'goto-domains')     setView('domains');
       if (a === 'goto-curriculum')  setView('curriculum');
+      if (a === 'goto-tricks')      setView('tricks');
       if (a === 'back-to-curriculum') { state.curriculumModule = null; setView('curriculum'); }
       if (a === 'complete-domain')  markDomain(btn.dataset.domainId);
     });
@@ -1245,6 +1341,50 @@ function bindViewEvents() {
       }
     });
   }
+
+  /* Tricks & Tips tabs */
+  view.querySelectorAll('[data-tricks-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.tricksTab = btn.dataset.tricksTab;
+      render();
+    });
+  });
+
+  /* Tricks & Tips search */
+  const ts = view.querySelector('#tricksSearch');
+  if (ts) {
+    ts.addEventListener('input', () => {
+      state.tricksQuery = ts.value;
+      render();
+      const newTs = document.getElementById('tricksSearch');
+      if (newTs) {
+        newTs.focus();
+        newTs.selectionStart = newTs.selectionEnd = newTs.value.length;
+      }
+    });
+  }
+
+  /* Copy trick payload */
+  view.querySelectorAll('[data-copy-trick]').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.copyTrick;
+      const allTricks = window.CTF_TRICKS_DATA || [];
+      const tr = allTricks.find(x => x.id === id);
+      const codeEl = view.querySelector(`#trick-code-${id}`);
+      const textToCopy = (tr && (tr.copyText || tr.payload)) || (codeEl ? codeEl.textContent : '');
+      if (textToCopy) {
+        try {
+          await navigator.clipboard.writeText(textToCopy);
+          const orig = btn.textContent;
+          btn.textContent = '✓ Copied!';
+          setTimeout(() => { btn.textContent = orig; }, 2000);
+        } catch (err) {
+          btn.textContent = 'Copied';
+        }
+      }
+    });
+  });
 
   /* Glossary search */
   const gs = view.querySelector('#glossarySearch');
@@ -1360,6 +1500,16 @@ function init() {
     btn.dataset.view = 'curriculum';
     btn.innerHTML = '<span>12</span> Curriculum';
     btn.addEventListener('click', () => setView('curriculum'));
+    mainNav.appendChild(btn);
+  }
+
+  /* Add Tricks nav item if not present */
+  if (mainNav && !mainNav.querySelector('[data-view="tricks"]')) {
+    const btn = document.createElement('button');
+    btn.className = 'nav-item';
+    btn.dataset.view = 'tricks';
+    btn.innerHTML = '<span>13</span> Tricks &amp; tips';
+    btn.addEventListener('click', () => setView('tricks'));
     mainNav.appendChild(btn);
   }
 

@@ -21,11 +21,15 @@ css = read("site-src/portal.css")
 js = read("site-src/portal.js")
 terminal_engine = read("site-src/terminal-engine.js")
 textbook_data = read("site-src/textbook-data.js")
+tricks_data = read("site-src/tricks-data.js")
 
 combined_js = "\n".join([
     "/* CTF Atlas — Combined Portal App (auto-generated, do not edit) */",
     "/* textbook-data.js */",
     textbook_data,
+    "",
+    "/* tricks-data.js */",
+    tricks_data,
     "",
     "/* terminal-engine.js */",
     terminal_engine,
