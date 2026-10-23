@@ -3293,7 +3293,6 @@ function init() {
   });
 
   /* Add Curriculum nav item if not present */
-  const mainNav = document.querySelector('.main-nav');
   if (mainNav && !mainNav.querySelector('[data-view="curriculum"]')) {
     const btn = document.createElement('button');
     btn.className = 'nav-item';

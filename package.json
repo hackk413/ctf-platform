@@ -7,7 +7,7 @@
     "build:knowledge": "python3 scripts/build_full_knowledge_base.py",
     "build:hackquest": "python3 scripts/build_tcs_hackquest_writeups.py",
     "verify:hackquest": "python3 scripts/verify_tcs_hackquest.py",
-    "check": "node --check api/login.js && node --check api/logout.js && node --check api/session.js && node --check api/portal.js && node --check api/updates.js && node --check lib/auth.mjs && node --check scripts/build-assets.mjs && node --check scripts/update-intel.mjs",
+    "check": "node --check api/login.js && node --check api/logout.js && node --check api/session.js && node --check api/portal.js && node --check api/updates.js && node --check lib/auth.mjs && node --check site-src/portal.js && node --check site-src/terminal-engine.js && node --check scripts/build-assets.mjs && node --check scripts/update-intel.mjs && node scripts/test_cadet_stealth.mjs && node scripts/test_dom_simulation.mjs",
     "update:intel": "node scripts/update-intel.mjs"
   },
   "type": "module"
