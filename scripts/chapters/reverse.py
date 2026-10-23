@@ -299,3 +299,173 @@ print("[+] Binary patched successfully! Anti-debug check disabled.")""",
         "mitigation": "Do not rely exclusively on user-space anti-debugging techniques; compile with kernel eBPF integrity monitoring and server-side attestation for sensitive commercial software."
     }
 }
+
+chapters['reverse-start-to-end'] = {'id': 'reverse-start-to-end',
+ 'domain': 'reverse',
+ 'category': 'Reverse Engineering',
+ 'title': 'The Complete Reverse Engineering Masterclass: From 30-Second Triage to Ghidra '
+          'Decompilation, Dynamic Hooking & Z3 Constraint Solving',
+ 'subtitle': 'Complete Challenge Lifecycle: Triage (file/checksec/strings/ltrace) -> Static '
+             'Decompilation (Ghidra/IDA) -> Dynamic Tracing (GDB/GEF) -> Algebraic Flag '
+             'Reconstruction (Z3 Solver)',
+ 'diagram': '[CHALLENGE ARTIFACT: unknown.bin]\n'
+            '          |\n'
+            '          v (00:00 - 00:30)\n'
+            '[PHASE 1: 30-SECOND RAPID TRIAGE]\n'
+            '  |-- $ file unknown.bin       --> Architecture (ELF 64-bit LSB pie executable, '
+            'x86-64)\n'
+            '  |-- $ checksec --file=target --> Mitigations (NX, Canary, PIE, RELRO)\n'
+            '  |-- $ strings -t x -n 8      --> Hardcoded flags, plaintext prompts, crypto '
+            'constants\n'
+            '  `-- $ ltrace / strace        --> Library intercept (strcmp, ptrace, getenv)\n'
+            '          |\n'
+            '          v (00:30 - 05:00)\n'
+            '[PHASE 2: STATIC DECOMPILATION (GHIDRA / IDA)]\n'
+            '  |-- Locate main / entry point & user input reader (fgets, read, scanf)\n'
+            '  |-- Variable cleanup (Rename: L, Retype: Ctrl+L, Struct definition)\n'
+            '  |-- Control Flow Graph (CFG) analysis: validation loop / dispatch table\n'
+            '  `-- Identify validation type: direct strcmp, XOR mask, hash digest, or constraint '
+            'system\n'
+            '          |\n'
+            '          v (05:00 - 10:00)\n'
+            '[PHASE 3: DYNAMIC DEBUGGING & HOOKING (GDB + GEF)]\n'
+            '  |-- Breakpoint at comparison instruction: b *main+0x8c (before strcmp/test eax)\n'
+            '  |-- Supply test vector (e.g. "flag{AAAAAAAAAAAAAAAAAAAAAAAA}")\n'
+            '  |-- Inspect registers ($rdi, $rsi, $rax) & telescope stack memory ($rsp)\n'
+            '  `-- Dump runtime-decrypted flag buffer directly from RAM\n'
+            '          |\n'
+            '          v (10:00 - 15:00)\n'
+            '[PHASE 4: ALGORITHMIC FLAG RECONSTRUCTION (PYTHON / Z3 THEOREM PROVER)]\n'
+            '  |-- If comparison is algorithmic/mathematical: extract bitwise equations\n'
+            "  |-- Model variables as BitVec('f_%d' % i, 8) in Z3 Solver\n"
+            '  |-- Add constraints from disassembled arithmetic operations\n'
+            '  `-- s.check() == sat -> Extract model -> Instant Flag Recovery!',
+ 'theory': 'Reverse engineering in competitive cybersecurity is not about reading thousands of '
+           'lines of raw assembly instruction-by-instruction. It is a systematic process of '
+           'eliminating noise, isolating the input validation routine, and reversing the state '
+           'transformation between your input and the accepted flag condition.\n'
+           '\n'
+           '### PHASE 1: THE 30-SECOND RAPID TRIAGE PROTOCOL\n'
+           'Before loading a binary into heavy decompilers like Ghidra, always execute the '
+           'non-invasive 30-second triage:\n'
+           '1. `file binary`: Determines file format (ELF, PE, Mach-O), target architecture '
+           '(x86_64, ARM, MIPS, AVR), linking type (dynamically linked vs statically linked), and '
+           'stripping status (stripped vs not stripped).\n'
+           '   - If statically linked and stripped: standard library functions (like `printf`, '
+           "`strcmp`) lack symbol names. You will need Ghidra's Function ID (FID) databases or "
+           'FLIRT signatures to identify libc functions.\n'
+           '   - If UPX-packed: file will show sections named `UPX0`, `UPX1`. Unpack with `upx -d '
+           'binary`.\n'
+           '2. `checksec --file=binary`: Audits binary protections (NX, Canary, PIE, RELRO). High '
+           'security mitigations in a reverse engineering challenge often signal anti-tampering or '
+           'anti-debugging measures.\n'
+           '3. `strings -t x -n 8 binary`: Scans for printable strings along with their file '
+           'offsets. Look for:\n'
+           '   - Flag format strings: `flag{`, `CTF{`, `TCS{`.\n'
+           '   - Success/failure prompts: "Access Granted", "Wrong password", "Invalid license".\n'
+           '   - Hardcoded cryptographic constants (e.g., MD5 initial values `0x67452301`, AES '
+           'S-boxes).\n'
+           '4. `ltrace -s 128 -i ./binary`: Intercepts dynamic library calls. If the program uses '
+           'standard `strcmp()`, `strncmp()`, `memcmp()`, or `strlen()`, `ltrace` prints the exact '
+           'arguments at runtime! In beginner-to-intermediate CTFs, the flag is frequently passed '
+           'as the second argument to `strcmp(user_input, decrypted_flag)`.\n'
+           '\n'
+           '### PHASE 2: STATIC REVERSE ENGINEERING IN GHIDRA\n'
+           'When `ltrace` fails (due to static linking, inlined comparisons, or custom crypto '
+           'loops), open the binary in Ghidra:\n'
+           '1. **Import & Auto-Analysis**: Create a non-shared project, import the binary, and let '
+           "Ghidra run Auto-Analysis. Ensure 'Decompiler Parameter ID' and 'Windows x86 PE RTTI "
+           "Analyzer' (for PE) are checked.\n"
+           '2. **Finding the Entry Point & Main**:\n'
+           '   - In non-stripped binaries: Symbol Tree -> Functions -> filter for `main`.\n'
+           '   - In stripped ELF binaries: Check the entry point (`_start`). In standard GCC/glibc '
+           'executables, `_start` passes the address of `main` as the first argument (`rdi`) to '
+           '`__libc_start_main`. Double-click that address to locate `main`.\n'
+           '3. **The 5 Essential Ghidra Hotkeys**:\n'
+           '   - `G` (Goto): Jump to any virtual memory address or symbol name.\n'
+           '   - `L` (Rename): Rename meaningless auto-generated variable names (`local_18` -> '
+           '`user_input_buf`, `FUN_00401122` -> `crypto_validation`). Renaming makes decompiler '
+           'pseudo-code read like native C.\n'
+           '   - `Ctrl+L` (Retype): Change variable types. Converting `undefined4 local_28` to '
+           '`char *` or `long long` immediately resolves pointer offsets and struct fields.\n'
+           '   - `X` (Cross References / XREFs): View every instruction and function that '
+           'references the selected variable, string, or function.\n'
+           '   - `;` / `:` (Comments): Add instruction-level or function-level documentation.\n'
+           '4. **Deconstructing Common Validation Loops**:\n'
+           '   - Direct XOR Cipher: `if ((input[i] ^ 0x5a) != expected[i]) return 0;`. Solved by '
+           're-XORing `expected[i] ^ 0x5a`.\n'
+           '   - Linear Substitution / Additive Ciphers: `if (((input[i] * 7 + 13) % 256) != '
+           'expected[i])`. Solved via modular arithmetic or 256-byte brute-force lookups.\n'
+           '   - Rolling XOR / CBC-style loops: `input[i] ^ input[i-1]`. Solved by iterating '
+           'forwards from `input[0]`.\n'
+           '\n'
+           '### PHASE 3: DYNAMIC DEBUGGING & HOOKING WITH GDB + GEF\n'
+           'Static analysis shows what the code *can* do; dynamic analysis shows what the code *is '
+           'doing right now*.\n'
+           '- If the binary decrypts an encrypted flag array at runtime (e.g., via RC4, AES, or '
+           'custom multi-round bit-shifting), you do NOT need to reverse the decryption '
+           'algorithm!\n'
+           '- Simply set a breakpoint right after the decryption loop or right before the '
+           'comparison instruction:\n'
+           '  `gdb -q ./challenge`\n'
+           '  `gef> b *main+0x84`  (Address of test/cmp instruction)\n'
+           '  `gef> r <<< "flag{test_vector_1234}"`\n'
+           '  `gef> x/s $rsi` or `gef> telescope $rsp 20`\n'
+           '- The decrypted flag is sitting directly in plaintext memory inside the processor '
+           'register or stack frame!\n'
+           '\n'
+           '### PHASE 4: ALGEBRAIC FLAG RECONSTRUCTION WITH Z3 THEOREM PROVER\n'
+           'When binary analysis reveals a system of 20+ non-linear constraints or bitwise '
+           'operations that cannot be inverted by hand:\n'
+           "1. Extract the equations directly from Ghidra's decompiler window.\n"
+           '2. Formulate a Z3 solver model in Python:\n'
+           "   Declare flag characters as BitVecs (`BitVec(f'c_{i}', 8)`), constrain printable "
+           'ASCII ranges (`c >= 32`, `c <= 126`), add algebraic and XOR constraints, and run '
+           '`s.check()`.\n'
+           "3. Z3's Satisfiability Modulo Theories (SMT) solver finds the exact mathematical flag "
+           'in fractions of a second.',
+ 'commands': [{'cmd': 'file challenge.bin && checksec --file=challenge.bin',
+               'why': 'Instant reconnaissance revealing architecture, linking type, stripping '
+                      'status, and binary hardening mitigations.',
+               'when': 'Step 1 of every reverse engineering challenge.',
+               'internals': 'Reads the 64-byte ELF header (`e_ident`, `e_type`, `e_machine`) and '
+                            'PT_GNU_RELRO / PT_GNU_STACK program segments.',
+               'pitfalls': 'Some challenges intentionally corrupt the ELF header to break '
+                           'automated tools; examine raw hex if file fails.'},
+              {'cmd': 'strings -t x -n 8 challenge.bin | grep -Ei '
+                      '"flag|key|correct|pass|wrong|tcs{"',
+               'why': 'Extracts hardcoded printable strings with hexadecimal virtual file offsets.',
+               'when': 'Immediate static triage to detect plaintext flags or locate validation '
+                       'messages.',
+               'internals': 'Scans readable segments for continuous sequences of printable '
+                            'ASCII/UTF-8 bytes of length 8 or greater.',
+               'pitfalls': 'Modern challenges encrypt or obfuscate strings; do not give up if '
+                           'strings returns nothing.'},
+              {'cmd': 'ltrace -s 128 -i ./challenge.bin',
+               'why': 'Intercepts all dynamic library calls (strcmp, strncmp, memcmp) and prints '
+                      'arguments up to 128 bytes with instruction pointers.',
+               'when': 'First dynamic execution step against unstripped, dynamically linked '
+                       'binaries.',
+               'internals': "Modifies the executable's Procedure Linkage Table (PLT) or uses "
+                            'ptrace breakpoints on PLT stubs to capture function arguments from '
+                            'registers.',
+               'pitfalls': 'Does not work on statically linked binaries or binaries with '
+                           'anti-debugging (`ptrace(PTRACE_TRACEME)` checks).'},
+              {'cmd': 'gdb -q ./challenge.bin -ex "b *main+0x60" -ex "r" -ex "telescope $rsp 20"',
+               'why': 'Sets a breakpoint immediately before the decision branch and dumps the '
+                      'stack frame to expose decrypted plaintext buffers.',
+               'when': 'Extracting runtime-decrypted flags without manual algorithm inversion.',
+               'internals': 'GDB replaces the byte at `main+0x60` with `0xCC` (`INT 3`), causing '
+                            'the CPU to trap execution and surrender control to the debugger.',
+               'pitfalls': 'Ensure ASLR is disabled inside GDB (`set disable-randomization on`) so '
+                           'memory addresses remain deterministic.'},
+              {'cmd': 'python3 -c "from z3 import *; s = Solver(); flag = [BitVec(f\'f_{i}\', 8) '
+                      'for i in range(24)]; s.check(); print(s.model())"',
+               'why': 'Instantly solves complex multi-byte mathematical constraints and XOR matrix '
+                      'checks using the Z3 SMT solver.',
+               'when': 'When the decompiler reveals systems of linear or bitwise equations '
+                       'comparing user input against computed values.',
+               'internals': 'Z3 converts bitvector operations into Conjunctive Normal Form (CNF) '
+                            'SAT formulas and executes DPLL(T) solver heuristics.',
+               'pitfalls': 'Ensure variables are constrained to valid printable ASCII ranges (`c '
+                           '>= 32`, `c <= 126`) to avoid non-printable mathematical collisions.'}]}

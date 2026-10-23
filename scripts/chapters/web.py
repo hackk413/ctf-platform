@@ -507,3 +507,183 @@ print("[+] Token:", creds["Token"])""",
         "mitigation": "Enforce IMDSv2 across cloud environments (requires PUT token header). Disallow private and loopback IP ranges in backend HTTP clients using strict URL validation and dedicated firewall egress policies."
     }
 }
+
+chapters['web-start-to-end'] = {'id': 'web-start-to-end',
+ 'domain': 'web',
+ 'category': 'Web Exploitation',
+ 'title': 'The Complete Web Pentesting & CTF Lifecycle: Initial Recon, Vulnerability Hypotheses, '
+          'Burp Suite Mastery & Flag Extraction',
+ 'subtitle': 'Complete Challenge Lifecycle: Fingerprinting & Tech Profiling -> Input Attack '
+             'Surface Mapping -> Vulnerability Hypotheses -> Burp/Turbo Proving -> Flag '
+             'Exfiltration',
+ 'diagram': '[CHALLENGE TARGET URL: http://challenge.ctf:8080]\n'
+            '          |\n'
+            '          v (Step 1: Recon & Profiling)\n'
+            '[PHASE 1: TECH STACK FINGERPRINTING & PASSIVE DISCOVERY]\n'
+            '  |-- Headers: Server, X-Powered-By, Set-Cookie (PHPSESSID, connect.sid, session)\n'
+            '  |-- HTML Comments, /robots.txt, /sitemap.xml, /.git/HEAD, /swagger.json\n'
+            '  `-- Content Discovery: ffuf -u http://target/FUZZ -w raft-medium-directories.txt '
+            '-mc 200,301,302\n'
+            '          |\n'
+            '          v (Step 2: Attack Surface Mapping)\n'
+            '[PHASE 2: INPUT SURFACE & ENDPOINT CATALOGING]\n'
+            '  |-- Query Parameters: ?id=1, ?page=home, ?url=http://...\n'
+            '  |-- Body Parameters: application/x-www-form-urlencoded, application/json, '
+            'multipart/form-data\n'
+            '  |-- Headers: User-Agent, X-Forwarded-For, Referer, Authorization: Bearer <jwt>\n'
+            '  `-- State Changes: Login, Register, Profile Update, File Upload, Search, PDF '
+            'Export\n'
+            '          |\n'
+            '          v (Step 3: Vulnerability Hypotheses & Falsifiable Testing)\n'
+            '[PHASE 3: HYPOTHESIS FORMULATION & TRIAGE MATRIX]\n'
+            "  |-- If URL param feeds DB query   --> Test SQLi: ' OR 1=1 -- - / ' UNION SELECT "
+            'NULL...\n'
+            '  |-- If URL param feeds file path  --> Test LFI: ../../../etc/passwd / '
+            'php://filter...\n'
+            '  |-- If URL param is fetched by backend --> Test SSRF: http://169.254.169.254 / '
+            'http://127.0.0.1\n'
+            '  |-- If template engine reflects input  --> Test SSTI: {{7*7}} / ${7*7} / <%= 7*7 '
+            '%>\n'
+            '  `-- If file upload is permitted   --> Test Web Shell: .php, .phtml, .php5, double '
+            'extension\n'
+            '          |\n'
+            '          v (Step 4: Burp Suite Community Execution)\n'
+            '[PHASE 4: BURP REPEATER & TURBO INTRUDER CONFIRMATION]\n'
+            '  |-- Fine-tune injection strings in Repeater (Ctrl+R) without browser caching '
+            'interference\n'
+            '  |-- High-speed fuzzing via Turbo Intruder (10,000 req/sec bypassing Community '
+            'throttle)\n'
+            '  `-- Out-of-Band verification via interactsh (interactsh-client -v) for blind '
+            'SSRF/SQLi\n'
+            '          |\n'
+            '          v (Step 5: Flag Exfiltration)\n'
+            '[PHASE 5: ROOT CAUSE PROOF & FLAG EXTRACTION]\n'
+            '  `-- Dump DB tables / read /flag.txt / execute reverse shell / decode JWT admin '
+            'token',
+ 'theory': 'Web exploitation challenges in CTFs mimic real-world web application vulnerabilities. '
+           'Successful exploitation requires an organized methodology: never fire automated tools '
+           'blindly; instead, profile the technology stack, map the attack surface, form precise '
+           'testable hypotheses, and confirm root causes with surgical precision.\n'
+           '\n'
+           '### PHASE 1: TECH PROFILING & PASSIVE DISCOVERY\n'
+           '1. **Response Headers Analysis**:\n'
+           '   - `Server: Apache/2.4.41 (Ubuntu)` -> Likely PHP or CGI backend; check for '
+           '`.htaccess` bypasses.\n'
+           '   - `X-Powered-By: Express` -> Node.js backend; look for Prototype Pollution, NoSQL '
+           'injection, and SSRF via `axios`/`fetch`.\n'
+           '   - `Set-Cookie: PHPSESSID=...` -> PHP session handling.\n'
+           '   - `Set-Cookie: session=eyJ...` -> Base64-encoded JSON or signed cookie (Flask or '
+           'Express session); decode and inspect signature.\n'
+           '2. **Hidden Source & Metadata Recon**:\n'
+           '   - Check HTML comments (`<!-- TODO: Remove debug endpoint /api/v2/test -->`).\n'
+           '   - Request `robots.txt`, `sitemap.xml`, `.git/HEAD`, `.env`, and `.DS_Store`.\n'
+           '   - If `/.git/` exists: use `git-dumper` to reconstruct the entire web application '
+           'source code locally!\n'
+           '\n'
+           '### PHASE 2: CONTENT & ENDPOINT DISCOVERY WITH MODERN TOOLS\n'
+           "DirBuster's Java GUI is obsolete, slow, and prone to freezing. Modern competitive "
+           'players use `ffuf` (written in Go) or `feroxbuster` (written in Rust), achieving 100x '
+           'higher speed and fine-grained noise filtering:\n'
+           '- **Top SecLists Wordlists**:\n'
+           '  - Fast sweep: `/usr/share/seclists/Discovery/Web-Content/common.txt`\n'
+           '  - Deep enumeration: '
+           '`/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt`\n'
+           '  - Parameter discovery: '
+           '`/usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt`\n'
+           '- **Noise Filtering Strategy**:\n'
+           '  Target servers often return custom 200 OK pages for non-existent routes (wildcard '
+           'handlers). Filter them out:\n'
+           '  - By response size: `-fs 1420` (filters responses with exactly 1420 bytes).\n'
+           '  - By word count: `-fw 38` (filters responses containing 38 words).\n'
+           '  - By line count: `-fl 12` (filters responses with 12 lines).\n'
+           '\n'
+           '### PHASE 3: THE VULNERABILITY TRIAGE MATRIX\n'
+           'When analyzing an input point, formulate hypotheses based on observed behavior:\n'
+           '1. **SQL Injection (SQLi)**:\n'
+           '   - *How to assume*: Input is reflected in table results, search bars, or '
+           'authentication forms.\n'
+           "   - *How to test*: Send `'` (look for 500 error or SQL syntax error). Send `' OR "
+           "'1'='1` vs `' OR '1'='2` (observe boolean response differences). Send `'; SELECT "
+           'SLEEP(5)-- -` (observe 5-second server freeze).\n'
+           '   - *How to conclude*: If `SLEEP(5)` produces a 5.05-second response and `SLEEP(0)` '
+           'produces 0.05 seconds, time-based SQLi is 100% verified. Extract the database schema '
+           'using automated `sqlmap` or scripted binary search.\n'
+           '2. **Server-Side Template Injection (SSTI)**:\n'
+           '   - *How to assume*: User input is reflected in the page (e.g. "Hello, {name}!") and '
+           'server is Python/Flask, Ruby/Rails, or Java/Spring.\n'
+           '   - *How to test*: Inject `{{7*7}}`. If page displays `49`, SSTI is confirmed! Next '
+           "inject `{{7*'7'}}`:\n"
+           '     - If output is `49` -> Twig (PHP).\n'
+           '     - If output is `7777777` -> Jinja2 (Python).\n'
+           "   - *How to conclude*: Traverse Python's Method Resolution Order (MRO) to access the "
+           '`os` module:\n'
+           "     `{{cycler.__init__.__globals__.os.popen('cat /flag*').read()}}`.\n"
+           '3. **Server-Side Request Forgery (SSRF)**:\n'
+           '   - *How to assume*: The app takes a URL parameter to fetch an avatar, generate a PDF '
+           'preview, or call a webhook (`?url=http://...`).\n'
+           '   - *How to test*: Supply internal loopback (`http://127.0.0.1:80/admin`) and cloud '
+           'metadata (`http://169.254.169.254/latest/meta-data/`).\n'
+           '   - *Bypass tricks*: If `127.0.0.1` is blacklisted, use decimal IP '
+           '`http://2130706433`, octal `http://0177.0.0.1`, or DNS rebinding '
+           '(`http://localtest.me`).\n'
+           '\n'
+           '### PHASE 4: BURP SUITE COMMUNITY EDITION PRO SECRETS\n'
+           'You do NOT need Burp Suite Professional to dominate CTFs. Master these Community '
+           'Edition secrets:\n'
+           '1. **Turbo Intruder (Bypassing Rate Limits & Throttling)**:\n'
+           '   Burp Community intentionally throttles the Intruder tool to ~1 request per second. '
+           'Install the free **Turbo Intruder** extension from the BApp Store. Using custom Python '
+           'scripts, Turbo Intruder streams HTTP requests at 10,000+ requests per second directly '
+           'over raw sockets, effortlessly brute-forcing 4-digit PINs, OTPs, or parameter fuzzing '
+           'in seconds!\n'
+           '2. **Match and Replace Automation**:\n'
+           '   Navigate to Proxy -> Proxy Settings -> Match and Replace. Add rules to:\n'
+           '   - Auto-inject authentication headers: Match `^$` in request headers, Replace with '
+           '`Authorization: Bearer <ADMIN_TOKEN>`.\n'
+           '   - Spoof client origin: Add `X-Forwarded-For: 127.0.0.1` to bypass IP-restricted '
+           'admin endpoints.\n'
+           '   - Strip security headers: Strip `Content-Security-Policy` and `X-Frame-Options` '
+           'from responses to test XSS and clickjacking freely.\n'
+           '3. **Free Out-of-Band (OOB) Testing Without Burp Collaborator**:\n'
+           '   Burp Collaborator is locked behind the Pro license. For blind SSRF, blind XXE, and '
+           'blind SQLi callbacks, use:\n'
+           '   - `interactsh` (`interactsh-client -v` by ProjectDiscovery) - provides instant free '
+           'DNS, HTTP, and SMTP logging.\n'
+           '   - `webhook.site` or `requestrepo.com` - web-based HTTP request loggers.',
+ 'commands': [{'cmd': 'ffuf -u http://target.ctf/FUZZ -w '
+                      '/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt -mc '
+                      '200,301,302 -fs 0',
+               'why': 'High-speed directory and file brute-forcing filtering out empty 0-byte '
+                      'responses.',
+               'when': 'Initial web reconnaissance after identifying target web port.',
+               'internals': 'Spawns concurrent asynchronous Go HTTP worker routines streaming '
+                            'wordlist tokens.',
+               'pitfalls': "Ensure rate limits don't trigger IP bans; use `-rate 50` if server "
+                           'becomes unresponsive.'},
+              {'cmd': 'sqlmap -u "http://target.ctf/item?id=1" --batch --random-agent --dbms=mysql '
+                      '--dbs',
+               'why': 'Automates SQL injection detection, database fingerprinting, and schema '
+                      'enumeration.',
+               'when': 'When an input parameter shows signs of dynamic SQL query interpolation.',
+               'internals': 'Performs heuristic tests including boolean-based, error-based, '
+                            'time-based, and UNION query injection.',
+               'pitfalls': "Always test manually first with `'` and `SLEEP(3)` to understand query "
+                           'context before launching sqlmap.'},
+              {'cmd': 'interactsh-client -v',
+               'why': 'Generates a unique OOB domain and displays real-time DNS and HTTP '
+                      'interaction callbacks.',
+               'when': 'Testing blind SSRF, blind command injection, or blind XXE without Burp '
+                       'Collaborator.',
+               'internals': 'Registers ephemeral domain names with public authoritative '
+                            'nameservers and streams query logs over TLS.',
+               'pitfalls': 'Ensure the target system has outbound internet egress access to '
+                           'resolve external DNS.'},
+              {'cmd': 'curl -s -X POST http://target.ctf/login -d "user=admin\' -- '
+                      '-&pass=arbitrary"',
+               'why': 'Verifies SQL injection authentication bypass using command-line curl.',
+               'when': 'Testing classic SQL login forms where credentials are concatenated '
+                       'directly into SQL queries.',
+               'internals': 'Sends raw HTTP POST body containing SQL comment operator `-- -` which '
+                            'truncates the password check.',
+               'pitfalls': 'Remember that `--` requires a trailing space or dash in MySQL; '
+                           'URL-encode space as `%20` or `+` if needed.'}]}
