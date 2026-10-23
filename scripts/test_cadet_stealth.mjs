@@ -57,6 +57,50 @@ async function testAuthTiers() {
     console.log('  [PASS] User alias login succeeded with role: cadet');
   }
 
+  // Test Comma-Separated Cadet Usernames
+  {
+    process.env.ATLAS_CADET_UID = 'analyst, student';
+    process.env.ATLAS_CADET_PASSWORD = 'sharedPass123';
+    
+    // Test analyst
+    const req1 = { method: 'POST', body: { uid: 'analyst', password: 'sharedPass123' }, headers: {} };
+    const res1 = mockRes();
+    await loginHandler(req1, res1);
+    assert.strictEqual(res1.getStatus(), 200);
+    assert.strictEqual(res1.getBody().uid, 'analyst');
+    assert.strictEqual(res1.getBody().role, 'cadet');
+
+    // Test student
+    const req2 = { method: 'POST', body: { uid: 'student', password: 'sharedPass123' }, headers: {} };
+    const res2 = mockRes();
+    await loginHandler(req2, res2);
+    assert.strictEqual(res2.getStatus(), 200);
+    assert.strictEqual(res2.getBody().uid, 'student');
+    assert.strictEqual(res2.getBody().role, 'cadet');
+    console.log('  [PASS] Comma-separated cadet usernames (analyst, student) authenticated successfully');
+
+    delete process.env.ATLAS_CADET_UID;
+    delete process.env.ATLAS_CADET_PASSWORD;
+  }
+
+  // Test JSON Multi-User Map
+  {
+    process.env.ATLAS_CADET_USERS = JSON.stringify({
+      alice: 'aliceSecret2026',
+      bob: 'bobSecret2026'
+    });
+
+    const reqAlice = { method: 'POST', body: { uid: 'alice', password: 'aliceSecret2026' }, headers: {} };
+    const resAlice = mockRes();
+    await loginHandler(reqAlice, resAlice);
+    assert.strictEqual(resAlice.getStatus(), 200);
+    assert.strictEqual(resAlice.getBody().uid, 'alice');
+    assert.strictEqual(resAlice.getBody().role, 'cadet');
+
+    console.log('  [PASS] JSON mapping multi-cadet accounts (alice, bob) authenticated successfully');
+    delete process.env.ATLAS_CADET_USERS;
+  }
+
   // Test Invalid Password
   {
     const req = { method: 'POST', body: { uid: 'cadet', password: 'wrong' }, headers: {} };
