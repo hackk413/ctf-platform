@@ -17,6 +17,8 @@ const state = {
   curriculumModule: null,
   casebookTab: 'all',
   casebookQuery: '',
+  hackquestSeasonFilter: 'all',
+  hackquestRoundFilter: 'all',
   tricksTab: 'all',
   tricksQuery: '',
   intelTab: 'all',
@@ -1124,6 +1126,10 @@ function casebookHTML() {
     if (tab === 'hackquest') {
       const isHQ = (w.event && w.event.toLowerCase().includes('hackquest')) || (w.id && w.id.includes('hackquest')) || (w.title && w.title.toLowerCase().includes('hackquest'));
       if (!isHQ) return false;
+      const hqSeason = state.hackquestSeasonFilter || 'all';
+      const hqRound = state.hackquestRoundFilter || 'all';
+      if (hqSeason !== 'all' && String(w.season) !== String(hqSeason)) return false;
+      if (hqRound !== 'all' && String(w.round) !== String(hqRound)) return false;
     } else if (tab !== 'all' && tab !== 'cve' && w.category !== tab) {
       return false;
     }
@@ -1178,6 +1184,39 @@ function casebookHTML() {
       <button class="os-btn${tab === catKey ? ' active' : ''}" data-casebook-tab="${catKey}">${label}</button>
     `).join('')}
   </div>
+
+  ${tab === 'hackquest' ? `
+    <div style="background:var(--card-bg, #0f172a);border:1px solid var(--border, #334155);border-radius:8px;padding:12px;margin-bottom:18px">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:10px">
+        <span style="font-size:12px;color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-right:4px">Season:</span>
+        ${[
+          ['all', 'All Seasons (1–10)'],
+          ['10', 'Season 10 (2025/26)'],
+          ['9', 'Season 9 (2024/25)'],
+          ['8', 'Season 8 (2024)'],
+          ['7', 'Season 7 (2023)'],
+          ['6', 'Season 6 (2022)'],
+          ['5', 'Season 5 (2021)'],
+          ['4', 'Season 4 (2019/20)'],
+          ['3', 'Season 3 (2018/19)'],
+          ['2', 'Season 2 (2017/18)'],
+          ['1', 'Season 1 (2016/17)']
+        ].map(([sKey, sLabel]) => `
+          <button class="os-btn${(state.hackquestSeasonFilter || 'all') === sKey ? ' active' : ''}" data-hq-season="${sKey}" style="font-size:11px;padding:3px 8px">${sLabel}</button>
+        `).join('')}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
+        <span style="font-size:12px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-right:4px">Round:</span>
+        ${[
+          ['all', 'All Rounds (R1 & R2)'],
+          ['1', 'Round 1 (Qualifier CTF)'],
+          ['2', 'Round 2 (Proctored Grand Finale)']
+        ].map(([rKey, rLabel]) => `
+          <button class="os-btn${(state.hackquestRoundFilter || 'all') === rKey ? ' active' : ''}" data-hq-round="${rKey}" style="font-size:11px;padding:3px 8px">${rLabel}</button>
+        `).join('')}
+      </div>
+    </div>
+  ` : ''}
 
   ${tab !== 'cve' ? `
     <div class="writeups-list">
@@ -1859,6 +1898,20 @@ function bindViewEvents() {
   view.querySelectorAll('[data-casebook-tab]').forEach(btn => {
     btn.addEventListener('click', () => {
       state.casebookTab = btn.dataset.casebookTab;
+      render();
+    });
+  });
+
+  /* TCS HackQuest Season & Round filters */
+  view.querySelectorAll('[data-hq-season]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.hackquestSeasonFilter = btn.dataset.hqSeason;
+      render();
+    });
+  });
+  view.querySelectorAll('[data-hq-round]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.hackquestRoundFilter = btn.dataset.hqRound;
       render();
     });
   });
