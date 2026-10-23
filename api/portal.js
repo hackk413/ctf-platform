@@ -21,10 +21,9 @@ export default function handler(req, res) {
     .replace('<link rel="stylesheet" href="styles.css">', () => '<style>' + safeCss + '</style>')
     .replace('<script src="app.js"></script>', () => userSessionScript + '<script>' + safeJs + '</script>');
 
-  const titlePrefix = data.role === 'admin' ? 'OPERATOR // FULL ACCESS' : 'CADET // TRAINING NODE';
   html = html.replace(
     '<title>CTF Atlas // Secure Learning Range</title>',
-    `<title>CTF ATLAS // ${titlePrefix}</title>`
+    '<title>CTF ATLAS // CYBERSECURITY RANGE</title>'
   );
 
   Object.entries(harden({ 'content-type': 'text/html; charset=utf-8' }))

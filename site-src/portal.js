@@ -59,40 +59,37 @@ function updateNavForRole() {
   if (mainNav) {
     const toolsBtn = mainNav.querySelector('[data-view="tools"]');
     const playbookBtn = mainNav.querySelector('[data-view="playbook"]');
-    if (toolsBtn) toolsBtn.style.display = isCadet ? 'none' : '';
-    if (playbookBtn) playbookBtn.style.display = isCadet ? 'none' : '';
+    if (isCadet) {
+      if (toolsBtn) toolsBtn.remove();
+      if (playbookBtn) playbookBtn.remove();
+    }
+    // Renumber visible buttons sequentially from 01:
+    const visibleButtons = mainNav.querySelectorAll('.nav-item');
+    visibleButtons.forEach((btn, idx) => {
+      const span = btn.querySelector('span');
+      if (span) {
+        span.textContent = String(idx + 1).padStart(2, '0');
+      }
+    });
   }
 
   const badgeContainer = document.getElementById('userProfileBadge');
   if (badgeContainer) {
-    if (isCadet) {
-      badgeContainer.innerHTML = `
-        <div class="user-badge cadet">
-          <div>
-            <strong style="color:var(--cyan);display:flex;align-items:center;gap:4px">🛡️ CADET PROFILE</strong>
-            <p style="margin:2px 0 0;font-size:10px;color:#aeb6c5">UID: <code>${esc(state.userUid)}</code></p>
-          </div>
-          <span class="tag warn" style="font-size:9px;padding:2px 6px">RESTRICTED</span>
-        </div>`;
-    } else {
-      badgeContainer.innerHTML = `
-        <div class="user-badge admin">
-          <div>
-            <strong style="color:var(--green);display:flex;align-items:center;gap:4px">⚡ OPERATOR PROFILE</strong>
-            <p style="margin:2px 0 0;font-size:10px;color:#aeb6c5">UID: <code>${esc(state.userUid)}</code></p>
-          </div>
-          <span class="tag accent" style="font-size:9px;padding:2px 6px">FULL ACCESS</span>
-        </div>`;
-    }
+    badgeContainer.innerHTML = `
+      <div class="user-badge ${isCadet ? 'cadet' : 'admin'}">
+        <div>
+          <strong style="color:${isCadet ? 'var(--cyan)' : 'var(--green)'};display:flex;align-items:center;gap:4px">
+            ${isCadet ? '🛡️' : '⚡'} RANGE OPERATOR
+          </strong>
+          <p style="margin:2px 0 0;font-size:10px;color:#aeb6c5">NODE: <code>${esc(state.userUid)}</code></p>
+        </div>
+        <span class="tag accent" style="font-size:9px;padding:2px 6px">ACTIVE</span>
+      </div>`;
   }
 
   const topbarPill = document.getElementById('topbarUserPill');
   if (topbarPill) {
-    if (isCadet) {
-      topbarPill.innerHTML = `<span class="tag warn" style="margin-right:8px;font-size:10px;display:inline-flex;align-items:center;gap:4px">🛡️ CADET: ${esc(state.userUid)}</span>`;
-    } else {
-      topbarPill.innerHTML = `<span class="tag accent" style="margin-right:8px;font-size:10px;display:inline-flex;align-items:center;gap:4px">⚡ OPERATOR: ${esc(state.userUid)}</span>`;
-    }
+    topbarPill.innerHTML = `<span class="tag accent" style="margin-right:8px;font-size:10px;display:inline-flex;align-items:center;gap:4px">● ${esc(state.userUid)}</span>`;
   }
 }
 
@@ -125,6 +122,9 @@ function getChapterForConcept(domainId, conceptIndex, conceptTitle) {
 }
 
 function openTextbookModal(chapterId) {
+  if (!isAdvancedRole() && (chapterId.startsWith('reverse-') || chapterId.startsWith('pwn-'))) {
+    return;
+  }
   const chapters = window.TEXTBOOK_CHAPTERS || {};
   const ch = chapters[chapterId];
   const modalBackdrop = document.getElementById('modalBackdrop');
@@ -646,7 +646,6 @@ function setTheme() {
 
 function setView(view) {
   if (!hasViewAccess(view)) {
-    alert(`[ACCESS DENIED] Your profile (${state.userUid.toUpperCase()} // CADET) does not have security clearance for ${view === 'tools' ? 'Tool Academy' : 'Lifecycles & Playbook'}. Operator clearance required.`);
     view = 'dashboard';
   }
   state.view = view; state.domain = null; state.curriculumModule = null;
@@ -663,13 +662,15 @@ function setView(view) {
 
 function openDomain(id) {
   const d = domains.find(x => x.id === id);
-  if (!isAdvancedRole() && d?.level === 'Advanced') {
-    alert(`[ACCESS DENIED] The '${d.name}' domain contains advanced binary exploitation and reverse engineering material reserved for Operator clearance.`);
+  if (!d) return;
+  if (!isAdvancedRole() && (d.id === 'reverse' || d.id === 'pwn')) {
+    state.view = 'domains'; state.domain = null;
+    render();
     return;
   }
   state.view = 'domains'; state.domain = id;
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === 'domains'));
-  document.getElementById('breadcrumbs').textContent = 'Domains / ' + domains.find(d => d.id === id)?.name;
+  document.getElementById('breadcrumbs').textContent = 'Domains / ' + d.name;
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -728,47 +729,34 @@ function curriculumHTML(intel) {
       <p>No curriculum modules loaded yet.</p></div></div>`;
   }
 
-  /* If a specific module is selected, render its full detail */
-  if (state.curriculumModule) {
-    const mod = allModules.find(m => m.id === state.curriculumModule);
-    if (mod) {
-      if (isCadet && (mod.domain === 'reverse' || mod.domain === 'pwn' || mod.id.includes('pwn') || mod.id.includes('reverse'))) {
-        return `
-        <div class="access-gate-card">
-          <h3>🔒 OPERATOR CLEARANCE REQUIRED</h3>
-          <p>This exploitation module covers advanced memory corruption, ROP, or binary reverse engineering that requires Operator clearance. Please return to the foundational tracks.</p>
-          <button class="btn" data-action="back-to-curriculum">← Back to Curriculum</button>
-        </div>`;
-      }
-      return curriculumModuleDetailHTML(mod);
-    }
-  }
-
   /* Filter modules for cadet */
   const modules = isCadet
-    ? allModules.filter(m => !(m.domain === 'reverse' || m.domain === 'pwn' || m.id.includes('pwn') || m.id.includes('reverse')))
+    ? allModules.filter(m => !(m.domain === 'reverse' || m.domain === 'pwn' || (m.id && (m.id.includes('pwn') || m.id.includes('reverse') || m.id.includes('binary-exploitation')))))
     : allModules;
+
+  /* If a specific module is selected, render its full detail */
+  if (state.curriculumModule) {
+    const mod = modules.find(m => m.id === state.curriculumModule);
+    if (mod) {
+      return curriculumModuleDetailHTML(mod);
+    }
+    state.curriculumModule = null;
+  }
 
   /* Module listing grid */
   return `
   <div class="section-head">
     <div>
-      <div class="eyebrow">TEXTBOOK-GRADE CURRICULUM // ${modules.length} ${isCadet ? 'ACTIVE FOUNDATIONAL' : 'ADVANCED'} MODULES</div>
+      <div class="eyebrow">TEXTBOOK-GRADE CURRICULUM // ${modules.length} MODULES</div>
       <h2>Exploitation Curriculum</h2>
       <p>Production-quality deep-dives into core exploitation domains. Each module contains OS internals, attack mechanics, tool command references, real-world case studies, and a browser-native terminal lab.</p>
     </div>
     <div class="tag-row">
-      <span class="tag accent">${isCadet ? '🛡️ CADET ACCESS' : '⚡ OPERATOR ACCESS'}</span>
+      <span class="tag accent">${modules.length} tracks</span>
       <span class="tag success">interactive labs</span>
       <span class="tag">textbook depth</span>
     </div>
   </div>
-
-  ${isCadet ? `
-    <div class="note warn-note" style="margin-bottom:16px">
-      <strong>🛡️ CADET NOTICE:</strong> Advanced binary exploitation and reverse engineering modules are restricted to Operator clearance. Active foundational tracks are shown below.
-    </div>
-  ` : ''}
 
   <div class="grid cols-2">
     ${modules.map(mod => `
@@ -1104,12 +1092,17 @@ async function loadIntel() {
  * ══════════════════════════════════════════════════════════ */
 
 function dashboardHTML() {
+  const isCadet = !isAdvancedRole();
+  const visibleDomains = isCadet ? domains.filter(d => !(d.id === 'reverse' || d.id === 'pwn')) : domains;
   const solved = state.solved.length, total = challenges.length;
+  const heroDomainsText = isCadet
+    ? 'foundations, Linux, networking, web, crypto, forensics, OSINT, stego, modern app surfaces, and defender context'
+    : 'foundations, Linux, networking, web, crypto, forensics, reverse engineering, pwn, OSINT, stego, modern app surfaces, and defender context';
   return `<div class="hero">
     <div class="hero-main">
       <div class="eyebrow">CTF Atlas / self-paced cyber range</div>
       <h1>Understand the system. Operate the tools. Prove the idea.</h1>
-      <p>A pin-to-pin CTF curriculum that fills the gaps between tutorials: foundations, Linux, networking, web, crypto, forensics, reverse engineering, pwn, OSINT, stego, modern app surfaces, and defender context — with safe hands-on practice at every stage.</p>
+      <p>A pin-to-pin CTF curriculum that fills the gaps between tutorials: ${heroDomainsText} — with safe hands-on practice at every stage.</p>
       <div class="tag-row"><span class="tag accent">offline-friendly</span><span class="tag accent">OS-independent</span><span class="tag success">localStorage progress</span><span class="tag">browser micro-labs</span></div>
       <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button><button class="btn" data-action="goto-curriculum">🎓 Curriculum</button><button class="btn" data-action="goto-tricks">⚡ Tricks &amp; tips</button><button class="btn" data-action="goto-workbench">🛠️ Workbench</button></div>
     </div>
@@ -1120,21 +1113,23 @@ function dashboardHTML() {
   </div>
   <div class="section-head"><div><h2>What's inside</h2><p>Designed to prevent the "I know the commands but not the reasoning" problem.</p></div></div>
   <div class="grid cols-4">
-    <div class="card"><div class="metric">12</div><div class="metric-label">learning domains</div><p style="margin-top:8px">Each has theory, workflows, practice and source material.</p></div>
-    <div class="card"><div class="metric">6</div><div class="metric-label">textbook modules</div><p style="margin-top:8px">Exploitation curriculum with interactive terminal labs and case studies.</p></div>
-    <div class="card"><div class="metric">18</div><div class="metric-label">micro-labs</div><p style="margin-top:8px">Local browser drills with instant feedback and saved progress.</p></div>
+    <div class="card"><div class="metric">${visibleDomains.length}</div><div class="metric-label">learning domains</div><p style="margin-top:8px">Each has theory, workflows, practice and source material.</p></div>
+    <div class="card"><div class="metric">${isCadet ? '5' : '6'}</div><div class="metric-label">curriculum tracks</div><p style="margin-top:8px">Exploitation curriculum with interactive terminal labs and case studies.</p></div>
+    <div class="card"><div class="metric">${total}</div><div class="metric-label">micro-labs</div><p style="margin-top:8px">Local browser drills with instant feedback and saved progress.</p></div>
     <div class="card"><div class="metric">18+</div><div class="metric-label">reference panels</div><p style="margin-top:8px">In-site notes, formulas, workflows and local-practice recipes.</p></div>
   </div>
   <div class="section-head"><div><h2>Recommended route</h2><p>Follow the sequence, but jump directly to a domain whenever you need it.</p></div></div>
   <div class="grid cols-3">
-    ${domains.slice(0,6).map((d,i)=>`<button class="card domain-card" data-domain="${d.id}" style="text-align:left"><div class="domain-icon">${d.icon}</div><div class="card-top"><div><h3>${d.name}</h3><p>${d.summary}</p></div><div class="arrow">→</div></div><div class="tag-row" style="margin-top:10px"><span class="tag">${d.level}</span><span class="tag">${d.duration}</span>${state.completedDomains.includes(d.id)?'<span class="tag success">complete</span>':''}</div></button>`).join('')}
+    ${visibleDomains.slice(0,6).map((d,i)=>`<button class="card domain-card" data-domain="${d.id}" style="text-align:left"><div class="domain-icon">${d.icon}</div><div class="card-top"><div><h3>${d.name}</h3><p>${d.summary}</p></div><div class="arrow">→</div></div><div class="tag-row" style="margin-top:10px"><span class="tag">${d.level}</span><span class="tag">${d.duration}</span>${state.completedDomains.includes(d.id)?'<span class="tag success">complete</span>':''}</div></button>`).join('')}
   </div>`;
 }
 
 function pathHTML() {
+  const isCadet = !isAdvancedRole();
+  const visibleDomains = isCadet ? domains.filter(d => !(d.id === 'reverse' || d.id === 'pwn')) : domains;
   return `<div class="section-head"><div><h2>The Atlas learning path</h2><p>Build fundamentals first; then specialize. Each stage is tied to a practical feedback loop.</p></div><div class="tag-row"><span class="tag accent">progress saved locally</span><span class="tag success">session protected</span></div></div>
   <div class="grid cols-2">
-    <div class="detail"><div class="detail-head"><h3 style="margin:0 0 4px">Core spine</h3><p style="margin:0;color:var(--muted);font-size:12px">The shortest path from zero to competent CTF problem solving.</p></div><div class="detail-body">${domains.map((d,i)=>`<div class="path-node" style="padding-bottom:18px"><div class="path-row"><div class="step-badge">${String(i+1).padStart(2,'0')}</div><div class="path-content"><div class="card-top"><div><h3>${d.name}</h3><p>${d.summary}</p></div><button class="icon-btn" data-domain="${d.id}" title="Open domain">→</button></div><div class="bar-small"><span style="width:${state.completedDomains.includes(d.id)?100:0}%"></span></div><div class="tag-row" style="margin-top:8px"><span class="tag">${d.level}</span><span class="tag">${d.duration}</span>${state.completedDomains.includes(d.id)?'<span class="tag success">done</span>':''}</div></div></div></div>`).join('')}</div></div>
+    <div class="detail"><div class="detail-head"><h3 style="margin:0 0 4px">Core spine</h3><p style="margin:0;color:var(--muted);font-size:12px">The shortest path from zero to competent CTF problem solving.</p></div><div class="detail-body">${visibleDomains.map((d,i)=>`<div class="path-node" style="padding-bottom:18px"><div class="path-row"><div class="step-badge">${String(i+1).padStart(2,'0')}</div><div class="path-content"><div class="card-top"><div><h3>${d.name}</h3><p>${d.summary}</p></div><button class="icon-btn" data-domain="${d.id}" title="Open domain">→</button></div><div class="bar-small"><span style="width:${state.completedDomains.includes(d.id)?100:0}%"></span></div><div class="tag-row" style="margin-top:8px"><span class="tag">${d.level}</span><span class="tag">${d.duration}</span>${state.completedDomains.includes(d.id)?'<span class="tag success">done</span>':''}</div></div></div></div>`).join('')}</div></div>
     <div class="detail"><div class="detail-head"><h3 style="margin:0 0 4px">How to study a topic</h3><p style="margin:0;color:var(--muted);font-size:12px">Use the same six-step loop for every category.</p></div><div class="detail-body"><div class="grid">${[['1','Define','Write the problem in plain language. What must be true for the flag to appear?'],['2','Model','Draw the data flow, protocol, memory region or trust boundary.'],['3','Observe','Collect the smallest useful evidence with a tool.'],['4','Hypothesize','Choose one explanation and predict what you should see.'],['5','Test','Change one variable. Prefer local, reversible experiments.'],['6','Explain','Write the root cause, proof, impact and defensive lesson.']].map(x=>`<div class="card"><div class="card-top"><span class="tag accent">${x[0]}</span><h3 style="margin:0;flex:1">${x[1]}</h3></div><p style="margin-top:8px">${x[2]}</p></div>`).join('')}</div><div class="note warn-note"><strong>When stuck:</strong> reduce scope. Verify file type. Inspect inputs/outputs. Read the help text. Make a tiny reproducer. Search the exact protocol term, not the whole mystery.</div></div></div>
   </div>`;
 }
@@ -1144,29 +1139,23 @@ function modulesHTML(query) {
   const q = normalizeAnswer(query || '');
   const rows = [];
   domains.forEach(d => {
-    if (isCadet && d.level === 'Advanced') return; // Filter out advanced domain modules for cadet!
+    if (isCadet && (d.id === 'reverse' || d.id === 'pwn')) return;
     d.concepts.forEach((c, i) => rows.push({ d, index: i+1, title: c[0], theory: c[1], practice: c[2], domain: d }));
   });
   const hits = rows.filter(r => !q || normalizeAnswer(r.title + ' ' + r.theory + ' ' + r.practice + ' ' + r.domain.name).includes(q));
   return `
   <div class="section-head">
     <div>
-      <div class="eyebrow">KNOWLEDGE MATRIX / ${rows.length} ${isCadet ? 'CORE &amp; FOUNDATIONAL' : 'TOTAL'} MODULES</div>
+      <div class="eyebrow">KNOWLEDGE MATRIX // ${rows.length} MODULES</div>
       <h2>Learning modules</h2>
       <p>Every concept is readable here before you touch a tool. Open the textbook chapter for exhaustive theory, architecture diagrams, and master command tables.</p>
     </div>
     <div class="tag-row">
-      <span class="tag accent">${isCadet ? '🛡️ CADET ACCESS' : '⚡ OPERATOR ACCESS'}</span>
+      <span class="tag accent">${rows.length} modules</span>
       <span class="tag">in-site textbook</span>
       <span class="tag">searchable</span>
     </div>
   </div>
-
-  ${isCadet ? `
-    <div class="note warn-note" style="margin-bottom:16px">
-      <strong>🛡️ CADET CLEARANCE NOTICE:</strong> Advanced exploitation modules (Reverse Engineering, Binary Exploitation) are locked. Foundational and core curriculum tracks are active below.
-    </div>
-  ` : ''}
 
   <div class="module-search">
     <span>&gt;</span>
@@ -1203,43 +1192,36 @@ function modulesHTML(query) {
 
 function domainsHTML() {
   const isCadet = !isAdvancedRole();
+  const visibleDomains = isCadet ? domains.filter(d => !(d.id === 'reverse' || d.id === 'pwn')) : domains;
   return `
   <div class="section-head">
     <div>
-      <div class="eyebrow">${isCadet ? 'CADET CLEARANCE // FOUNDATIONAL TRACKS' : 'ALL DOMAINS // FULL MATRIX'}</div>
+      <div class="eyebrow">${isCadet ? 'EXPLORATION TRACKS // CORE DOMAINS' : 'ALL DOMAINS // FULL MATRIX'}</div>
       <h2>Domains</h2>
       <p>Every domain follows the same pattern: concept map → workflow → tools → practice → real-world transfer.</p>
     </div>
     <div class="tag-row">
-      <span class="tag accent">${isCadet ? '🛡️ CADET ACCESS' : '⚡ OPERATOR ACCESS'}</span>
+      <span class="tag accent">${visibleDomains.length} domains</span>
+      <span class="tag success">hands-on</span>
     </div>
   </div>
-  ${isCadet ? `
-    <div class="note warn-note" style="margin-bottom:16px">
-      <strong>🛡️ CADET NOTICE:</strong> Advanced domains (Reverse Engineering, Binary Exploitation) are locked. Foundational and core domains are active below.
-    </div>
-  ` : ''}
   <div class="grid cols-3">
-    ${domains.map(d => {
-      const isLocked = isCadet && d.level === 'Advanced';
-      return `
-      <button class="card domain-card${isLocked ? ' locked' : ''}" data-domain="${d.id}" style="text-align:left;${isLocked ? 'opacity:0.65;border-color:var(--danger)' : ''}">
+    ${visibleDomains.map(d => `
+      <button class="card domain-card" data-domain="${d.id}" style="text-align:left">
         <div class="domain-icon">${d.icon}</div>
         <div class="card-top">
           <div>
             <h3>${d.name}</h3>
             <p>${d.summary}</p>
           </div>
-          <div class="arrow">${isLocked ? '🔒' : '→'}</div>
+          <div class="arrow">→</div>
         </div>
         <div class="tag-row" style="margin-top:10px">
-          <span class="tag${d.level === 'Advanced' ? ' warn' : ''}">${d.level}</span>
+          <span class="tag">${d.level}</span>
           <span class="tag">${d.duration}</span>
-          ${isLocked ? '<span class="module-locked-pill">🔒 Operator Only</span>' : ''}
           ${state.completedDomains.includes(d.id)?'<span class="tag success">complete</span>':''}
         </div>
-      </button>`;
-    }).join('')}
+      </button>`).join('')}
   </div>`;
 }
 
@@ -1262,6 +1244,7 @@ function domainDetailHTML(id) {
 }
 
 function toolsHTML() {
+  if (!isAdvancedRole()) return '<div class="empty">Section unavailable.</div>';
   const os = state.os;
   const tab = state.toolTab || 'overview';
 
@@ -1803,6 +1786,7 @@ function labsHTML() {
 }
 
 function playbookHTML() {
+  if (!isAdvancedRole()) return '<div class="empty">Section unavailable.</div>';
   const tab = state.playbookTab || 'universal';
 
   const steps = [
@@ -2244,16 +2228,10 @@ function tricksHTML() {
     </div>
     <div class="tag-row">
       <span class="tag accent">${filtered.length} active tricks</span>
-      <span class="tag warn">${isCadet ? '🛡️ CADET ACCESS' : '⚡ FULL OPERATOR CLEARANCE'}</span>
-      <span class="tag success">mitigation included</span>
+      <span class="tag success">verified techniques</span>
+      <span class="tag">mitigation included</span>
     </div>
   </div>
-
-  ${isCadet ? `
-    <div class="note warn-note" style="margin-bottom:14px">
-      <strong>🛡️ CADET CLEARANCE NOTICE:</strong> Displaying foundational command chaining, whitespace evasion, and Linux recon. Advanced privilege escalation (SUID GTFOBins, capabilities), reverse shell execution, and evasion payloads are restricted to Operator clearance.
-    </div>
-  ` : ''}
 
   <div class="module-search" style="margin-bottom:14px">
     <span>&gt;</span>
