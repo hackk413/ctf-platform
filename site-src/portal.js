@@ -3152,16 +3152,6 @@ function init() {
   /* Update navigation and clearances */
   updateNavForRole();
 
-  /* Sidebar nav items */
-  document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      setView(btn.dataset.view);
-      if (window.innerWidth <= 820) {
-        closeMobileMenu();
-      }
-    });
-  });
-
   /* Mobile and Desktop menu toggle */
   const sidebar = document.getElementById('sidebar');
   const menuBtn = document.getElementById('menuToggle');
@@ -3169,13 +3159,16 @@ function init() {
   const backdrop = document.getElementById('sidebarBackdrop');
 
   function openMobileMenu() {
+    sidebar?.classList.remove('collapsed');
     sidebar?.classList.add('open');
     backdrop?.classList.add('active');
+    document.body.style.overflow = 'hidden';
   }
 
   function closeMobileMenu() {
     sidebar?.classList.remove('open');
     backdrop?.classList.remove('active');
+    document.body.style.overflow = '';
   }
 
   function closeDesktopMenu() {
@@ -3197,8 +3190,41 @@ function init() {
     }
   }
 
+  /* Sidebar nav items - robust event delegation */
+  const mainNav = document.querySelector('.main-nav');
+  if (mainNav) {
+    mainNav.addEventListener('click', (e) => {
+      const btn = e.target.closest('.nav-item[data-view]');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const targetView = btn.dataset.view;
+      if (targetView) {
+        setView(targetView);
+        if (window.innerWidth <= 820) {
+          closeMobileMenu();
+        }
+      }
+    });
+  }
+
+  document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const targetView = btn.dataset.view;
+      if (targetView) {
+        setView(targetView);
+        if (window.innerWidth <= 820) {
+          closeMobileMenu();
+        }
+      }
+    });
+  });
+
   if (menuBtn) {
     menuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
       if (window.innerWidth <= 820) {
         if (sidebar?.classList.contains('open')) {
@@ -3214,6 +3240,7 @@ function init() {
 
   if (closeBtn) {
     closeBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       e.stopPropagation();
       if (window.innerWidth <= 820) {
         closeMobileMenu();
@@ -3224,7 +3251,9 @@ function init() {
   }
 
   if (backdrop) {
-    backdrop.addEventListener('click', () => {
+    backdrop.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       closeMobileMenu();
     });
   }
