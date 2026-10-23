@@ -5,24 +5,120 @@
 <meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#0a0a0f">
 <title>CTF_ATLAS // AUTH NODE</title>
 <style>
-:root{--bg:#0a0a0f;--fg:#e0e0e0;--card:#12121a;--muted:#1c1c2e;--sub:#6b7280;--g:#00ff88;--m:#ff00ff;--c:#00d4ff;--b:#2a2a3a;--red:#ff3366;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg)}body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(0,255,136,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px);background-size:48px 48px}body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.22) 2px,rgba(0,0,0,.22) 4px);mix-blend-mode:screen;opacity:.45}.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:28px}.auth-panel{width:min(760px,100%);background:rgba(18,18,26,.96);border:1px solid var(--b);padding:30px;position:relative;box-shadow:0 0 20px #00ff8814;clip-path:polygon(0 12px,12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px))}.auth-panel:before{content:"";position:absolute;inset:8px;border:1px solid #00ff8810;pointer-events:none}.auth-topline{display:flex;justify-content:space-between;color:var(--sub);font-size:12px;letter-spacing:.15em}.ascii-logo{font-size:clamp(34px,7vw,72px);font-weight:900;color:var(--g);margin-top:38px;letter-spacing:.12em;text-shadow:0 0 8px #00ff8870}.glitch-title{font-size:clamp(25px,4vw,46px);font-weight:900;text-transform:uppercase;margin:8px 0 12px;color:#fff;text-shadow:-2px 0 var(--m),2px 0 var(--c);animation:glitch 4s steps(2,end) infinite}.auth-sub{color:#9ca3af;line-height:1.7;letter-spacing:.06em}.terminal-input{display:flex;gap:10px;align-items:center;margin:14px 0;padding:14px;border:1px solid var(--b);background:#0f1016}.terminal-input span{color:var(--g);white-space:nowrap}.terminal-input input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--g);font:inherit}.btn{width:100%;margin-top:12px;min-height:48px;border:2px solid var(--g);background:transparent;color:var(--g);font:inherit;letter-spacing:.14em;cursor:pointer;clip-path:polygon(0 9px,9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px));transition:.12s}.btn:hover,.btn:focus-visible{background:var(--g);color:#000;box-shadow:0 0 7px var(--g),0 0 18px #00ff8844;outline:none}.auth-status{margin-top:18px;color:#9ca3af;font-size:13px;letter-spacing:.08em}.auth-status.ok{color:var(--g)}.auth-status.error{color:var(--red)}.auth-foot{margin-top:30px;color:#515766;font-size:11px;letter-spacing:.12em}@keyframes glitch{0%,92%,100%{transform:none}94%{transform:skewX(-1deg) translateX(-1px)}96%{transform:skewX(1deg) translateX(1px)}}@media(prefers-reduced-motion:reduce){.glitch-title{animation:none}}@media(max-width:640px){.auth-panel{padding:22px}.terminal-input{flex-direction:column;align-items:flex-start}.terminal-input input{width:100%}}
+:root{--bg:#0a0a0f;--fg:#e0e0e0;--card:#12121a;--muted:#1c1c2e;--sub:#6b7280;--g:#00ff88;--m:#ff00ff;--c:#00d4ff;--b:#2a2a3a;--red:#ff3366;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(rgba(0,255,136,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.025) 1px,transparent 1px);background-size:48px 48px}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.22) 2px,rgba(0,0,0,.22) 4px);mix-blend-mode:screen;opacity:.45}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:28px}
+.auth-panel{width:min(800px,100%);background:rgba(18,18,26,.96);border:1px solid var(--b);padding:30px;position:relative;box-shadow:0 0 24px #00ff8814;clip-path:polygon(0 12px,12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px))}
+.auth-panel:before{content:"";position:absolute;inset:8px;border:1px solid #00ff8810;pointer-events:none}
+.auth-topline{display:flex;justify-content:space-between;color:var(--sub);font-size:12px;letter-spacing:.15em}
+.ascii-logo{font-size:clamp(34px,7vw,72px);font-weight:900;color:var(--g);margin-top:20px;letter-spacing:.12em;text-shadow:0 0 8px #00ff8870}
+.glitch-title{font-size:clamp(22px,4vw,42px);font-weight:900;text-transform:uppercase;margin:6px 0 10px;color:#fff;text-shadow:-2px 0 var(--m),2px 0 var(--c);animation:glitch 4s steps(2,end) infinite}
+.auth-sub{color:#9ca3af;line-height:1.6;letter-spacing:.06em;font-size:13px;margin:0 0 18px}
+.profiles-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.profile-pill{border:1px solid var(--b);background:#0e1018;padding:12px;border-radius:4px;cursor:pointer;transition:.15s;text-align:left}
+.profile-pill:hover{border-color:var(--g);background:#121724;box-shadow:0 0 10px #00ff8820}
+.profile-pill.active{border-color:var(--g);background:#131d24}
+.profile-pill strong{display:flex;align-items:center;gap:6px;color:var(--g);font-size:12px;letter-spacing:.08em;margin-bottom:4px}
+.profile-pill p{margin:0;color:#8c96a8;font-size:11px;line-height:1.4}
+.terminal-input{display:flex;gap:10px;align-items:center;margin:12px 0;padding:12px 14px;border:1px solid var(--b);background:#0f1016}
+.terminal-input span{color:var(--g);white-space:nowrap;font-size:13px}
+.terminal-input input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--g);font:inherit;font-size:14px}
+.btn{width:100%;margin-top:10px;min-height:46px;border:2px solid var(--g);background:transparent;color:var(--g);font:inherit;letter-spacing:.14em;cursor:pointer;clip-path:polygon(0 8px,8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px));transition:.12s}
+.btn:hover,.btn:focus-visible{background:var(--g);color:#000;box-shadow:0 0 7px var(--g),0 0 18px #00ff8844;outline:none}
+.auth-status{margin-top:16px;color:#9ca3af;font-size:12px;letter-spacing:.08em;min-height:18px}
+.auth-status.ok{color:var(--g)}
+.auth-status.error{color:var(--red)}
+.auth-foot{margin-top:24px;color:#515766;font-size:11px;letter-spacing:.12em;display:flex;justify-content:space-between}
+@keyframes glitch{0%,92%,100%{transform:none}94%{transform:skewX(-1deg) translateX(-1px)}96%{transform:skewX(1deg) translateX(1px)}}
+@media(prefers-reduced-motion:reduce){.glitch-title{animation:none}}
+@media(max-width:640px){.auth-panel{padding:20px}.profiles-grid{grid-template-columns:1fr}.terminal-input{flex-direction:column;align-items:flex-start}.terminal-input input{width:100%}}
 </style>
 </head>
 <body>
 <div class="auth-wrap"><main class="auth-panel" aria-labelledby="title">
-<div class="auth-topline"><span>[ SECURE NODE ]</span><span id="clock">00:00:00</span></div>
+<div class="auth-topline"><span>[ SECURE AUTH NODE ]</span><span id="clock">00:00:00</span></div>
 <div class="ascii-logo" aria-hidden="true">CTF_ATLAS</div>
 <div class="glitch-title" id="title">ACCESS TERMINAL</div>
-<p class="auth-sub">PIN-TO-PIN CYBERSECURITY TRAINING / SESSION GATEWAY</p>
+<p class="auth-sub">ROLE-BASED CYBERSECURITY RANGE // OPERATOR &amp; CADET CLEARANCE</p>
+
+<div class="profiles-grid">
+  <button type="button" class="profile-pill active" id="btnCadetProfile">
+    <strong>🛡️ CADET PROFILE</strong>
+    <p>Training node // Foundational modules, basic tricks, restricted tooling. (UID: <code>cadet</code> / Pass: <code>cadet123</code>)</p>
+  </button>
+  <button type="button" class="profile-pill" id="btnAdminProfile">
+    <strong>⚡ OPERATOR PROFILE</strong>
+    <p>Full clearance // Tool Academy, Solve Lifecycles, Binary Exploitation &amp; Evasion. (UID: <code>admin</code> / Pass: <code>admin123</code>)</p>
+  </button>
+</div>
+
 <form id="loginForm" autocomplete="on">
-<label class="terminal-input"><span>&gt; UID:</span><input id="uid" name="uid" autocomplete="username" autocapitalize="none" required></label>
-<label class="terminal-input"><span>&gt; PASS:</span><input id="password" name="password" type="password" autocomplete="current-password" required></label>
+<label class="terminal-input"><span>&gt; UID:</span><input id="uid" name="uid" autocomplete="username" autocapitalize="none" value="cadet" required></label>
+<label class="terminal-input"><span>&gt; PASS:</span><input id="password" name="password" type="password" autocomplete="current-password" value="cadet123" required></label>
 <button class="btn" type="submit">[ INITIATE SESSION ]</button>
 </form>
-<div id="authStatus" class="auth-status" aria-live="polite">[WAITING] ENTER AUTHENTICATION MATERIAL</div>
-<div class="auth-foot">AUTHORIZED TRAINING ENVIRONMENT ONLY // NO TELEMETRY</div>
+<div id="authStatus" class="auth-status" aria-live="polite">[READY] SELECT CLEARANCE OR ENTER CREDENTIALS</div>
+<div class="auth-foot">
+  <span>CLEARANCE: LEVEL-1 (CADET) / LEVEL-5 (OPERATOR)</span>
+  <span>SECURE RANGE // NO TELEMETRY</span>
+</div>
 </main></div>
 <script>
-(()=>{const $=id=>document.getElementById(id);const clock=$('clock');const tick=()=>clock.textContent=new Date().toLocaleTimeString('en-GB');tick();setInterval(tick,1000);fetch('/api/session',{credentials:'same-origin'}).then(r=>{if(r.ok)location.replace('/portal')}).catch(()=>{});$('loginForm').addEventListener('submit',async e=>{e.preventDefault();const s=$('authStatus');s.className='auth-status';s.textContent='[AUTH] VERIFYING...';try{const r=await fetch('/api/login',{method:'POST',headers:{'content-type':'application/json'},credentials:'same-origin',body:JSON.stringify({uid:$('uid').value.trim(),password:$('password').value})});if(!r.ok)throw 0;s.className='auth-status ok';s.textContent='[OK] SESSION ESTABLISHED';setTimeout(()=>location.replace('/portal'),150)}catch{s.className='auth-status error';s.textContent='[ERR] INVALID CREDENTIALS';$('password').select()}})})()
+(()=>{
+  const $=id=>document.getElementById(id);
+  const clock=$('clock');
+  const tick=()=>clock.textContent=new Date().toLocaleTimeString('en-GB');
+  tick();
+  setInterval(tick,1000);
+
+  // Auto-redirect if already logged in
+  fetch('/api/session',{credentials:'same-origin'}).then(r=>{if(r.ok)location.replace('/portal')}).catch(()=>{});
+
+  // Profile quick switchers
+  $('btnCadetProfile')?.addEventListener('click', ()=>{
+    $('uid').value = 'cadet';
+    $('password').value = 'cadet123';
+    $('btnCadetProfile').classList.add('active');
+    $('btnAdminProfile').classList.remove('active');
+    $('authStatus').className = 'auth-status';
+    $('authStatus').textContent = '[CADET] LEVEL-1 CREDENTIALS LOADED';
+  });
+
+  $('btnAdminProfile')?.addEventListener('click', ()=>{
+    $('uid').value = 'admin';
+    $('password').value = 'admin123';
+    $('btnAdminProfile').classList.add('active');
+    $('btnCadetProfile').classList.remove('active');
+    $('authStatus').className = 'auth-status';
+    $('authStatus').textContent = '[OPERATOR] FULL-CLEARANCE CREDENTIALS LOADED';
+  });
+
+  $('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const s = $('authStatus');
+    s.className = 'auth-status';
+    s.textContent = '[AUTH] VALIDATING CRYPTOGRAPHIC MATERIAL...';
+    try {
+      const r = await fetch('/api/login', {
+        method: 'POST',
+        headers: {'content-type': 'application/json'},
+        credentials: 'same-origin',
+        body: JSON.stringify({ uid: $('uid').value.trim(), password: $('password').value })
+      });
+      const data = await r.json();
+      if (!r.ok || !data.ok) throw (data.error || 'Invalid credentials');
+      s.className = 'auth-status ok';
+      s.textContent = `[OK] SESSION ESTABLISHED // CLEARANCE: ${data.role ? data.role.toUpperCase() : 'AUTHORIZED'}`;
+      setTimeout(() => location.replace('/portal'), 150);
+    } catch (err) {
+      s.className = 'auth-status error';
+      s.textContent = `[ERR] ${typeof err === 'string' ? err : 'INVALID CREDENTIALS'}`;
+      $('password').select();
+    }
+  });
+})();
 </script>
 </body></html>

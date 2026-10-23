@@ -10,12 +10,14 @@
 </head>
 <body>
   <div class="scanlines" aria-hidden="true"></div>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand-row">
         <div class="brand-mark cyber-chamfer">CA</div>
         <div><div class="brand-name">CTF_ATLAS</div><div class="brand-sub">learn // operate // prove</div></div>
       </div>
+      <div id="userProfileBadge" style="margin-top:12px;margin-bottom:4px"></div>
       <button class="mobile-close" id="mobileClose" aria-label="Close navigation">[X]</button>
       <nav class="main-nav" aria-label="Main navigation">
         <button class="nav-item active" data-view="dashboard"><span>01</span> Dashboard</button>
@@ -43,11 +45,12 @@
 
     <main class="content" id="main">
       <header class="topbar">
-        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Open navigation">[MENU]</button>
+        <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Toggle navigation" title="Toggle navigation (Desktop collapse / Mobile drawer)">[MENU]</button>
         <div class="breadcrumbs" id="breadcrumbs">Dashboard</div>
         <div class="topbar-actions">
+          <div id="topbarUserPill" style="display:flex;align-items:center"></div>
           <label class="search-wrap" aria-label="Search the atlas"><span>&gt;</span><input id="globalSearch" type="search" placeholder="search concepts / tools / labs" autocomplete="off"></label>
-          <button class="icon-btn" id="themeToggle" title="Visual mode" aria-label="Visual mode">NEON</button>
+          <button class="icon-btn" id="themeToggle" title="Toggle Theme (Neon Dark / Clean Light)" aria-label="Visual mode">NEON</button>
         </div>
       </header>
       <section id="view" class="view" aria-live="polite"></section>

