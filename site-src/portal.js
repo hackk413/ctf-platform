@@ -46,6 +46,16 @@ function isAdvancedRole() {
   return state.userRole === 'admin';
 }
 
+// Global alert safety: for cadet profile, any alert that arises says 'This field is under development.'
+if (!isAdvancedRole() && typeof window !== 'undefined') {
+  const _rawAlert = window.alert;
+  window.alert = function(_msg) {
+    if (typeof _rawAlert === 'function') {
+      _rawAlert('This field is under development.');
+    }
+  };
+}
+
 function hasViewAccess(view) {
   if (isAdvancedRole()) return true;
   // Restricted views for cadet/normal user:
@@ -123,6 +133,7 @@ function getChapterForConcept(domainId, conceptIndex, conceptTitle) {
 
 function openTextbookModal(chapterId) {
   if (!isAdvancedRole() && (chapterId.startsWith('reverse-') || chapterId.startsWith('pwn-'))) {
+    alert('This field is under development.');
     return;
   }
   const chapters = window.TEXTBOOK_CHAPTERS || {};
@@ -646,7 +657,8 @@ function setTheme() {
 
 function setView(view) {
   if (!hasViewAccess(view)) {
-    view = 'dashboard';
+    alert('This field is under development.');
+    return;
   }
   state.view = view; state.domain = null; state.curriculumModule = null;
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.view === view));
@@ -664,8 +676,7 @@ function openDomain(id) {
   const d = domains.find(x => x.id === id);
   if (!d) return;
   if (!isAdvancedRole() && (d.id === 'reverse' || d.id === 'pwn')) {
-    state.view = 'domains'; state.domain = null;
-    render();
+    alert('This field is under development.');
     return;
   }
   state.view = 'domains'; state.domain = id;
@@ -739,6 +750,9 @@ function curriculumHTML(intel) {
     const mod = modules.find(m => m.id === state.curriculumModule);
     if (mod) {
       return curriculumModuleDetailHTML(mod);
+    }
+    if (isCadet) {
+      alert('This field is under development.');
     }
     state.curriculumModule = null;
   }
@@ -1244,7 +1258,10 @@ function domainDetailHTML(id) {
 }
 
 function toolsHTML() {
-  if (!isAdvancedRole()) return '<div class="empty">Section unavailable.</div>';
+  if (!isAdvancedRole()) {
+    alert('This field is under development.');
+    return '<div class="empty">This field is under development.</div>';
+  }
   const os = state.os;
   const tab = state.toolTab || 'overview';
 
@@ -1786,7 +1803,10 @@ function labsHTML() {
 }
 
 function playbookHTML() {
-  if (!isAdvancedRole()) return '<div class="empty">Section unavailable.</div>';
+  if (!isAdvancedRole()) {
+    alert('This field is under development.');
+    return '<div class="empty">This field is under development.</div>';
+  }
   const tab = state.playbookTab || 'universal';
 
   const steps = [

@@ -126,14 +126,18 @@ async function testCadetClientStealth() {
   console.log('[TEST] 4. Client Script & DOM Navigation Stealth');
   const { portalJs } = await import('../lib/assets.mjs');
 
-  // Check for alert() calls
+  // Check for alert() calls: any alert that arises must state "This field is under development."
   const alertMatches = portalJs.match(/alert\s*\([^)]*\)/g) || [];
-  // Ensure no access denied alerts
   for (const a of alertMatches) {
     assert(!a.includes('ACCESS DENIED'), `Found ACCESS DENIED alert: ${a}`);
     assert(!a.includes('clearance'), `Found clearance alert: ${a}`);
+    assert(!a.includes('Operator'), `Found Operator reference in alert: ${a}`);
+    assert(!a.includes('CADET'), `Found CADET reference in alert: ${a}`);
   }
-  console.log('  [PASS] Zero permission/denied alert() calls in portal script');
+  // Ensure that all functional alerts in portalJs specify 'This field is under development.'
+  assert(portalJs.includes("alert('This field is under development.')"), "portalJs must include development alert");
+  assert(portalJs.includes("_rawAlert('This field is under development.')"), "portalJs must have global safety alert wrapper");
+  console.log('  [PASS] All alerts strictly display "This field is under development."');
 
   // Test string leakages
   assert(!portalJs.includes('CADET NOTICE:'), 'portalJs must not contain CADET NOTICE:');
