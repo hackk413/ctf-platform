@@ -227,37 +227,45 @@ html.light .user-badge {
   display: block;
 }
 
-@media (min-width: 821px) {
-  .app-shell.sidebar-collapsed {
-    grid-template-columns: 74px 1fr !important;
-  }
-  .sidebar.collapsed {
-    padding: 16px 8px;
-    align-items: center;
-  }
-  .sidebar.collapsed .brand-name,
-  .sidebar.collapsed .brand-sub,
-  .sidebar.collapsed .brand-row {
-    padding-bottom: 8px;
-  }
-  .sidebar.collapsed .brand-name,
-  .sidebar.collapsed .brand-sub,
-  .sidebar.collapsed .nav-item span:last-child,
-  .sidebar.collapsed .sidebar-bottom,
-  .sidebar.collapsed .user-badge p,
-  .sidebar.collapsed .user-badge strong {
-    display: none;
-  }
-  .sidebar.collapsed .nav-item {
-    justify-content: center;
-    padding: 10px 0;
-    font-size: 11px;
-  }
-  .sidebar.collapsed .brand-mark {
-    width: 38px;
-    height: 38px;
-    font-size: 13px;
-  }
+/* ── Full Sidebar Collapse for Laptops & Desktops ────────── */
+.app-shell.sidebar-collapsed {
+  grid-template-columns: 1fr !important;
+}
+
+.sidebar.collapsed,
+.app-shell.sidebar-collapsed .sidebar {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+.mobile-close {
+  display: inline-flex !important;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted-fg);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  cursor: pointer;
+  z-index: 15;
+  transition: all .15s;
+}
+.mobile-close:hover {
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: var(--shadow-green-sm);
 }
 
 /* ── Role-based Access & Profile Clearance Badges ──────────── */
