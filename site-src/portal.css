@@ -586,3 +586,23 @@ html.light .user-badge {
 .copy-btn { margin-bottom: 8px; font-size: 11px; padding: 4px 10px; }
 .writeup-card { border: 1px solid var(--border); background: linear-gradient(180deg,#141520dd,#0e0f16f0); padding: 22px; margin-bottom: 18px; clip-path: polygon(0 9px,9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px)); }
 .writeup-card:hover { border-color: var(--green); box-shadow: var(--shadow-green-sm); }
+
+/* Vulnerability Research & Advisories Feed */
+.advisory-card { border: 1px solid var(--border); background: linear-gradient(180deg, #13141fdd, #0c0e15f5); padding: 22px; margin-bottom: 18px; clip-path: polygon(0 9px,9px 0,calc(100% - 9px) 0,100% 9px,100% calc(100% - 9px),calc(100% - 9px) 100%,9px 100%,0 calc(100% - 9px)); transition: all 0.15s ease; }
+.advisory-card:hover { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0, 212, 255, 0.2); }
+.advisory-card.critical:hover { border-color: var(--pink); box-shadow: 0 0 18px rgba(255, 0, 128, 0.25); }
+.severity-tag { font-family: var(--display); font-size: 11px; font-weight: 800; padding: 3px 8px; letter-spacing: 0.1em; border-radius: 2px; }
+.severity-tag.critical { background: #ff005520; color: #ff3377; border: 1px solid #ff0055; box-shadow: 0 0 8px #ff005530; }
+.severity-tag.high { background: #ff990020; color: #ffaa22; border: 1px solid #ff9900; }
+.researcher-box { background: rgba(0, 212, 255, 0.05); border: 1px solid rgba(0, 212, 255, 0.2); border-left: 3px solid var(--cyan); padding: 10px 14px; margin: 12px 0; border-radius: 2px; font-size: 12px; }
+.researcher-box strong { color: var(--cyan); }
+.researcher-box p { margin: 4px 0 0; color: #94a3b8; font-size: 11px; font-style: italic; }
+.advisory-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 14px 0; font-size: 12px; }
+.advisory-meta-item { background: #080a10; border: 1px solid var(--border); padding: 8px 12px; }
+.advisory-meta-item .lbl { color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 2px; }
+.advisory-meta-item .val { color: var(--fg); font-weight: 600; font-family: var(--mono); }
+.sync-live-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 255, 136, 0.08); border: 1px solid var(--green); padding: 6px 12px; color: var(--green); font-family: var(--mono); font-size: 11px; font-weight: 700; border-radius: 4px; }
+.sync-live-badge .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 8px var(--green); animation: pulse-dot 1.2s infinite; }
+@keyframes spin-anim { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.spinning { animation: spin-anim 0.8s linear infinite; display: inline-block; }
+

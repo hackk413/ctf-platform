@@ -38,6 +38,9 @@ const state = {
   workbenchLport: '4444',
   workbenchSubnetIp: '10.10.14.23',
   workbenchSubnetPrefix: '24',
+  advisoriesTab: 'all',
+  advisoriesQuery: '',
+  advisoriesSyncing: false,
 };
 
 window.state = state;
@@ -59,7 +62,7 @@ if (!isAdvancedRole() && typeof window !== 'undefined') {
 function hasViewAccess(view) {
   if (isAdvancedRole()) return true;
   // Restricted views for cadet/normal user:
-  if (view === 'tools' || view === 'playbook') return false;
+  if (view === 'tools' || view === 'playbook' || view === 'advisories') return false;
   return true;
 }
 
@@ -69,9 +72,11 @@ function updateNavForRole() {
   if (mainNav) {
     const toolsBtn = mainNav.querySelector('[data-view="tools"]');
     const playbookBtn = mainNav.querySelector('[data-view="playbook"]');
+    const advisoriesBtn = mainNav.querySelector('[data-view="advisories"]');
     if (isCadet) {
       if (toolsBtn) toolsBtn.remove();
       if (playbookBtn) playbookBtn.remove();
+      if (advisoriesBtn) advisoriesBtn.remove();
     }
     // Renumber visible buttons sequentially from 01:
     const visibleButtons = mainNav.querySelectorAll('.nav-item');
@@ -666,7 +671,7 @@ function setView(view) {
     dashboard:'Dashboard', path:'Learning path', modules:'Learning modules', domains:'Learning paths',
     tools:'Tool Academy', labs:'Micro-labs', playbook:'Lifecycles & Playbook', casebook:'Casebook',
     library:'Reference vault', glossary:'Glossary', intel:'Live intel', curriculum:'Curriculum',
-    tricks:'Tricks & tips', workbench:'Cyber workbench'
+    tricks:'Tricks & tips', workbench:'Cyber workbench', advisories:'Vuln Intel & Research'
   }[view] || 'CTF Atlas';
   render();
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -715,8 +720,9 @@ function render() {
   if (state.view === 'curriculum')  view.innerHTML = curriculumHTML(intelCache);
   if (state.view === 'tricks')      view.innerHTML = tricksHTML();
   if (state.view === 'workbench')   view.innerHTML = workbenchHTML();
+  if (state.view === 'advisories')  view.innerHTML = advisoriesHTML();
   bindViewEvents();
-  if ((state.view === 'intel' || state.view === 'curriculum') && !intelCache) loadIntel();
+  if ((state.view === 'intel' || state.view === 'curriculum' || state.view === 'advisories') && !intelCache) loadIntel();
   document.getElementById('sidebarProgress').textContent = completion() + '%';
   document.getElementById('sidebarProgressBar').style.width = completion() + '%';
   setTheme();
@@ -1084,18 +1090,29 @@ function intelHTML(intel) {
 }
 
 /* ── Intelligence loader ─────────────────────────────────── */
-async function loadIntel() {
-  if (intelLoading || intelCache) return;
+async function loadIntel(force = false) {
+  if (!force && (intelLoading || intelCache)) return;
   intelLoading = true;
   try {
-    const r = await fetch('/data/live-intel.json', { credentials: 'same-origin' });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const json = await r.json();
-    /* api/updates.js wraps response as { ok: true, data: {...} } */
-    intelCache = (json && json.ok && json.data) ? json.data : json;
+    const endpoint = force ? '/api/updates?sync=1' : '/api/updates';
+    const r = await fetch(endpoint, { method: force ? 'POST' : 'GET', credentials: 'same-origin' });
+    if (r.ok) {
+      const json = await r.json();
+      intelCache = (json && json.ok && json.data) ? json.data : json;
+    } else {
+      const r2 = await fetch('/data/live-intel.json', { credentials: 'same-origin' });
+      const json2 = await r2.json();
+      intelCache = (json2 && json2.ok && json2.data) ? json2.data : json2;
+    }
   } catch (e) {
-    console.warn('Intel fetch failed, using bootstrap:', e);
-    intelCache = { status: 'error', summary: {}, items: [], topicSignals: [], sources: [], curriculum: [], notes: [] };
+    try {
+      const r2 = await fetch('/data/live-intel.json', { credentials: 'same-origin' });
+      const json2 = await r2.json();
+      intelCache = (json2 && json2.ok && json2.data) ? json2.data : json2;
+    } catch (e2) {
+      console.warn('Intel fetch failed, using bootstrap:', e2);
+      intelCache = { status: 'error', summary: {}, items: [], topicSignals: [], sources: [], curriculum: [], advisories: [], notes: [] };
+    }
   }
   intelLoading = false;
   render();
@@ -1118,7 +1135,7 @@ function dashboardHTML() {
       <h1>Understand the system. Operate the tools. Prove the idea.</h1>
       <p>A pin-to-pin CTF curriculum that fills the gaps between tutorials: ${heroDomainsText} — with safe hands-on practice at every stage.</p>
       <div class="tag-row"><span class="tag accent">offline-friendly</span><span class="tag accent">OS-independent</span><span class="tag success">localStorage progress</span><span class="tag">browser micro-labs</span></div>
-      <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button><button class="btn" data-action="goto-curriculum">🎓 Curriculum</button><button class="btn" data-action="goto-tricks">⚡ Tricks &amp; tips</button><button class="btn" data-action="goto-workbench">🛠️ Workbench</button></div>
+      <div class="hero-actions"><button class="btn primary" data-action="goto-path">Start the path</button><button class="btn" data-action="goto-labs">Open micro-labs</button><button class="btn" data-action="goto-domains">Browse domains</button><button class="btn" data-action="goto-curriculum">🎓 Curriculum</button><button class="btn" data-action="goto-tricks">⚡ Tricks &amp; tips</button><button class="btn" data-action="goto-workbench">🛠️ Workbench</button>${isCadet ? '' : '<button class="btn" data-action="goto-advisories">🛡️ Vuln Intel</button>'}</div>
     </div>
     <div class="hero-side">
       <div><div class="metric-label">Browser lab completion</div><div class="big-number">${solved}/${total}</div><div class="muted">micro-challenges solved</div></div>
@@ -2575,6 +2592,423 @@ function glossaryHTML(filter) {
   <div style="margin-top:16px">${hits.map(([t,d])=>`<div class="glossary-item"><strong>${esc(t)}</strong><span>${esc(d)}</span></div>`).join('') || '<div class="empty">No terms matched.</div>'}</div>`;
 }
 
+/* ══════════════════════════════════════════════════════════
+ * VULNERABILITY RESEARCH & ADVISORIES (ADMIN ONLY)
+ * ══════════════════════════════════════════════════════════ */
+
+function advisoriesHTML() {
+  if (!isAdvancedRole()) {
+    alert('This field is under development.');
+    return '<div class="empty">This field is under development.</div>';
+  }
+
+  const advisories = (intelCache && intelCache.advisories) || [];
+  const tab = state.advisoriesTab || 'all';
+  const query = (state.advisoriesQuery || '').trim().toLowerCase();
+
+  // Metrics
+  const totalCount = advisories.length;
+  const criticalCount = advisories.filter(a => a.severity === 'CRITICAL').length;
+  const zeroDayCount = advisories.filter(a => a.isZeroDay).length;
+  const historicCount = advisories.filter(a => a.isHistoric).length;
+  const lastSyncStr = intelCache && intelCache.updatedAt
+    ? new Date(intelCache.updatedAt).toLocaleString()
+    : 'Active Feed';
+
+  // Filter logic
+  const filtered = advisories.filter(a => {
+    // Tab filter
+    if (tab === 'zeroday' && !a.isZeroDay) return false;
+    if (tab === 'historic' && !a.isHistoric) return false;
+    if (tab === 'critical' && a.severity !== 'CRITICAL') return false;
+    if (tab === 'rce' && !((a.category || '').toLowerCase().includes('rce') || (a.title || '').toLowerCase().includes('rce') || (a.summary || '').toLowerCase().includes('remote code'))) return false;
+    if (tab === 'auth' && !((a.category || '').toLowerCase().includes('auth') || (a.category || '').toLowerCase().includes('bypass') || (a.title || '').toLowerCase().includes('auth'))) return false;
+    if (tab === 'supply' && !((a.category || '').toLowerCase().includes('supply') || (a.category || '').toLowerCase().includes('kernel') || (a.category || '').toLowerCase().includes('memory'))) return false;
+
+    // Search query
+    if (query) {
+      const haystack = [
+        a.cve, a.title, a.summary,
+        a.category,
+        a.affected?.vendor, a.affected?.product, a.affected?.ecosystem,
+        a.discoveredBy?.name, a.discoveredBy?.organization,
+        a.research?.cwe
+      ].filter(Boolean).join(' ').toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+    return true;
+  });
+
+  return `
+  <div class="section-head">
+    <div>
+      <div class="eyebrow" style="color:var(--pink)">RESTRICTED // CYBERSECURITY ADVISORY VAULT</div>
+      <h2>Vulnerability Research &amp; Advisory Feed</h2>
+      <p>Continuous threat intelligence stream covering critical zero-day disclosures, root cause research, and hardened remediation playbooks. Only accessible with Operator clearance.</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div class="sync-live-badge">
+        <span class="pulse"></span>
+        <span>LIVE FEED // SYNCED: ${esc(lastSyncStr)}</span>
+      </div>
+      <button class="btn accent" id="syncAdvisoriesBtn" style="font-size:11px;padding:8px 14px" title="Query live CISA KEV and global threat feeds for newly published vulnerabilities">
+        ${state.advisoriesSyncing ? '<span class="spinning">↻</span> Syncing Feeds…' : '⚡ SYNC ADVISORIES NOW'}
+      </button>
+    </div>
+  </div>
+
+  <!-- KPI Metrics Bar -->
+  <div class="intel-kpis" style="margin-bottom:20px">
+    <div class="intel-kpi">
+      <span class="num">${totalCount}</span>
+      <span class="label">Total Tracked Advisories</span>
+    </div>
+    <div class="intel-kpi">
+      <span class="num" style="color:#ff3377">${criticalCount}</span>
+      <span class="label">Critical Severity (9.0+)</span>
+    </div>
+    <div class="intel-kpi">
+      <span class="num" style="color:var(--cyan)">${zeroDayCount}</span>
+      <span class="label">Zero-Days &amp; Recent In-The-Wild</span>
+    </div>
+    <div class="intel-kpi">
+      <span class="num" style="color:var(--green)">${totalCount}</span>
+      <span class="label">Remediation Playbooks Ready</span>
+    </div>
+  </div>
+
+  <!-- Interactive Search & Tab Filters -->
+  <div class="card" style="margin-bottom:20px;padding:16px">
+    <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center">
+      <div style="position:relative">
+        <input id="advisoriesSearch" type="search" value="${esc(state.advisoriesQuery || '')}"
+          placeholder="Search by CVE (e.g. CVE-2024-3094), researcher (e.g. Andres Freund, Orange Tsai), vendor, product, or attack keyword…"
+          style="width:100%;padding:10px 14px;background:#08090f;border:1px solid var(--border);color:var(--green);font-family:var(--mono);font-size:13px;outline:none"
+          autocomplete="off">
+      </div>
+      ${state.advisoriesQuery ? `<button class="btn outline" id="clearAdvisoriesSearchBtn" style="font-size:11px;padding:8px 12px">✕ Clear</button>` : ''}
+    </div>
+
+    <!-- Category filter tabs -->
+    <div class="os-tabs" style="margin-top:14px;gap:6px">
+      ${[
+        ['all', `All Advisories (${totalCount})`],
+        ['zeroday', `⚡ Zero-Days &amp; Recent (${zeroDayCount})`],
+        ['historic', `🏛️ High Severity Hall of Fame (${historicCount})`],
+        ['critical', `🚨 Critical 9.0+ (${criticalCount})`],
+        ['rce', '💥 Remote Code Execution'],
+        ['auth', '🔑 Auth &amp; Logic Bypass'],
+        ['supply', '📦 Supply Chain &amp; Kernel']
+      ].map(([id, label]) => `
+        <button class="os-btn ${tab === id ? 'active' : ''}" data-advisory-tab="${id}">
+          ${label}
+        </button>
+      `).join('')}
+    </div>
+  </div>
+
+  <!-- Advisory Listing -->
+  <div style="display:grid;gap:16px">
+    ${filtered.length === 0 ? `
+      <div class="empty">
+        No vulnerability advisories matched your query "<strong>${esc(state.advisoriesQuery)}</strong>".
+      </div>
+    ` : filtered.map(a => {
+      const isCrit = a.severity === 'CRITICAL';
+      const disc = a.discoveredBy || {};
+      const aff = a.affected || {};
+      return `
+      <article class="advisory-card ${isCrit ? 'critical' : ''}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+              <span class="tag accent" style="font-weight:700;font-size:12px">${esc(a.cve || a.id.toUpperCase())}</span>
+              <span class="severity-tag ${isCrit ? 'critical' : 'high'}">${esc(a.severity)} ${a.cvss ? '(' + a.cvss + ')' : ''}</span>
+              ${a.isZeroDay ? '<span class="tag" style="border-color:#00d4ff66;color:var(--cyan)">ZERO-DAY IN-THE-WILD</span>' : ''}
+              ${a.isHistoric ? '<span class="tag" style="border-color:#ffb00066;color:var(--amber)">HALL OF FAME</span>' : ''}
+              <span class="tag">${esc(a.category || 'Vulnerability')}</span>
+              <span style="color:var(--muted);font-size:11px">Disclosed: ${esc(a.disclosureDate || 'Recent')}</span>
+            </div>
+            <h3 style="font-size:18px;margin:4px 0 8px;color:var(--fg)">${esc(a.title)}</h3>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn accent" data-open-advisory="${esc(a.id)}" data-tab="research" style="font-size:11px;padding:6px 12px">
+              🔬 Deep Research
+            </button>
+            <button class="btn outline" data-open-advisory="${esc(a.id)}" data-tab="remediation" style="font-size:11px;padding:6px 12px">
+              🛡️ How To Resolve
+            </button>
+          </div>
+        </div>
+
+        <!-- Discovered By Box -->
+        ${disc.name ? `
+        <div class="researcher-box">
+          <div>
+            <strong>🔍 Discovered By:</strong> ${esc(disc.name)}
+            ${disc.organization ? `· <span style="color:#e2e8f0">${esc(disc.organization)}</span>` : ''}
+            ${disc.role ? `· <span style="color:var(--muted)">${esc(disc.role)}</span>` : ''}
+          </div>
+          ${disc.details ? `<p>"${esc(disc.details)}"</p>` : ''}
+        </div>
+        ` : ''}
+
+        <!-- Affected Software -->
+        <div style="font-size:12px;margin:8px 0;color:#cbd5e1">
+          <strong style="color:var(--green)">Affected Software:</strong>
+          <code>${esc(aff.product || 'Component')}</code> ${esc(aff.versions || '')}
+          ${aff.ecosystem ? `<span style="color:var(--muted)"> · ${esc(aff.ecosystem)}</span>` : ''}
+        </div>
+
+        <!-- Summary -->
+        <p style="color:#aeb6c5;font-size:13px;line-height:1.6;margin:8px 0 14px">
+          ${esc(a.summary)}
+        </p>
+
+        <!-- Quick Remediation Snippet -->
+        <div style="background:#090d16;border:1px solid #1e293b;border-left:3px solid var(--green);padding:10px 14px;border-radius:2px;font-size:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div>
+            <strong style="color:var(--green)">⚡ Immediate Resolution:</strong>
+            <span style="color:#cbd5e1">${esc(a.remediation?.immediateAction || 'Apply latest vendor security updates.')}</span>
+          </div>
+          <button class="btn outline copy-btn" data-open-advisory="${esc(a.id)}" data-tab="remediation" style="font-size:10px;padding:4px 8px">
+            View Full Playbook →
+          </button>
+        </div>
+      </article>
+      `;
+    }).join('')}
+  </div>
+  `;
+}
+
+function openAdvisoryModal(advId, initialTab = 'research') {
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modal = modalBackdrop?.querySelector('.modal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+  if (!modalBackdrop || !modalBody || !modalTitle) return;
+
+  const advisories = (intelCache && intelCache.advisories) || [];
+  const adv = advisories.find(x => x.id === advId || (x.cve && x.cve.toLowerCase() === advId.toLowerCase()));
+
+  if (!adv) {
+    modalTitle.textContent = 'ADVISORY NOT FOUND';
+    modalBody.innerHTML = `<div class="empty">Advisory "${esc(advId)}" was not found in intelligence cache.</div>`;
+    modalBackdrop.hidden = false;
+    return;
+  }
+
+  modal.classList.add('wide');
+  modalTitle.innerHTML = `🛡️ THREAT ADVISORY // ${esc(adv.cve || adv.title)}`;
+
+  const res = adv.research || {};
+  const rem = adv.remediation || {};
+  const disc = adv.discoveredBy || {};
+  const aff = adv.affected || {};
+  const isCrit = adv.severity === 'CRITICAL';
+
+  modalBody.innerHTML = `
+    <!-- Top Details Banner -->
+    <div style="border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:14px">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+        <span class="tag accent" style="font-size:13px;font-weight:700">${esc(adv.cve || adv.id.toUpperCase())}</span>
+        <span class="severity-tag ${isCrit ? 'critical' : 'high'}">${esc(adv.severity)} ${adv.cvss ? '(CVSS ' + adv.cvss + ')' : ''}</span>
+        <span class="tag">${esc(adv.category || 'Vulnerability')}</span>
+        <span style="color:var(--muted);font-size:12px">Disclosed: ${esc(adv.disclosureDate || 'Recent')}</span>
+        ${adv.isZeroDay ? '<span class="tag" style="border-color:#00d4ff;color:var(--cyan)">ZERO-DAY IN-THE-WILD</span>' : ''}
+        ${adv.isHistoric ? '<span class="tag" style="border-color:#ffb000;color:var(--amber)">HALL OF FAME</span>' : ''}
+      </div>
+      <h3 style="margin:0 0 8px;font-size:20px;color:var(--fg)">${esc(adv.title)}</h3>
+      <p style="margin:0;color:#94a3b8;font-size:13px;line-height:1.6">${esc(adv.summary)}</p>
+    </div>
+
+    <!-- Modal Sub-Tabs -->
+    <div class="os-tabs" style="margin-bottom:16px">
+      <button class="os-btn ${initialTab === 'research' ? 'active' : ''}" id="modalTabResearchBtn">
+        🔬 1. Deep Technical Research &amp; Mechanics
+      </button>
+      <button class="os-btn ${initialTab === 'remediation' ? 'active' : ''}" id="modalTabRemediationBtn">
+        🛡️ 2. Remediation &amp; Detection Playbook
+      </button>
+    </div>
+
+    <!-- Panel 1: Deep Research -->
+    <div id="modalPanelResearch" style="display:${initialTab === 'research' ? 'block' : 'none'}">
+      <!-- Discovered By Box -->
+      ${disc.name ? `
+      <div class="researcher-box" style="margin-top:0;margin-bottom:16px;padding:14px">
+        <div style="font-size:14px">
+          <strong>🔍 Discovered By:</strong> ${esc(disc.name)}
+          ${disc.organization ? `· <span style="color:#e2e8f0;font-weight:600">${esc(disc.organization)}</span>` : ''}
+          ${disc.role ? `· <span style="color:var(--muted)">(${esc(disc.role)})</span>` : ''}
+        </div>
+        ${disc.details ? `<p style="margin-top:8px;font-size:12px;line-height:1.6">"${esc(disc.details)}"</p>` : ''}
+      </div>
+      ` : ''}
+
+      <!-- Affected Targets Grid -->
+      <div class="advisory-meta-grid">
+        <div class="advisory-meta-item">
+          <span class="lbl">Vendor / Project</span>
+          <span class="val">${esc(aff.vendor || 'Unknown')}</span>
+        </div>
+        <div class="advisory-meta-item">
+          <span class="lbl">Affected Component</span>
+          <span class="val" style="color:var(--cyan)">${esc(aff.product || 'Unknown')}</span>
+        </div>
+        <div class="advisory-meta-item">
+          <span class="lbl">Vulnerable Versions</span>
+          <span class="val" style="color:#ff3377">${esc(aff.versions || 'All Prior')}</span>
+        </div>
+        <div class="advisory-meta-item">
+          <span class="lbl">Weakness Enumeration</span>
+          <span class="val">${esc(res.cwe || 'CWE')}</span>
+        </div>
+      </div>
+
+      <!-- Root Cause Analysis -->
+      <h4 style="color:var(--cyan);font-family:var(--display);margin:20px 0 8px;text-transform:uppercase">
+        1. Root Cause &amp; Flaw Architecture
+      </h4>
+      <p style="color:#cbd5e1;line-height:1.7;font-size:13px">${esc(res.rootCause)}</p>
+
+      <!-- Architecture Flow Diagram -->
+      ${res.diagram ? `
+      <h4 style="color:var(--cyan);font-family:var(--display);margin:20px 0 8px;text-transform:uppercase">
+        2. Architectural Exploitation Flow Diagram
+      </h4>
+      <pre class="textbook-diagram">${esc(res.diagram)}</pre>
+      ` : ''}
+
+      <!-- Exploit Mechanics -->
+      <h4 style="color:var(--cyan);font-family:var(--display);margin:20px 0 8px;text-transform:uppercase">
+        3. Exploit Mechanics &amp; Execution Vector
+      </h4>
+      <p style="color:#cbd5e1;line-height:1.7;font-size:13px">${esc(res.exploitMechanics)}</p>
+
+      ${res.technicalImpact ? `
+      <div class="note warn-note" style="margin-top:16px">
+        <strong>Technical Impact:</strong> ${esc(res.technicalImpact)}
+      </div>
+      ` : ''}
+    </div>
+
+    <!-- Panel 2: Remediation & Detection -->
+    <div id="modalPanelRemediation" style="display:${initialTab === 'remediation' ? 'block' : 'none'}">
+      <!-- Immediate Action Box -->
+      <div style="background:#090d16;border:1px solid var(--green);border-left:4px solid var(--green);padding:14px;border-radius:3px;margin-bottom:18px">
+        <h4 style="margin:0 0 6px;color:var(--green);font-family:var(--display);text-transform:uppercase">
+          Immediate Action Required
+        </h4>
+        <p style="margin:0;color:#e2e8f0;font-size:13px;line-height:1.6">${esc(rem.immediateAction)}</p>
+      </div>
+
+      <!-- Patch CLI Commands -->
+      ${(rem.commands && rem.commands.length) ? `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:18px 0 8px">
+        <h4 style="color:var(--cyan);font-family:var(--display);margin:0;text-transform:uppercase">
+          Patch &amp; Upgrade Commands
+        </h4>
+        <button class="btn outline copy-btn" id="copyAdvCmdsBtn" style="font-size:11px;padding:4px 10px">
+          📋 Copy Commands
+        </button>
+      </div>
+      <pre class="code-block" style="background:#080a10;padding:14px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code id="adv-cmds-code" style="color:var(--green);font-family:var(--mono);font-size:12px">${esc(rem.commands.join('\n'))}</code></pre>
+      ` : ''}
+
+      <!-- Defensive Mitigations -->
+      ${(rem.mitigations && rem.mitigations.length) ? `
+      <h4 style="color:var(--cyan);font-family:var(--display);margin:20px 0 8px;text-transform:uppercase">
+        Defensive Mitigations &amp; Workarounds
+      </h4>
+      <ul class="checklist">
+        ${rem.mitigations.map(m => `<li>${esc(m)}</li>`).join('')}
+      </ul>
+      ` : ''}
+
+      <!-- Detection Signatures -->
+      <h4 style="color:var(--cyan);font-family:var(--display);margin:24px 0 12px;text-transform:uppercase">
+        Enterprise Detection Rules (Sigma / YARA / Snort)
+      </h4>
+
+      ${rem.detection?.sigma ? `
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span class="tag accent" style="font-weight:bold">SIGMA RULE</span>
+          <button class="btn outline copy-btn" id="copyAdvSigmaBtn" style="font-size:10px;padding:3px 8px">📋 Copy Sigma</button>
+        </div>
+        <pre class="code-block" style="background:#080a10;padding:12px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code id="adv-sigma-code" style="color:#00d4ff;font-family:var(--mono);font-size:11px">${esc(rem.detection.sigma)}</code></pre>
+      </div>
+      ` : ''}
+
+      ${rem.detection?.yara ? `
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span class="tag" style="border-color:#ffb000;color:var(--amber);font-weight:bold">YARA SIGNATURE</span>
+          <button class="btn outline copy-btn" id="copyAdvYaraBtn" style="font-size:10px;padding:3px 8px">📋 Copy YARA</button>
+        </div>
+        <pre class="code-block" style="background:#080a10;padding:12px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code id="adv-yara-code" style="color:#ffb000;font-family:var(--mono);font-size:11px">${esc(rem.detection.yara)}</code></pre>
+      </div>
+      ` : ''}
+
+      ${rem.detection?.snort ? `
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span class="tag" style="border-color:#ff3377;color:#ff3377;font-weight:bold">SNORT / SURICATA SIGNATURE</span>
+          <button class="btn outline copy-btn" id="copyAdvSnortBtn" style="font-size:10px;padding:3px 8px">📋 Copy Snort</button>
+        </div>
+        <pre class="code-block" style="background:#080a10;padding:12px;border:1px solid #1e293b;border-radius:4px;overflow-x:auto"><code id="adv-snort-code" style="color:#ff77aa;font-family:var(--mono);font-size:11px">${esc(rem.detection.snort)}</code></pre>
+      </div>
+      ` : ''}
+    </div>
+  `;
+
+  // Bind sub-tabs inside modal
+  const tabResearchBtn = modalBody.querySelector('#modalTabResearchBtn');
+  const tabRemediationBtn = modalBody.querySelector('#modalTabRemediationBtn');
+  const panelResearch = modalBody.querySelector('#modalPanelResearch');
+  const panelRemediation = modalBody.querySelector('#modalPanelRemediation');
+
+  tabResearchBtn?.addEventListener('click', () => {
+    tabResearchBtn.classList.add('active');
+    tabRemediationBtn?.classList.remove('active');
+    if (panelResearch) panelResearch.style.display = 'block';
+    if (panelRemediation) panelRemediation.style.display = 'none';
+  });
+
+  tabRemediationBtn?.addEventListener('click', () => {
+    tabRemediationBtn.classList.add('active');
+    tabResearchBtn?.classList.remove('active');
+    if (panelResearch) panelResearch.style.display = 'none';
+    if (panelRemediation) panelRemediation.style.display = 'block';
+  });
+
+  // Bind copy buttons inside modal
+  const bindCopy = (btnId, codeId) => {
+    const b = modalBody.querySelector(btnId);
+    const c = modalBody.querySelector(codeId);
+    if (b && c) {
+      b.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(c.textContent);
+          const orig = b.textContent;
+          b.textContent = '✓ Copied!';
+          setTimeout(() => { b.textContent = orig; }, 2000);
+        } catch (_) {}
+      });
+    }
+  };
+
+  bindCopy('#copyAdvCmdsBtn', '#adv-cmds-code');
+  bindCopy('#copyAdvSigmaBtn', '#adv-sigma-code');
+  bindCopy('#copyAdvYaraBtn', '#adv-yara-code');
+  bindCopy('#copyAdvSnortBtn', '#adv-snort-code');
+
+  modalBackdrop.hidden = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 /* ── Event binding ───────────────────────────────────────── */
 function bindViewEvents() {
   const view = document.getElementById('view');
@@ -2589,6 +3023,7 @@ function bindViewEvents() {
       if (a === 'goto-curriculum')  setView('curriculum');
       if (a === 'goto-tricks')      setView('tricks');
       if (a === 'goto-workbench')   setView('workbench');
+      if (a === 'goto-advisories')  setView('advisories');
       if (a === 'back-to-curriculum') { state.curriculumModule = null; setView('curriculum'); }
       if (a === 'complete-domain')  markDomain(btn.dataset.domainId);
     });
@@ -3145,10 +3580,72 @@ function bindViewEvents() {
   view.querySelectorAll('.detail [data-domain]').forEach(btn => {
     btn.addEventListener('click', () => openDomain(btn.dataset.domain));
   });
+
+  /* Vulnerability Research & Advisories (Admin only) */
+  view.querySelectorAll('[data-advisory-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.advisoriesTab = btn.dataset.advisoryTab;
+      render();
+    });
+  });
+
+  const advSearch = view.querySelector('#advisoriesSearch');
+  if (advSearch) {
+    advSearch.addEventListener('input', () => {
+      state.advisoriesQuery = advSearch.value;
+      render();
+      const newAdvSearch = document.getElementById('advisoriesSearch');
+      if (newAdvSearch) {
+        newAdvSearch.focus();
+        newAdvSearch.selectionStart = newAdvSearch.selectionEnd = newAdvSearch.value.length;
+      }
+    });
+  }
+
+  const clearAdvBtn = view.querySelector('#clearAdvisoriesSearchBtn');
+  if (clearAdvBtn) {
+    clearAdvBtn.addEventListener('click', () => {
+      state.advisoriesQuery = '';
+      render();
+    });
+  }
+
+  view.querySelectorAll('[data-open-advisory]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openAdvisoryModal(btn.dataset.openAdvisory, btn.dataset.tab || 'research');
+    });
+  });
+
+  const syncAdvBtn = view.querySelector('#syncAdvisoriesBtn');
+  if (syncAdvBtn) {
+    syncAdvBtn.addEventListener('click', async () => {
+      if (state.advisoriesSyncing) return;
+      state.advisoriesSyncing = true;
+      render();
+      try {
+        await loadIntel(true);
+      } finally {
+        state.advisoriesSyncing = false;
+        render();
+      }
+    });
+  }
 }
 
 /* ── Top-level navigation init ───────────────────────────── */
 function init() {
+  /* Ensure advisories button exists for admin if not already in markup */
+  const mainNav = document.querySelector('.main-nav');
+  if (isAdvancedRole() && mainNav && !mainNav.querySelector('[data-view="advisories"]')) {
+    const btn = document.createElement('button');
+    btn.className = 'nav-item';
+    btn.dataset.view = 'advisories';
+    btn.innerHTML = '<span>15</span> Vuln Intel &amp; Research';
+    btn.addEventListener('click', () => setView('advisories'));
+    mainNav.appendChild(btn);
+  }
+
   /* Update navigation and clearances */
   updateNavForRole();
 
@@ -3191,7 +3688,6 @@ function init() {
   }
 
   /* Sidebar nav items - robust event delegation */
-  const mainNav = document.querySelector('.main-nav');
   if (mainNav) {
     mainNav.addEventListener('click', (e) => {
       const btn = e.target.closest('.nav-item[data-view]');

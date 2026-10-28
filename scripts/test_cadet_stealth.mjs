@@ -126,7 +126,9 @@ async function testNetworkSanitization() {
     const curriculum = res.getBody().data.curriculum;
     const hasPwn = curriculum.some(m => m.id === 'binary-exploitation');
     assert.strictEqual(hasPwn, true, 'Admin MUST receive binary-exploitation');
-    console.log(`  [PASS] Admin receives full curriculum (${curriculum.length} modules, including binary-exploitation)`);
+    const advisories = res.getBody().data.advisories;
+    assert(Array.isArray(advisories) && advisories.length > 0, 'Admin MUST receive live vulnerability advisories');
+    console.log(`  [PASS] Admin receives full curriculum (${curriculum.length} modules) and ${advisories.length} vulnerability advisories`);
   }
 
   // Test Cadet Updates Endpoint
@@ -138,7 +140,10 @@ async function testNetworkSanitization() {
     const curriculum = res.getBody().data.curriculum;
     const hasPwn = curriculum.some(m => m.id === 'binary-exploitation' || m.domain === 'pwn' || m.domain === 'reverse');
     assert.strictEqual(hasPwn, false, 'Cadet MUST NOT receive binary-exploitation');
-    console.log(`  [PASS] Cadet receives sanitized curriculum (${curriculum.length} modules, ZERO binary-exploitation over the wire)`);
+    const data = res.getBody().data;
+    assert.strictEqual(data.advisories, undefined, 'Cadet MUST NOT receive vulnerability advisories over the wire');
+    assert.strictEqual(data.vulnResearch, undefined, 'Cadet MUST NOT receive vulnerability research over the wire');
+    console.log(`  [PASS] Cadet receives sanitized curriculum (${curriculum.length} modules, ZERO binary-exploitation & ZERO advisories over the wire)`);
   }
 }
 

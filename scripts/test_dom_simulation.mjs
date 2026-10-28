@@ -391,7 +391,7 @@ function runSessionTest(role, uid) {
 
   // 3. Verify Nav Items
   const navItems = doc.querySelectorAll('.main-nav .nav-item');
-  const expectedCount = isCadet ? 12 : 14;
+  const expectedCount = isCadet ? 12 : 15;
   console.log(`  [PASS] Found ${navItems.length} nav items in main-nav (expected ${expectedCount}).`);
   assert.strictEqual(navItems.length, expectedCount);
 
@@ -399,11 +399,13 @@ function runSessionTest(role, uid) {
   if (isCadet) {
     assert(!views.includes('tools'), 'Cadet menu must NOT contain tools');
     assert(!views.includes('playbook'), 'Cadet menu must NOT contain playbook');
-    console.log(`  [PASS] Restricted tools and playbook are completely absent from Cadet menu.`);
+    assert(!views.includes('advisories'), 'Cadet menu must NOT contain advisories');
+    console.log(`  [PASS] Restricted tools, playbook, and advisories are completely absent from Cadet menu.`);
   } else {
     assert(views.includes('tools'), 'Admin menu must contain tools');
     assert(views.includes('playbook'), 'Admin menu must contain playbook');
-    console.log(`  [PASS] Admin menu contains all tools and playbook views.`);
+    assert(views.includes('advisories'), 'Admin menu must contain advisories');
+    console.log(`  [PASS] Admin menu contains all tools, playbook, and advisories views.`);
   }
 
   // 4. Test Theme Toggle
@@ -493,6 +495,11 @@ function runSessionTest(role, uid) {
     sandbox.setView('playbook');
     assert(alerts.includes('This field is under development.'), 'Unauthorized playbook view access must alert development');
     assert.notStrictEqual(sandbox.state.view, 'playbook', 'Unauthorized view change must be blocked');
+
+    alerts.length = 0;
+    sandbox.setView('advisories');
+    assert(alerts.includes('This field is under development.'), 'Unauthorized advisories view access must alert development');
+    assert.notStrictEqual(sandbox.state.view, 'advisories', 'Unauthorized view change must be blocked');
 
     alerts.length = 0;
     sandbox.openDomain('reverse');

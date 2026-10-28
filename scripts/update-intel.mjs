@@ -481,9 +481,67 @@ const topicSignals = [...topicMap.entries()]
             `rather than copying the advisory verbatim.`,
   }));
 
-/* ── Load existing data to preserve curriculum section ──── */
+/* ── Load existing data to preserve curriculum & advisories section ──── */
 const existing = await loadExisting();
 const curriculum = existing?.curriculum || [];
+const existingAdvisories = existing?.advisories || [];
+
+// Ingest any newly fetched KEV entries into advisories catalog
+const advisoryMap = new Map(existingAdvisories.map(a => [(a.cve || a.id).toUpperCase(), a]));
+for (const it of unique.filter(x => x.kind === 'KEV' || x.cve)) {
+  const cveKey = (it.cve || it.id).toUpperCase();
+  if (cveKey && !advisoryMap.has(cveKey) && it.cve) {
+    advisoryMap.set(cveKey, {
+      id: it.cve.toLowerCase(),
+      cve: it.cve,
+      title: it.title || `${it.product || 'Target Component'} Exploited Vulnerability`,
+      severity: (it.severity ? it.severity.toUpperCase() : 'HIGH'),
+      cvss: it.cvss || 8.8,
+      category: it.topic || 'Active Exploitation (CISA KEV)',
+      status: 'CISA Known Exploited (Active Threat)',
+      isHistoric: false,
+      isZeroDay: true,
+      disclosureDate: it.date ? it.date.slice(0, 10) : new Date().toISOString().slice(0, 10),
+      discoveredBy: {
+        name: 'Reported to CISA KEV Catalog',
+        organization: 'CISA / Threat Intelligence Community',
+        role: 'Vulnerability Monitoring',
+        details: it.source || 'Added to CISA Known Exploited Vulnerabilities catalog.'
+      },
+      affected: {
+        vendor: it.vendor || 'Disclosed Vendor',
+        product: it.product || 'Disclosed Software',
+        versions: 'See CISA KEV security bulletin',
+        ecosystem: it.topic || 'Network / Operating Systems'
+      },
+      summary: it.summary || it.details || 'Actively exploited vulnerability tracked in federal intelligence feeds.',
+      research: {
+        rootCause: it.details || `Active security flaw identified in ${it.product || 'system'}. Attackers exploit this boundary failure to conduct unauthorized actions.`,
+        exploitMechanics: `Threat actors deliver targeted payloads triggering the flaw. Remediate immediately per vendor advisory.`,
+        diagram: `[ Attacker ] ---> [ Network Request ] ---> [ ${it.product || 'Target Asset'} ] ---> [ State Compromise ]`,
+        technicalImpact: 'Active exploitation observed across Internet-facing infrastructure.',
+        cwe: it.cwe || 'CWE-Other'
+      },
+      remediation: {
+        immediateAction: it.action || 'Apply vendor security update or disconnect vulnerable device from public networks.',
+        commands: [
+          '# Check vendor patch notes and apply latest security updates immediately',
+          '# Verify exposed service ports: nmap -sV -p- <target-host>'
+        ],
+        mitigations: [
+          'Isolate affected host from untrusted subnets.',
+          'Review audit logs for anomalous connections.'
+        ],
+        detection: {
+          sigma: `title: ${it.cve} Potential Activity\nstatus: high\nlogsource:\n  category: webserver\ndetection:\n  selection:\n    cve: '${it.cve}'\n  condition: selection`,
+          yara: `rule CVE_${it.cve.replace(/-/g, '_')} { strings: $cve = "${it.cve}" condition: any of them }`,
+          snort: `alert tcp any any -> any any (msg:"CTF-ATLAS: ${it.cve} Detection Signal"; content:"${it.cve}"; sid:3999999; rev:1;)`
+        }
+      }
+    });
+  }
+}
+const advisories = [...advisoryMap.values()];
 
 if (VERBOSE) {
   console.log(`\n  Topic signal distribution:`);
@@ -495,13 +553,17 @@ const output = {
   updatedAt: now.toISOString(),
   status:    sourceStatus.some(s => s.status === 'error') ? 'partial' : 'ok',
   summary: {
-    vulnerabilities: unique.filter(x => x.kind === 'CVE').length,
-    kev:             unique.filter(x => x.kind === 'KEV').length,
-    releases:        unique.filter(x => x.kind === 'RELEASE').length,
-    techniques:      unique.filter(x => x.kind === 'TECHNIQUE').length,
-    signals:         unique.length,
+    vulnerabilities:    unique.filter(x => x.kind === 'CVE').length,
+    kev:                unique.filter(x => x.kind === 'KEV').length,
+    releases:           unique.filter(x => x.kind === 'RELEASE').length,
+    techniques:         unique.filter(x => x.kind === 'TECHNIQUE').length,
+    signals:            unique.length,
+    advisoriesCount:    advisories.length,
+    criticalAdvisories: advisories.filter(a => a.severity === 'CRITICAL').length,
+    zeroDaysCount:      advisories.filter(a => a.isZeroDay).length,
   },
   curriculum,                    // ← preserved from existing file
+  advisories,                    // ← preserved & auto-updated vulnerability research
   items:        unique.slice(0, MAX_ITEMS),
   topicSignals,
   sources:      sourceStatus,
@@ -509,7 +571,7 @@ const output = {
     'Signals are collected from a curated allowlist of security data sources and normalized locally.',
     'The updater is discovery-first: it suggests topics and freshness work; it does not silently rewrite core lessons or ingest untrusted executable content.',
     'Automated summaries are intentionally bounded so the site remains readable. Deep curriculum changes should be reviewed before publication.',
-    'The curriculum section is preserved from the existing file and is not overwritten by this script.',
+    'The curriculum and advisories sections are preserved and enriched by this script.',
   ],
 };
 

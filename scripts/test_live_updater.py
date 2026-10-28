@@ -353,15 +353,26 @@ for item in collected_items:
 
 unique_items.sort(key=lambda x: x.get("date") or "", reverse=True)
 
-# Preserve Curriculum
+# Preserve Curriculum & Advisories
 preserved_curriculum = []
+preserved_advisories = []
 if os.path.exists(OUT_INTEL):
     try:
         with open(OUT_INTEL, encoding="utf-8") as f:
             old_data = json.load(f)
             preserved_curriculum = old_data.get("curriculum", [])
+            preserved_advisories = old_data.get("advisories", [])
     except Exception as e:
-        print(f"  [WARN] Could not read existing curriculum: {e}")
+        print(f"  [WARN] Could not read existing curriculum/advisories: {e}")
+
+if not preserved_advisories:
+    adv_path = os.path.join(ROOT, "data", "advisories.json")
+    if os.path.exists(adv_path):
+        try:
+            with open(adv_path, encoding="utf-8") as f:
+                preserved_advisories = json.load(f)
+        except Exception as e:
+            print(f"  [WARN] Could not read master advisories.json: {e}")
 
 # Topic Signals
 topic_counts = {}
@@ -390,6 +401,7 @@ final_intel = {
         "signals": len(unique_items)
     },
     "curriculum": preserved_curriculum,
+    "advisories": preserved_advisories,
     "items": unique_items,
     "topicSignals": topic_signals,
     "sources": source_status,
@@ -419,9 +431,17 @@ try:
     with open(os.path.join(ROOT, "site-src", "portal.css"), encoding="utf-8") as f: css = f.read()
     with open(os.path.join(ROOT, "site-src", "portal.js"), encoding="utf-8") as f: js = f.read()
     with open(os.path.join(ROOT, "site-src", "terminal-engine.js"), encoding="utf-8") as f: terminal_engine = f.read()
+    with open(os.path.join(ROOT, "site-src", "textbook-data.js"), encoding="utf-8") as f: textbook_data = f.read()
+    with open(os.path.join(ROOT, "site-src", "tricks-data.js"), encoding="utf-8") as f: tricks_data = f.read()
 
     combined_js = "\n".join([
         "/* CTF Atlas — Combined Portal App (auto-generated, do not edit) */",
+        "/* textbook-data.js */",
+        textbook_data,
+        "",
+        "/* tricks-data.js */",
+        tricks_data,
+        "",
         "/* terminal-engine.js */",
         terminal_engine,
         "",
