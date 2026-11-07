@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-06T11:51:24.199Z",
+  "updatedAt": "2026-11-07T10:54:06.890Z",
   "status": "ok",
   "summary": {
     "vulnerabilities": 27,
@@ -7,9 +7,9 @@
     "releases": 30,
     "techniques": 30,
     "signals": 199,
-    "advisoriesCount": 73,
+    "advisoriesCount": 74,
     "criticalAdvisories": 12,
-    "zeroDaysCount": 66
+    "zeroDaysCount": 67
   },
   "curriculum": [
     {
@@ -4481,6 +4481,54 @@
           "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2024-27834 Detection Signal\"; content:\"CVE-2024-27834\"; sid:3999999; rev:1;)"
         }
       }
+    },
+    {
+      "id": "cve-2026-19868",
+      "cve": "CVE-2026-19868",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "severity": "HIGH",
+      "cvss": 8.8,
+      "category": "web security",
+      "status": "CISA Known Exploited (Active Threat)",
+      "isHistoric": false,
+      "isZeroDay": true,
+      "disclosureDate": "2026-11-06",
+      "discoveredBy": {
+        "name": "Reported to CISA KEV Catalog",
+        "organization": "CISA / Threat Intelligence Community",
+        "role": "Vulnerability Monitoring",
+        "details": "CISA Cybersecurity Advisories (US-CERT)"
+      },
+      "affected": {
+        "vendor": "Disclosed Vendor",
+        "product": "Disclosed Software",
+        "versions": "See CISA KEV security bulletin",
+        "ecosystem": "web security"
+      },
+      "summary": "<p>CISA has added one new vulnerability to its&nbsp;<a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul type=\"disc\"> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-19868\" target=\"_blank\">CVE-2026-19868</a> SonicWall SonicOS SSLVPN Use of Single-factor Authentication Vulnerability</li> </ul> <p>This type of vulnerability is a frequ",
+      "research": {
+        "rootCause": "<p>CISA has added one new vulnerability to its&nbsp;<a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul type=\"disc\"> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-19868\" target=\"_blank\">CVE-2026-19868</a> SonicWall SonicOS SSLVPN Use of Single-factor Authentication Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise.</p> <p><a href=\"https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk\">Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk</a> establishes v",
+        "exploitMechanics": "Threat actors deliver targeted payloads triggering the flaw. Remediate immediately per vendor advisory.",
+        "diagram": "[ Attacker ] ---> [ Network Request ] ---> [ Target Asset ] ---> [ State Compromise ]",
+        "technicalImpact": "Active exploitation observed across Internet-facing infrastructure.",
+        "cwe": "CWE-Other"
+      },
+      "remediation": {
+        "immediateAction": "Apply vendor security update or disconnect vulnerable device from public networks.",
+        "commands": [
+          "# Check vendor patch notes and apply latest security updates immediately",
+          "# Verify exposed service ports: nmap -sV -p- <target-host>"
+        ],
+        "mitigations": [
+          "Isolate affected host from untrusted subnets.",
+          "Review audit logs for anomalous connections."
+        ],
+        "detection": {
+          "sigma": "title: CVE-2026-19868 Potential Activity\nstatus: high\nlogsource:\n  category: webserver\ndetection:\n  selection:\n    cve: 'CVE-2026-19868'\n  condition: selection",
+          "yara": "rule CVE_CVE_2026_19868 { strings: $cve = \"CVE-2026-19868\" condition: any of them }",
+          "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2026-19868 Detection Signal\"; content:\"CVE-2026-19868\"; sid:3999999; rev:1;)"
+        }
+      }
     }
   ],
   "items": [
@@ -4489,7 +4537,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: 7z",
       "summary": "7z can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4501,7 +4549,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: R",
       "summary": "R can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4513,7 +4561,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aa-exec",
       "summary": "aa-exec can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4525,7 +4573,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ab",
       "summary": "ab can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4537,7 +4585,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: acr",
       "summary": "acr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4549,7 +4597,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: agetty",
       "summary": "agetty can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4561,7 +4609,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: alpine",
       "summary": "alpine can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4573,7 +4621,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ansible-playbook",
       "summary": "ansible-playbook can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4585,7 +4633,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ansible-test",
       "summary": "ansible-test can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4597,7 +4645,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aoss",
       "summary": "aoss can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4609,7 +4657,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apache2",
       "summary": "apache2 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4621,7 +4669,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apache2ctl",
       "summary": "apache2ctl can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4633,7 +4681,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apport-cli",
       "summary": "apport-cli can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4645,7 +4693,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apt",
       "summary": "apt can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4657,7 +4705,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apt-get",
       "summary": "apt-get can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4669,7 +4717,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aptitude",
       "summary": "aptitude can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4681,7 +4729,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ar",
       "summary": "ar can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4693,7 +4741,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arch-nspawn",
       "summary": "arch-nspawn can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4705,7 +4753,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aria2c",
       "summary": "aria2c can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4717,7 +4765,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arj",
       "summary": "arj can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4729,7 +4777,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arp",
       "summary": "arp can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4741,7 +4789,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: as",
       "summary": "as can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4753,7 +4801,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ascii-xfr",
       "summary": "ascii-xfr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4765,7 +4813,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ascii85",
       "summary": "ascii85 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4777,7 +4825,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ash",
       "summary": "ash can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4789,7 +4837,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aspell",
       "summary": "aspell can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4801,7 +4849,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: asterisk",
       "summary": "asterisk can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4813,7 +4861,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: at",
       "summary": "at can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4825,7 +4873,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: atobm",
       "summary": "atobm can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4837,12 +4885,205 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: autoconf",
       "summary": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-06T11:51:24.199Z",
+      "date": "2026-11-07T10:54:06.890Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
       "sourceUrl": "https://gtfobins.github.io/gtfobins/autoconf/",
       "details": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-07T06-44-17-000Z",
+      "kind": "RESEARCH",
+      "title": "Claude Code's “Don't Ask Again” File Exposes Passwords and Keys in 1,122 Public Copies on GitHub",
+      "summary": "",
+      "date": "2026-11-07T06:44:17.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/claude-codes-dont-ask-again-file.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-07T00-00-55-000Z",
+      "kind": "RESEARCH",
+      "title": "SonicWall warns of new SSL-VPN MFA bypass flaw exploited in attacks",
+      "summary": "",
+      "date": "2026-11-07T00:00:55.000Z",
+      "severity": "info",
+      "topic": "cryptography",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/sonicwall-warns-of-new-ssl-vpn-mfa-bypass-flaw-exploited-in-attacks/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-06T22-27-25-000Z",
+      "kind": "RESEARCH",
+      "title": "Runaway AI hacking agent behind WorkOS breach after escaping sandbox",
+      "summary": "",
+      "date": "2026-11-06T22:27:25.000Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/runaway-ai-hacking-agent-behind-workos-breach-after-escaping-sandbox/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-06T20-24-19-000Z",
+      "kind": "RESEARCH",
+      "title": "OpenAI's new GPT-6 Cyber AI finds 81 Firefox flaws, 948 Linux bugs",
+      "summary": "",
+      "date": "2026-11-06T20:24:19.000Z",
+      "severity": "info",
+      "topic": "cloud and containers",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/openais-new-gpt-6-cyber-ai-finds-81-firefox-flaws-948-linux-bugs/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-06T18-46-52-000Z",
+      "kind": "RESEARCH",
+      "title": "Fake security tools on GitHub push backdoors and infostealers",
+      "summary": "",
+      "date": "2026-11-06T18:46:52.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/fake-security-tools-on-github-push-backdoors-and-infostealers/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-06T17-04-23-000Z",
+      "kind": "RESEARCH",
+      "title": "QNAP says hackers breaching NAS devices in Plex2Shell attacks",
+      "summary": "",
+      "date": "2026-11-06T17:04:23.000Z",
+      "severity": "info",
+      "topic": "linux and systems",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/qnap-says-hackers-breaching-nas-devices-in-plex2shell-attacks/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-06T16-08-38-000Z",
+      "kind": "RESEARCH",
+      "title": "Installing the Fix for an Exploited WordPress Flaw Can Expose Some Sites One Last Time",
+      "summary": "",
+      "date": "2026-11-06T16:08:38.000Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/installing-fix-for-exploited-wordpress.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-06T15-25-31-000Z",
+      "kind": "RESEARCH",
+      "title": "Veeam warns of Software Appliance boot failures on AMD EPYC hosts",
+      "summary": "",
+      "date": "2026-11-06T15:25:31.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/veeam-software-appliance-vms-fail-to-boot-on-amd-epyc-hosts/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-06T15-21-49-000Z",
+      "kind": "RESEARCH",
+      "title": "Hackers Target OpenSSH SSHole Flaw Within Hours of Disclosure, Gain Root on Honeypot",
+      "summary": "",
+      "date": "2026-11-06T15:21:49.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/hackers-exploited-openssh-sshole-flaw.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-06T15-00-10-000Z",
+      "kind": "RESEARCH",
+      "title": "IMSI vs IMEI: What Your Phone Broadcasts and Who Can Read It",
+      "summary": "",
+      "date": "2026-11-06T15:00:10.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/imsi-vs-imei-what-your-phone-broadcasts-and-who-can-read-it/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-06T14-58-32-000Z",
+      "kind": "RESEARCH",
+      "title": "OpenAI Launches GPT-6 Cyber After AI Helps Find 81 Firefox Flaws, 948 Linux Exploits",
+      "summary": "",
+      "date": "2026-11-06T14:58:32.000Z",
+      "severity": "info",
+      "topic": "cloud and containers",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/openai-launches-gpt-6-cyber-after-ai.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-06T14-17-07-000Z",
+      "kind": "RESEARCH",
+      "title": "Chainalysis says breach exposed credentials for all customers",
+      "summary": "",
+      "date": "2026-11-06T14:17:07.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/chainalysis-says-breach-exposed-credentials-for-all-customers/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-06T12-37-22-000Z",
+      "kind": "RESEARCH",
+      "title": "D-Link warns of multiple zero-days in DGS-3130 Series switches",
+      "summary": "",
+      "date": "2026-11-06T12:37:22.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/d-link-warns-of-multiple-zero-days-in-dgs-3130-series-switches/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-06T12-06-43-000Z",
+      "kind": "RESEARCH",
+      "title": "Microsoft Paint RCE Fix Now Available, but Windows Update Won't Deliver It",
+      "summary": "",
+      "date": "2026-11-06T12:06:43.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/microsoft-paint-rce-fix-now-available.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-06T12-06-35-000Z",
+      "kind": "RESEARCH",
+      "title": "Malicious Browser Extensions Could Use Claude Dispatch to Run Code on Users' Computers",
+      "summary": "",
+      "date": "2026-11-06T12:06:35.000Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/malicious-browser-extensions-could-use.html",
+      "details": ""
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-19868",
+      "kind": "CVE",
+      "title": "CISA Adds One Known Exploited Vulnerability to Catalog",
+      "summary": "<p>CISA has added one new vulnerability to its&nbsp;<a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul type=\"disc\"> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-19868\" target=\"_blank\">CVE-2026-19868</a> SonicWall SonicOS SSLVPN Use of Single-factor Authentication Vulnerability</li> </ul> <p>This type of vulnerability is a frequ",
+      "date": "2026-11-06T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/11/06/cisa-adds-one-known-exploited-vulnerability-catalog",
+      "cve": "CVE-2026-19868",
+      "details": "<p>CISA has added one new vulnerability to its&nbsp;<a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul type=\"disc\"> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-19868\" target=\"_blank\">CVE-2026-19868</a> SonicWall SonicOS SSLVPN Use of Single-factor Authentication Vulnerability</li> </ul> <p>This type of vulnerability is a frequent attack vector for malicious cyber actors and poses significant risks to the federal enterprise.</p> <p><a href=\"https://www.cisa.gov/news-events/directives/bod-26-04-implementation-guidance-prioritizing-security-updates-based-risk\">Binding Operational Directive (BOD) 26-04: Prioritizing Security Updates Based on Risk</a> establishes v"
     },
     {
       "id": "signal:the-hacker-news:2026-11-06T11-30-00-000Z",
@@ -4915,6 +5156,20 @@
       "source": "BleepingComputer Vulnerability Disclosures",
       "sourceUrl": "https://www.bleepingcomputer.com/news/security/fbi-cisa-warn-of-cyberattacks-targeting-refrigeration-systems/",
       "details": ""
+    },
+    {
+      "id": "kev:CVE-2026-19868",
+      "kind": "KEV",
+      "title": "SonicWall SonicOS SSLVPN Use of Single-factor Authentication Vulnerability",
+      "summary": "SonicWall SonicOS SSLVPN contains a use of single-factor authentication vulnerability that may allow a user with valid credentials for an alternate authentication method to bypass SAML authentication controls. Successful exploitation may also bypass SAML-enforced multi-factor authentication (MFA).",
+      "date": "2026-11-06T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "identity and access",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-19868",
+      "cve": "CVE-2026-19868",
+      "product": "SonicOS SSLVPN",
+      "details": "SonicWall SonicOS SSLVPN contains a use of single-factor authentication vulnerability that may allow a user with valid credentials for an alternate authentication method to bypass SAML authentication controls. Successful exploitation may also bypass SAML-enforced multi-factor authentication (MFA)."
     },
     {
       "id": "signal:bleepingcomputer:2026-11-05T21-30-30-000Z",
@@ -5001,42 +5256,6 @@
       "details": ""
     },
     {
-      "id": "signal:bleepingcomputer:2026-11-05T16-24-26-000Z",
-      "kind": "RESEARCH",
-      "title": "Hackers backdoor Linux servers using trojanized CWP web server",
-      "summary": "",
-      "date": "2026-11-05T16:24:26.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/hackers-backdoor-linux-servers-using-trojanized-cwp-web-server/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-05T16-12-46-000Z",
-      "kind": "RESEARCH",
-      "title": "DigiCert data breach exposes customer information, identity documents",
-      "summary": "",
-      "date": "2026-11-05T16:12:46.000Z",
-      "severity": "info",
-      "topic": "identity and access",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/digicert-data-breach-exposes-customer-information-identity-documents/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-05T15-00-10-000Z",
-      "kind": "RESEARCH",
-      "title": "Closing the Identity Gap at the Service Desk",
-      "summary": "",
-      "date": "2026-11-05T15:00:10.000Z",
-      "severity": "info",
-      "topic": "cryptography",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/closing-the-identity-gap-at-the-service-desk/",
-      "details": ""
-    },
-    {
       "id": "signal:the-hacker-news:2026-11-05T14-41-10-000Z",
       "kind": "RESEARCH",
       "title": "ThreatsDay: Apache OFBiz RCE, DreamHost Breach, DeFi Site Hijacks + 17 More Stories",
@@ -5075,158 +5294,14 @@
     {
       "id": "signal:cisa-advisories:2026-11-05T12-00-00-000Z",
       "kind": "ADVISORY",
-      "title": "Post-Quantum Questions to Ask Your Vendors",
-      "summary": "<p>CISA, the Australian Signals Directorate’s Australian Cyber Security Centre (ASD’s ACSC) and the National Security Agency (NSA) released joint guidance and an accompanying quick-reference list to help organizations assess vendor readiness for transitioning to post-quantum cryptography (PQC). As quantum computing advances, widely used public-key cryptography will become vulnerable to compromise from cryptographically relevant quantum computers (CRQCs). T",
+      "title": "US Government Partners Urge Hardening Industrial Refrigeration and Cold Chain Monitoring Systems",
+      "summary": "<h2><strong>Overview</strong></h2> <p>The Cybersecurity and Infrastructure Security Agency (CISA), Federal Bureau of Investigation (FBI), Health and Human Services (HHS), U.S. Department of Agriculture (USDA), and the Department of Transportation (DoT)—hereafter referred to as “the authoring organizations”—are aware of malicious cyber activity targeting industrial refrigeration and cold chain monitoring systems globally. Organizations in the <a href=\"https",
       "date": "2026-11-05T12:00:00.000Z",
       "severity": "high",
-      "topic": "cryptography",
-      "source": "CISA Cybersecurity Advisories (US-CERT)",
-      "sourceUrl": "https://www.cisa.gov/resources-tools/resources/post-quantum-questions-ask-your-vendors",
-      "details": "<p>CISA, the Australian Signals Directorate’s Australian Cyber Security Centre (ASD’s ACSC) and the National Security Agency (NSA) released joint guidance and an accompanying quick-reference list to help organizations assess vendor readiness for transitioning to post-quantum cryptography (PQC). As quantum computing advances, widely used public-key cryptography will become vulnerable to compromise from cryptographically relevant quantum computers (CRQCs). To protect their systems and data, organizations must plan for and transition to PQC—which includes algorithms capable of withstanding both classical computing and quantum-enabled threats—before CRQCs become available.&nbsp;</p> <p>Many organizations rely on third-party vendors for managed services, cloud capabilities, and other cryptograp"
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-05T10-06-19-000Z",
-      "kind": "RESEARCH",
-      "title": "5 Active Cyber Threats That Put US Enterprises at Risk in October 2026",
-      "summary": "",
-      "date": "2026-11-05T10:06:19.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/5-active-cyber-threats-that-put-us.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-05T09-18-29-000Z",
-      "kind": "RESEARCH",
-      "title": "GhostMap Android flaw lets malicious app trigger persistent boot loop",
-      "summary": "",
-      "date": "2026-11-05T09:18:29.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/ghostmap-android-flaw-lets-malicious-app-trigger-persistent-boot-loop/",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-05T09-13-28-000Z",
-      "kind": "RESEARCH",
-      "title": "Apple to Start Scanning Publicly Shared iCloud Photos and Files for Harmful Content",
-      "summary": "",
-      "date": "2026-11-05T09:13:28.000Z",
-      "severity": "info",
-      "topic": "cloud and containers",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/apple-to-start-scanning-publicly-shared.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-05T08-42-03-000Z",
-      "kind": "RESEARCH",
-      "title": "CERT-In Flags AI-Driven Attacks as Backdoored ARTEX Exposes 62 Consoles to Root Access",
-      "summary": "",
-      "date": "2026-11-05T08:42:03.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/backdoored-docker-image-for-artex-ai.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-05T07-06-33-000Z",
-      "kind": "RESEARCH",
-      "title": "Zyxel GS1900 Patch Fails to Block Zero-Day Exploit Allowing Root Command Execution",
-      "summary": "",
-      "date": "2026-11-05T07:06:33.000Z",
-      "severity": "info",
-      "topic": "reverse engineering",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/zyxel-gs1900-patch-fails-to-block-zero.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-05T05-17-04-000Z",
-      "kind": "RESEARCH",
-      "title": "Hackers Exploit Patched Apple Flaw to Deliver Info-Stealing Malware, CISA Says",
-      "summary": "",
-      "date": "2026-11-05T05:17:04.000Z",
-      "severity": "info",
-      "topic": "reverse engineering",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/hackers-exploit-patched-apple-flaw-to.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-04T21-31-18-000Z",
-      "kind": "RESEARCH",
-      "title": "Vercel rolls out new protection against stolen session cookie attacks",
-      "summary": "",
-      "date": "2026-11-04T21:31:18.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/vercel-rolls-out-new-protection-against-stolen-session-cookie-attacks/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-04T20-58-19-000Z",
-      "kind": "RESEARCH",
-      "title": "Zyxel fixes zero-day exploited to hack nearly 1,000 network switches",
-      "summary": "",
-      "date": "2026-11-04T20:58:19.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/zyxel-fixes-zero-day-exploited-to-hack-nearly-1-000-network-switches/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-04T19-05-19-000Z",
-      "kind": "RESEARCH",
-      "title": "DreamHost confirms data breach exposed FTP logins and webmail sessions",
-      "summary": "",
-      "date": "2026-11-04T19:05:19.000Z",
-      "severity": "info",
       "topic": "web security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/dreamhost-confirms-data-breach-exposed-ftp-logins-and-webmail-sessions/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-04T18-02-56-000Z",
-      "kind": "RESEARCH",
-      "title": "Cyberattack disrupts blood storage refrigeration systems in France",
-      "summary": "",
-      "date": "2026-11-04T18:02:56.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/cyberattack-disrupts-blood-storage-refrigeration-systems-in-france/",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-04T17-00-46-000Z",
-      "kind": "RESEARCH",
-      "title": "Debian and Ubuntu APT Flaw Lets MitM Attackers Swap Verified Packages and Run Code as Root",
-      "summary": "",
-      "date": "2026-11-04T17:00:46.000Z",
-      "severity": "info",
-      "topic": "software supply chain",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/debian-and-ubuntu-apt-flaw-lets-mitm.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-04T16-58-46-000Z",
-      "kind": "RESEARCH",
-      "title": "NIKKE PC game launcher hacked to spread remote access, data-stealing malware",
-      "summary": "",
-      "date": "2026-11-04T16:58:46.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/nikke-pc-game-launcher-hacked-to-spread-remote-access-data-stealing-malware/",
-      "details": ""
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/resources-tools/resources/us-government-partners-urge-hardening-industrial-refrigeration-and-cold-chain-monitoring-systems",
+      "details": "<h2><strong>Overview</strong></h2> <p>The Cybersecurity and Infrastructure Security Agency (CISA), Federal Bureau of Investigation (FBI), Health and Human Services (HHS), U.S. Department of Agriculture (USDA), and the Department of Transportation (DoT)—hereafter referred to as “the authoring organizations”—are aware of malicious cyber activity targeting industrial refrigeration and cold chain monitoring systems globally. Organizations in the <a href=\"https://www.cisa.gov/topics/critical-infrastructure-security-and-resilience/critical-infrastructure-sectors/healthcare-and-public-health-sector\" title=\"Healthcare and Public Health\">Healthcare and Public Health</a>, <a href=\"https://www.cisa.gov/topics/critical-infrastructure-security-and-resilience/critical-infrastructure-sectors/chemical-sec"
     },
     {
       "id": "signal:cisa-advisories:CVE-2024-27834",
@@ -5571,39 +5646,12 @@
       "cve": "CVE-2026-111497",
       "product": "Brotli",
       "details": "Google Brotli contains an unchecked return value vulnerability that allows a remote unauthenticated attacker to corrupt adjacent decoder state memory, disclose sensitive memory contents, cause a denial of service, or potentially execute arbitrary code using a crafted Brotli-compressed stream."
-    },
-    {
-      "id": "signal:cisa-advisories:CVE-2026-109618",
-      "kind": "CVE",
-      "title": "CISA Adds Two Known Exploited Vulnerabilities to Catalog",
-      "summary": "<div class=\"OutlineElement Ltr SCXW42064574 BCX8\"> <p class=\"text-align-justify\">CISA has added two new vulnerabilities to its <a class=\"Hyperlink SCXW42064574 BCX8\" href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\" target=\"_blank\" rel=\"noreferrer noopener\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a> and updated the PHP Alert, <a class=\"Hyperlink SCXW42064574 BCX8\" href=\"https://www.cisa.gov/news-events/alerts/2026/10/21/crit",
-      "date": "2026-10-26T12:00:00.000Z",
-      "severity": "high",
-      "topic": "web security",
-      "source": "CISA Cybersecurity Advisories (US-CERT)",
-      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/10/26/cisa-adds-two-known-exploited-vulnerabilities-catalog",
-      "cve": "CVE-2026-109618",
-      "details": "<div class=\"OutlineElement Ltr SCXW42064574 BCX8\"> <p class=\"text-align-justify\">CISA has added two new vulnerabilities to its <a class=\"Hyperlink SCXW42064574 BCX8\" href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\" target=\"_blank\" rel=\"noreferrer noopener\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a> and updated the PHP Alert, <a class=\"Hyperlink SCXW42064574 BCX8\" href=\"https://www.cisa.gov/news-events/alerts/2026/10/21/critical-vulnerabilities-php-require-immediate-patching\" target=\"_blank\" rel=\"noreferrer noopener\"><u>Critical Vulnerabilities in PHP Require Immediate Patching</u></a>: &nbsp;</p> </div> <div class=\"ListContainerWrapper SCXW42064574 BCX8\"> <ul type=\"disc\"> <li><a class=\"Hyperlink SCXW42064574 BCX8\" href=\"https://www.cve.org/CVERecord?id=CVE-"
-    },
-    {
-      "id": "kev:CVE-2026-109618",
-      "kind": "KEV",
-      "title": "PHP Memory Corruption Vulnerability",
-      "summary": "PHP contains an out-of-memory corruption vulnerability that allows for unauthenticated remote code execution.",
-      "date": "2026-10-26T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "web security",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-109618",
-      "cve": "CVE-2026-109618",
-      "product": "PHP",
-      "details": "PHP contains an out-of-memory corruption vulnerability that allows for unauthenticated remote code execution."
     }
   ],
   "topicSignals": [
     {
       "topic": "web security",
-      "count": 77,
+      "count": 79,
       "reason": "Recent source activity is clustering around web security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
@@ -5612,34 +5660,24 @@
       "reason": "Recent source activity is clustering around systems and exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
+      "topic": "general security",
+      "count": 28,
+      "reason": "Recent source activity is clustering around general security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
       "topic": "binary exploitation",
       "count": 28,
       "reason": "Recent source activity is clustering around binary exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "general security",
-      "count": 27,
-      "reason": "Recent source activity is clustering around general security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
-    },
-    {
-      "topic": "cryptography",
-      "count": 12,
-      "reason": "Recent source activity is clustering around cryptography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
-    },
-    {
       "topic": "linux and systems",
-      "count": 10,
+      "count": 11,
       "reason": "Recent source activity is clustering around linux and systems. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "reverse engineering",
-      "count": 4,
-      "reason": "Recent source activity is clustering around reverse engineering. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
-    },
-    {
-      "topic": "osint",
-      "count": 3,
-      "reason": "Recent source activity is clustering around osint. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+      "topic": "cryptography",
+      "count": 10,
+      "reason": "Recent source activity is clustering around cryptography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "identity and access",
@@ -5647,19 +5685,29 @@
       "reason": "Recent source activity is clustering around identity and access. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
+      "topic": "osint",
+      "count": 3,
+      "reason": "Recent source activity is clustering around osint. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "cloud and containers",
+      "count": 2,
+      "reason": "Recent source activity is clustering around cloud and containers. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
       "topic": "digital forensics",
       "count": 2,
       "reason": "Recent source activity is clustering around digital forensics. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "cloud and containers",
-      "count": 1,
-      "reason": "Recent source activity is clustering around cloud and containers. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+      "topic": "reverse engineering",
+      "count": 2,
+      "reason": "Recent source activity is clustering around reverse engineering. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "software supply chain",
+      "topic": "detection and response",
       "count": 1,
-      "reason": "Recent source activity is clustering around software supply chain. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+      "reason": "Recent source activity is clustering around detection and response. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     }
   ],
   "sources": [
