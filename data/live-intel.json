@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-11-07T10:54:06.890Z",
-  "status": "ok",
+  "updatedAt": "2026-11-08T11:04:17.134Z",
+  "status": "partial",
   "summary": {
-    "vulnerabilities": 27,
+    "vulnerabilities": 17,
     "kev": 25,
-    "releases": 30,
+    "releases": 10,
     "techniques": 30,
-    "signals": 199,
+    "signals": 129,
     "advisoriesCount": 74,
     "criticalAdvisories": 12,
     "zeroDaysCount": 67
@@ -4537,7 +4537,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: 7z",
       "summary": "7z can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4549,7 +4549,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: R",
       "summary": "R can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4561,7 +4561,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aa-exec",
       "summary": "aa-exec can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4573,7 +4573,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ab",
       "summary": "ab can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4585,7 +4585,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: acr",
       "summary": "acr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4597,7 +4597,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: agetty",
       "summary": "agetty can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4609,7 +4609,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: alpine",
       "summary": "alpine can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4621,7 +4621,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ansible-playbook",
       "summary": "ansible-playbook can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4633,7 +4633,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ansible-test",
       "summary": "ansible-test can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4645,7 +4645,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aoss",
       "summary": "aoss can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4657,7 +4657,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apache2",
       "summary": "apache2 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4669,7 +4669,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apache2ctl",
       "summary": "apache2ctl can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4681,7 +4681,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apport-cli",
       "summary": "apport-cli can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4693,7 +4693,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apt",
       "summary": "apt can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4705,7 +4705,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apt-get",
       "summary": "apt-get can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4717,7 +4717,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aptitude",
       "summary": "aptitude can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4729,7 +4729,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ar",
       "summary": "ar can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4741,7 +4741,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arch-nspawn",
       "summary": "arch-nspawn can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4753,7 +4753,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aria2c",
       "summary": "aria2c can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4765,7 +4765,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arj",
       "summary": "arj can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4777,7 +4777,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arp",
       "summary": "arp can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4789,7 +4789,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: as",
       "summary": "as can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4801,7 +4801,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ascii-xfr",
       "summary": "ascii-xfr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4813,7 +4813,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ascii85",
       "summary": "ascii85 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4825,7 +4825,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ash",
       "summary": "ash can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4837,7 +4837,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aspell",
       "summary": "aspell can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4849,7 +4849,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: asterisk",
       "summary": "asterisk can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4861,7 +4861,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: at",
       "summary": "at can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4873,7 +4873,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: atobm",
       "summary": "atobm can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -4885,12 +4885,36 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: autoconf",
       "summary": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-07T10:54:06.890Z",
+      "date": "2026-11-08T11:04:17.134Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
       "sourceUrl": "https://gtfobins.github.io/gtfobins/autoconf/",
       "details": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-07T15-25-35-000Z",
+      "kind": "RESEARCH",
+      "title": "Hackers pull off $133 million French bank heist via service provider",
+      "summary": "",
+      "date": "2026-11-07T15:25:35.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/hackers-pull-off-133-million-french-bank-heist-via-service-provider/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-07T14-10-19-000Z",
+      "kind": "RESEARCH",
+      "title": "CTM360 Exposes Fake Gift Card Scams Exploiting Trusted Brands",
+      "summary": "",
+      "date": "2026-11-07T14:10:19.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/ctm360-exposes-fake-gift-card-scams-exploiting-trusted-brands/",
+      "details": ""
     },
     {
       "id": "signal:the-hacker-news:2026-11-07T06-44-17-000Z",
@@ -5196,42 +5220,6 @@
       "details": ""
     },
     {
-      "id": "signal:bleepingcomputer:2026-11-05T19-24-26-000Z",
-      "kind": "RESEARCH",
-      "title": "OpenAI’s GPT-6 Astra silently obstructed safety research tasks",
-      "summary": "",
-      "date": "2026-11-05T19:24:26.000Z",
-      "severity": "info",
-      "topic": "osint",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/openais-gpt-6-astra-silently-obstructed-safety-research-tasks/",
-      "details": ""
-    },
-    {
-      "id": "signal:radare2:2026-11-05T18-32-14-000Z",
-      "kind": "RESEARCH",
-      "title": "6.2.6",
-      "summary": "<h2>Release Notes</h2> <p>Codename: \"fcn.do\"<br> Version: 6.2.6<br> Previous: 6.2.4<br> AbiDiff: 152-174 (22)<br> Commits: 1237<br> Contributors: 43</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.6/radare2-6.2.6.tar.xz | tar xJv radare2-6.2.6/sys/install.sh\"><pre>curl -Ls https://github.com/radareorg/radare",
-      "date": "2026-11-05T18:32:14.000Z",
-      "severity": "info",
-      "topic": "cryptography",
-      "source": "radare2 / Cutter Releases (Binary Analysis)",
-      "sourceUrl": "https://github.com/radareorg/radare2/releases/tag/6.2.6",
-      "details": "<h2>Release Notes</h2> <p>Codename: \"fcn.do\"<br> Version: 6.2.6<br> Previous: 6.2.4<br> AbiDiff: 152-174 (22)<br> Commits: 1237<br> Contributors: 43</p> <div class=\"highlight highlight-source-shell notranslate position-relative overflow-auto\" data-snippet-clipboard-copy-content=\"curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.6/radare2-6.2.6.tar.xz | tar xJv radare2-6.2.6/sys/install.sh\"><pre>curl -Ls https://github.com/radareorg/radare2/releases/download/6.2.6/radare2-6.2.6.tar.xz <span class=\"pl-k\">|</span> tar xJv radare2-6.2.6/sys/install.sh</pre></div> <h2>Highlights</h2> <details><summary>More details</summary><p> </p><h2>Authors</h2> <p><a href=\"mailto:84493696+arxhr007@users.noreply.github.com\">Aaron Thomas</a> <a href=\"mailto:273765681+ZypherionTechnologies@use"
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-05T17-45-29-000Z",
-      "kind": "RESEARCH",
-      "title": "OpenSSH flaw lets attackers log into password-disabled Linux accounts",
-      "summary": "",
-      "date": "2026-11-05T17:45:29.000Z",
-      "severity": "info",
-      "topic": "linux and systems",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/openssh-flaw-lets-attackers-log-into-password-disabled-linux-accounts/",
-      "details": ""
-    },
-    {
       "id": "signal:the-hacker-news:2026-11-05T16-42-46-000Z",
       "kind": "RESEARCH",
       "title": "OpenSSH Issues Emergency Fix for Flaw Letting Long Passwords Bypass SSH Auth on Alpine Linux",
@@ -5369,18 +5357,6 @@
       "cve": "CVE-2026-119977",
       "product": "WordPress Core",
       "details": "WordPress WordPress Core contains a time-of-check time-of-use (TOCTOU) race condition vulnerability that could allow unauthenticated attackers to execute code on the server during the upgrade window. This is due to predictable, web-accessible staging paths used during full-package core upgrades."
-    },
-    {
-      "id": "signal:sqlmap:2026-10-30T16-30-50-000Z",
-      "kind": "RESEARCH",
-      "title": "1.10.11",
-      "summary": "<p>Release 1.10.11 (<a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"6122478827\" data-permission-text=\"Title is private\" data-url=\"https://github.com/sqlmapproject/sqlmap/issues/6165\" data-hovercard-type=\"issue\" data-hovercard-url=\"/sqlmapproject/sqlmap/issues/6165/hovercard\" href=\"https://github.com/sqlmapproject/sqlmap/issues/6165\">#6165</a>)</p>",
-      "date": "2026-10-30T16:30:50.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "sqlmap Releases (Web Application Security)",
-      "sourceUrl": "https://github.com/sqlmapproject/sqlmap/releases/tag/1.10.11",
-      "details": "<p>Release 1.10.11 (<a class=\"issue-link js-issue-link\" data-error-text=\"Failed to load title\" data-id=\"6122478827\" data-permission-text=\"Title is private\" data-url=\"https://github.com/sqlmapproject/sqlmap/issues/6165\" data-hovercard-type=\"issue\" data-hovercard-url=\"/sqlmapproject/sqlmap/issues/6165/hovercard\" href=\"https://github.com/sqlmapproject/sqlmap/issues/6165\">#6165</a>)</p>"
     },
     {
       "id": "signal:cisa-advisories:CVE-2026-111357",
@@ -5646,12 +5622,40 @@
       "cve": "CVE-2026-111497",
       "product": "Brotli",
       "details": "Google Brotli contains an unchecked return value vulnerability that allows a remote unauthenticated attacker to corrupt adjacent decoder state memory, disclose sensitive memory contents, cause a denial of service, or potentially execute arbitrary code using a crafted Brotli-compressed stream."
+    },
+    {
+      "id": "kev:CVE-2026-109618",
+      "kind": "KEV",
+      "title": "PHP Memory Corruption Vulnerability",
+      "summary": "PHP contains an out-of-memory corruption vulnerability that allows for unauthenticated remote code execution.",
+      "date": "2026-10-26T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "web security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-109618",
+      "cve": "CVE-2026-109618",
+      "product": "PHP",
+      "details": "PHP contains an out-of-memory corruption vulnerability that allows for unauthenticated remote code execution."
+    },
+    {
+      "id": "kev:CVE-2026-109619",
+      "kind": "KEV",
+      "title": "PHP Stale Internal Request-State Vulnerability",
+      "summary": "PHP contains a stale internal request-state vulnerability that allows for unauthenticated remote code execution.",
+      "date": "2026-10-26T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "web security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-109619",
+      "cve": "CVE-2026-109619",
+      "product": "PHP",
+      "details": "PHP contains a stale internal request-state vulnerability that allows for unauthenticated remote code execution."
     }
   ],
   "topicSignals": [
     {
       "topic": "web security",
-      "count": 79,
+      "count": 39,
       "reason": "Recent source activity is clustering around web security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
@@ -5661,22 +5665,22 @@
     },
     {
       "topic": "general security",
-      "count": 28,
+      "count": 22,
       "reason": "Recent source activity is clustering around general security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "binary exploitation",
-      "count": 28,
+      "count": 11,
       "reason": "Recent source activity is clustering around binary exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "linux and systems",
-      "count": 11,
+      "count": 10,
       "reason": "Recent source activity is clustering around linux and systems. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "cryptography",
-      "count": 10,
+      "count": 6,
       "reason": "Recent source activity is clustering around cryptography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
@@ -5685,14 +5689,14 @@
       "reason": "Recent source activity is clustering around identity and access. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "osint",
-      "count": 3,
-      "reason": "Recent source activity is clustering around osint. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
-    },
-    {
       "topic": "cloud and containers",
       "count": 2,
       "reason": "Recent source activity is clustering around cloud and containers. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "osint",
+      "count": 2,
+      "reason": "Recent source activity is clustering around osint. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "digital forensics",
@@ -5701,7 +5705,7 @@
     },
     {
       "topic": "reverse engineering",
-      "count": 2,
+      "count": 1,
       "reason": "Recent source activity is clustering around reverse engineering. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
@@ -5721,23 +5725,26 @@
     {
       "id": "ghidra",
       "name": "NSA Ghidra Releases (Reverse Engineering)",
-      "status": "ok",
-      "count": 10,
-      "url": "https://github.com/NationalSecurityAgency/ghidra/releases.atom"
+      "status": "error",
+      "count": 0,
+      "url": "https://github.com/NationalSecurityAgency/ghidra/releases.atom",
+      "error": "This operation was aborted"
     },
     {
       "id": "cyberchef",
       "name": "GCHQ CyberChef Releases (Crypto & Encodings)",
-      "status": "ok",
-      "count": 10,
-      "url": "https://github.com/gchq/CyberChef/releases.atom"
+      "status": "error",
+      "count": 0,
+      "url": "https://github.com/gchq/CyberChef/releases.atom",
+      "error": "This operation was aborted"
     },
     {
       "id": "pwntools",
       "name": "pwntools Releases (Binary Exploitation)",
-      "status": "ok",
-      "count": 10,
-      "url": "https://github.com/Gallopsled/pwntools/releases.atom"
+      "status": "error",
+      "count": 0,
+      "url": "https://github.com/Gallopsled/pwntools/releases.atom",
+      "error": "This operation was aborted"
     },
     {
       "id": "pwndbg",
@@ -5749,30 +5756,34 @@
     {
       "id": "radare2",
       "name": "radare2 / Cutter Releases (Binary Analysis)",
-      "status": "ok",
-      "count": 10,
-      "url": "https://github.com/radareorg/radare2/releases.atom"
+      "status": "error",
+      "count": 0,
+      "url": "https://github.com/radareorg/radare2/releases.atom",
+      "error": "HTTP 504 Gateway Time-out"
     },
     {
       "id": "sqlmap",
       "name": "sqlmap Releases (Web Application Security)",
-      "status": "ok",
-      "count": 10,
-      "url": "https://github.com/sqlmapproject/sqlmap/releases.atom"
+      "status": "error",
+      "count": 0,
+      "url": "https://github.com/sqlmapproject/sqlmap/releases.atom",
+      "error": "HTTP 504 Gateway Time-out"
     },
     {
       "id": "nuclei-templates",
       "name": "ProjectDiscovery Nuclei Vulnerability Templates",
-      "status": "ok",
-      "count": 10,
-      "url": "https://github.com/projectdiscovery/nuclei-templates/releases.atom"
+      "status": "error",
+      "count": 0,
+      "url": "https://github.com/projectdiscovery/nuclei-templates/releases.atom",
+      "error": "HTTP 504 Gateway Time-out"
     },
     {
       "id": "owasp-cheatsheets",
       "name": "OWASP Security Cheat Sheets",
-      "status": "ok",
+      "status": "error",
       "count": 0,
-      "url": "https://github.com/OWASP/CheatSheetSeries/releases.atom"
+      "url": "https://github.com/OWASP/CheatSheetSeries/releases.atom",
+      "error": "HTTP 504 Gateway Time-out"
     },
     {
       "id": "seclists",
@@ -5819,9 +5830,10 @@
     {
       "id": "hydra",
       "name": "THC Hydra Releases (Network Login Cracker)",
-      "status": "ok",
-      "count": 10,
-      "url": "https://github.com/vanhauser-thc/thc-hydra/releases.atom"
+      "status": "error",
+      "count": 0,
+      "url": "https://github.com/vanhauser-thc/thc-hydra/releases.atom",
+      "error": "HTTP 504 Gateway Time-out"
     },
     {
       "id": "gtfobins",
