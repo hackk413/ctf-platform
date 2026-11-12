@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-11-11T11:42:15.595Z",
+  "updatedAt": "2026-11-12T12:15:08.338Z",
   "status": "ok",
   "summary": {
-    "vulnerabilities": 27,
+    "vulnerabilities": 28,
     "kev": 25,
     "releases": 30,
     "techniques": 30,
     "signals": 198,
-    "advisoriesCount": 84,
+    "advisoriesCount": 86,
     "criticalAdvisories": 12,
-    "zeroDaysCount": 77
+    "zeroDaysCount": 79
   },
   "curriculum": [
     {
@@ -5009,6 +5009,102 @@
           "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2026-125350 Detection Signal\"; content:\"CVE-2026-125350\"; sid:3999999; rev:1;)"
         }
       }
+    },
+    {
+      "id": "cve-2026-118383",
+      "cve": "CVE-2026-118383",
+      "title": "Critical Pre-Auth MongoDB Flaw (CVE-2026-118383) Can Crash Lagging Servers on Failover",
+      "severity": "HIGH",
+      "cvss": 8.8,
+      "category": "general security",
+      "status": "CISA Known Exploited (Active Threat)",
+      "isHistoric": false,
+      "isZeroDay": true,
+      "disclosureDate": "2026-11-12",
+      "discoveredBy": {
+        "name": "Reported to CISA KEV Catalog",
+        "organization": "CISA / Threat Intelligence Community",
+        "role": "Vulnerability Monitoring",
+        "details": "The Hacker News Threat Intelligence"
+      },
+      "affected": {
+        "vendor": "Disclosed Vendor",
+        "product": "Disclosed Software",
+        "versions": "See CISA KEV security bulletin",
+        "ecosystem": "general security"
+      },
+      "summary": "Actively exploited vulnerability tracked in federal intelligence feeds.",
+      "research": {
+        "rootCause": "Active security flaw identified in system. Attackers exploit this boundary failure to conduct unauthorized actions.",
+        "exploitMechanics": "Threat actors deliver targeted payloads triggering the flaw. Remediate immediately per vendor advisory.",
+        "diagram": "[ Attacker ] ---> [ Network Request ] ---> [ Target Asset ] ---> [ State Compromise ]",
+        "technicalImpact": "Active exploitation observed across Internet-facing infrastructure.",
+        "cwe": "CWE-Other"
+      },
+      "remediation": {
+        "immediateAction": "Apply vendor security update or disconnect vulnerable device from public networks.",
+        "commands": [
+          "# Check vendor patch notes and apply latest security updates immediately",
+          "# Verify exposed service ports: nmap -sV -p- <target-host>"
+        ],
+        "mitigations": [
+          "Isolate affected host from untrusted subnets.",
+          "Review audit logs for anomalous connections."
+        ],
+        "detection": {
+          "sigma": "title: CVE-2026-118383 Potential Activity\nstatus: high\nlogsource:\n  category: webserver\ndetection:\n  selection:\n    cve: 'CVE-2026-118383'\n  condition: selection",
+          "yara": "rule CVE_CVE_2026_118383 { strings: $cve = \"CVE-2026-118383\" condition: any of them }",
+          "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2026-118383 Detection Signal\"; content:\"CVE-2026-118383\"; sid:3999999; rev:1;)"
+        }
+      }
+    },
+    {
+      "id": "cve-2026-123488",
+      "cve": "CVE-2026-123488",
+      "title": "Nuclei Templates v10.5.2 - Release Notes",
+      "severity": "HIGH",
+      "cvss": 8.8,
+      "category": "web security",
+      "status": "CISA Known Exploited (Active Threat)",
+      "isHistoric": false,
+      "isZeroDay": true,
+      "disclosureDate": "2026-11-12",
+      "discoveredBy": {
+        "name": "Reported to CISA KEV Catalog",
+        "organization": "CISA / Threat Intelligence Community",
+        "role": "Vulnerability Monitoring",
+        "details": "ProjectDiscovery Nuclei Vulnerability Templates"
+      },
+      "affected": {
+        "vendor": "Disclosed Vendor",
+        "product": "Disclosed Software",
+        "versions": "See CISA KEV security bulletin",
+        "ecosystem": "web security"
+      },
+      "summary": "<h3>New Templates Added: <code>121</code> | CVEs Added: <code>102</code> | First-time contributions: <code>18</code></h3> <h3>🔥 Release Highlights 🔥</h3> <ul> <li>[<a title=\"CVE-2026-123488\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-qvg8-69ff-cf67/hovercard\" href=\"https://github.com/advisories/GHSA-qvg8-69ff-cf67\">CVE-2026-123488</a>] Craft CMS < 4.18.9, < 5.11.2 - Unauthenticated SQL Injection (@0x_Akoko) [critical] (vKEV) 🔥</",
+      "research": {
+        "rootCause": "<h3>New Templates Added: <code>121</code> | CVEs Added: <code>102</code> | First-time contributions: <code>18</code></h3> <h3>🔥 Release Highlights 🔥</h3> <ul> <li>[<a title=\"CVE-2026-123488\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-qvg8-69ff-cf67/hovercard\" href=\"https://github.com/advisories/GHSA-qvg8-69ff-cf67\">CVE-2026-123488</a>] Craft CMS < 4.18.9, < 5.11.2 - Unauthenticated SQL Injection (@0x_Akoko) [critical] (vKEV) 🔥</li> <li>[<a title=\"CVE-2026-123158\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-4fcc-vm97-gx3x/hovercard\" href=\"https://github.com/advisories/GHSA-4fcc-vm97-gx3x\">CVE-2026-123158</a>] SSHole - OpenSSH/musl Password Auth Bypass (<a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/user",
+        "exploitMechanics": "Threat actors deliver targeted payloads triggering the flaw. Remediate immediately per vendor advisory.",
+        "diagram": "[ Attacker ] ---> [ Network Request ] ---> [ Target Asset ] ---> [ State Compromise ]",
+        "technicalImpact": "Active exploitation observed across Internet-facing infrastructure.",
+        "cwe": "CWE-Other"
+      },
+      "remediation": {
+        "immediateAction": "Apply vendor security update or disconnect vulnerable device from public networks.",
+        "commands": [
+          "# Check vendor patch notes and apply latest security updates immediately",
+          "# Verify exposed service ports: nmap -sV -p- <target-host>"
+        ],
+        "mitigations": [
+          "Isolate affected host from untrusted subnets.",
+          "Review audit logs for anomalous connections."
+        ],
+        "detection": {
+          "sigma": "title: CVE-2026-123488 Potential Activity\nstatus: high\nlogsource:\n  category: webserver\ndetection:\n  selection:\n    cve: 'CVE-2026-123488'\n  condition: selection",
+          "yara": "rule CVE_CVE_2026_123488 { strings: $cve = \"CVE-2026-123488\" condition: any of them }",
+          "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2026-123488 Detection Signal\"; content:\"CVE-2026-123488\"; sid:3999999; rev:1;)"
+        }
+      }
     }
   ],
   "items": [
@@ -5017,7 +5113,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: 7z",
       "summary": "7z can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5029,7 +5125,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: R",
       "summary": "R can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5041,7 +5137,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aa-exec",
       "summary": "aa-exec can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5053,7 +5149,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ab",
       "summary": "ab can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5065,7 +5161,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: acr",
       "summary": "acr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5077,7 +5173,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: agetty",
       "summary": "agetty can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5089,7 +5185,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: alpine",
       "summary": "alpine can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5101,7 +5197,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ansible-playbook",
       "summary": "ansible-playbook can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5113,7 +5209,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ansible-test",
       "summary": "ansible-test can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5125,7 +5221,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aoss",
       "summary": "aoss can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5137,7 +5233,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apache2",
       "summary": "apache2 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5149,7 +5245,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apache2ctl",
       "summary": "apache2ctl can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5161,7 +5257,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apport-cli",
       "summary": "apport-cli can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5173,7 +5269,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apt",
       "summary": "apt can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5185,7 +5281,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: apt-get",
       "summary": "apt-get can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5197,7 +5293,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aptitude",
       "summary": "aptitude can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5209,7 +5305,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ar",
       "summary": "ar can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5221,7 +5317,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arch-nspawn",
       "summary": "arch-nspawn can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5233,7 +5329,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aria2c",
       "summary": "aria2c can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5245,7 +5341,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arj",
       "summary": "arj can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5257,7 +5353,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: arp",
       "summary": "arp can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5269,7 +5365,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: as",
       "summary": "as can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5281,7 +5377,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ascii-xfr",
       "summary": "ascii-xfr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5293,7 +5389,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ascii85",
       "summary": "ascii85 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5305,7 +5401,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: ash",
       "summary": "ash can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5317,7 +5413,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: aspell",
       "summary": "aspell can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5329,7 +5425,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: asterisk",
       "summary": "asterisk can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5341,7 +5437,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: at",
       "summary": "at can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5353,7 +5449,7 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: atobm",
       "summary": "atobm can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
@@ -5365,12 +5461,278 @@
       "kind": "TECHNIQUE",
       "title": "GTFOBins: autoconf",
       "summary": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-11T11:42:15.595Z",
+      "date": "2026-11-12T12:15:08.338Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
       "sourceUrl": "https://gtfobins.github.io/gtfobins/autoconf/",
       "details": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-12T12-11-11-000Z",
+      "kind": "RESEARCH",
+      "title": "Microsoft: Recent Windows updates cause SQL Server performance issues",
+      "summary": "",
+      "date": "2026-11-12T12:11:11.000Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/microsoft/microsoft-recent-windows-updates-cause-sql-server-performance-issues/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-12T10-24-07-000Z",
+      "kind": "RESEARCH",
+      "title": "Microsoft confirms Windows security updates installation issues",
+      "summary": "",
+      "date": "2026-11-12T10:24:07.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/microsoft/microsoft-confirms-kb5132061-installation-issues-0x80070306-0x800f0989-0x800f0993-errors/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-12T09-38-00-000Z",
+      "kind": "RESEARCH",
+      "title": "Hackers plant GSocket on Linux servers for persistent access",
+      "summary": "",
+      "date": "2026-11-12T09:38:00.000Z",
+      "severity": "info",
+      "topic": "linux and systems",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/hackers-plant-gsocket-on-linux-servers-for-persistent-access/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:CVE-2026-118383",
+      "kind": "CVE",
+      "title": "Critical Pre-Auth MongoDB Flaw (CVE-2026-118383) Can Crash Lagging Servers on Failover",
+      "summary": "",
+      "date": "2026-11-12T09:25:00.000Z",
+      "severity": "high",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/critical-pre-auth-mongodb-flaw-cve-2026.html",
+      "cve": "CVE-2026-118383",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-12T08-20-37-000Z",
+      "kind": "RESEARCH",
+      "title": "Node.js Fixes 16 Flaws, Including HTTP/2 Bugs That Crash Servers and Leak Other Connections' Data",
+      "summary": "",
+      "date": "2026-11-12T08:20:37.000Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/nodejs-fixes-16-flaws-including-http2.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-12T06-42-47-000Z",
+      "kind": "RESEARCH",
+      "title": "Attacker Used 4,837 Hijacked GitHub Accounts to Run a CI Secret Stealer in 1,806+ Repositories",
+      "summary": "",
+      "date": "2026-11-12T06:42:47.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/4837-hijacked-github-accounts-ran-ci.html",
+      "details": ""
+    },
+    {
+      "id": "signal:nuclei-templates:CVE-2026-123488",
+      "kind": "CVE",
+      "title": "Nuclei Templates v10.5.2 - Release Notes",
+      "summary": "<h3>New Templates Added: <code>121</code> | CVEs Added: <code>102</code> | First-time contributions: <code>18</code></h3> <h3>🔥 Release Highlights 🔥</h3> <ul> <li>[<a title=\"CVE-2026-123488\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-qvg8-69ff-cf67/hovercard\" href=\"https://github.com/advisories/GHSA-qvg8-69ff-cf67\">CVE-2026-123488</a>] Craft CMS < 4.18.9, < 5.11.2 - Unauthenticated SQL Injection (@0x_Akoko) [critical] (vKEV) 🔥</",
+      "date": "2026-11-12T05:48:41.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "ProjectDiscovery Nuclei Vulnerability Templates",
+      "sourceUrl": "https://github.com/projectdiscovery/nuclei-templates/releases/tag/v10.5.2",
+      "cve": "CVE-2026-123488",
+      "details": "<h3>New Templates Added: <code>121</code> | CVEs Added: <code>102</code> | First-time contributions: <code>18</code></h3> <h3>🔥 Release Highlights 🔥</h3> <ul> <li>[<a title=\"CVE-2026-123488\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-qvg8-69ff-cf67/hovercard\" href=\"https://github.com/advisories/GHSA-qvg8-69ff-cf67\">CVE-2026-123488</a>] Craft CMS < 4.18.9, < 5.11.2 - Unauthenticated SQL Injection (@0x_Akoko) [critical] (vKEV) 🔥</li> <li>[<a title=\"CVE-2026-123158\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-4fcc-vm97-gx3x/hovercard\" href=\"https://github.com/advisories/GHSA-4fcc-vm97-gx3x\">CVE-2026-123158</a>] SSHole - OpenSSH/musl Password Auth Bypass (<a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/user"
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-12T05-12-26-000Z",
+      "kind": "RESEARCH",
+      "title": "Critical Apache HTTP/2 Flaw Could Let Unauthenticated Attackers Execute Code Remotely",
+      "summary": "",
+      "date": "2026-11-12T05:12:26.000Z",
+      "severity": "info",
+      "topic": "web security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/critical-apache-http2-flaw-could-let.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-12T04-39-48-000Z",
+      "kind": "RESEARCH",
+      "title": "ScreenConnect Attacks Target at Least 288 Endpoints Across 48 Organizations With Rogue Clients",
+      "summary": "",
+      "date": "2026-11-12T04:39:48.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/screenconnect-attacks-target-at-least.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-11T23-01-31-000Z",
+      "kind": "RESEARCH",
+      "title": "Baker Tilly notifies clients of data breach at third-party provider",
+      "summary": "",
+      "date": "2026-11-11T23:01:31.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/baker-tilly-notifies-clients-of-data-breach-at-third-party-provider/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-11T22-56-21-000Z",
+      "kind": "RESEARCH",
+      "title": "Active ScreenConnect attacks breach MSPs, impact dozens of organizations",
+      "summary": "",
+      "date": "2026-11-11T22:56:21.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/active-screenconnect-attacks-breach-msps-impact-dozens-of-organizations/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-11T21-27-40-000Z",
+      "kind": "RESEARCH",
+      "title": "eMudhra revokes 8 more CA certificates after private key mishap",
+      "summary": "",
+      "date": "2026-11-11T21:27:40.000Z",
+      "severity": "info",
+      "topic": "cryptography",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/emudhra-revokes-8-more-ca-certificates-after-private-key-mishap/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-11T20-54-20-000Z",
+      "kind": "RESEARCH",
+      "title": "Notion says Fireworks breach exposed customer AI chat transcripts",
+      "summary": "",
+      "date": "2026-11-11T20:54:20.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/notion-says-fireworks-breach-exposed-customer-ai-chat-transcripts/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-11T16-12-46-000Z",
+      "kind": "RESEARCH",
+      "title": "Critical Zoom Workplace Flaw Could Allow Unauthenticated Remote Privilege Escalation",
+      "summary": "",
+      "date": "2026-11-11T16:12:46.000Z",
+      "severity": "info",
+      "topic": "identity and access",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/critical-zoom-workplace-flaw-could.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-11T15-34-27-000Z",
+      "kind": "RESEARCH",
+      "title": "AntiFox AI Pentesting Platform Linked to Attacks That Accessed AWS Production Secrets",
+      "summary": "",
+      "date": "2026-11-11T15:34:27.000Z",
+      "severity": "info",
+      "topic": "cloud and containers",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/antifox-ai-pentesting-platform-linked.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-11T15-12-59-000Z",
+      "kind": "RESEARCH",
+      "title": "Hackers use AntiFox AI agents in AWS credential-theft attacks",
+      "summary": "",
+      "date": "2026-11-11T15:12:59.000Z",
+      "severity": "info",
+      "topic": "cloud and containers",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/hackers-use-antifox-ai-agents-in-aws-credential-theft-attacks/",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-11T15-01-11-000Z",
+      "kind": "RESEARCH",
+      "title": "eBPF Rootkits: Why Underground Actors Are Taking Notice",
+      "summary": "",
+      "date": "2026-11-11T15:01:11.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/ebpf-rootkits-why-underground-actors-are-taking-notice/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-11T14-01-00-000Z",
+      "kind": "RESEARCH",
+      "title": "Hackers Target Qlik Sense Servers With Reverse Shells, Stage ActiveMQ and Veeam Exploits",
+      "summary": "",
+      "date": "2026-11-11T14:01:00.000Z",
+      "severity": "info",
+      "topic": "linux and systems",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/hackers-target-qlik-sense-servers-with.html",
+      "details": ""
+    },
+    {
+      "id": "signal:bleepingcomputer:2026-11-11T12-32-27-000Z",
+      "kind": "RESEARCH",
+      "title": "N-able releases security hotfixes for zero-day vulnerabilities",
+      "summary": "",
+      "date": "2026-11-11T12:32:27.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/n-able-releases-security-hotfixes-for-zero-day-vulnerabilities/",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-11T12-19-40-000Z",
+      "kind": "RESEARCH",
+      "title": "Over 35,000 Grok-Built Apps Exposed Online, Some Leaking Confidential Data and Passwords",
+      "summary": "",
+      "date": "2026-11-11T12:19:40.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/over-35000-grok-built-apps-exposed.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-11T12-01-59-000Z",
+      "kind": "RESEARCH",
+      "title": "We Built An Agent That Broke All of Our Security Rules. Here's What We Learned.",
+      "summary": "",
+      "date": "2026-11-11T12:01:59.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/we-built-agent-that-broke-all-of-our.html",
+      "details": ""
+    },
+    {
+      "id": "signal:the-hacker-news:2026-11-11T12-00-53-000Z",
+      "kind": "RESEARCH",
+      "title": "eMudhra Revokes 8 More CAs It Previously Declared Unaffected by Key Compromise",
+      "summary": "",
+      "date": "2026-11-11T12:00:53.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/emudhra-revokes-8-more-cas-it.html",
+      "details": ""
     },
     {
       "id": "signal:bleepingcomputer:2026-11-11T11-18-36-000Z",
@@ -5469,198 +5831,6 @@
       "details": ""
     },
     {
-      "id": "signal:bleepingcomputer:2026-11-10T20-54-55-000Z",
-      "kind": "RESEARCH",
-      "title": "Japanese furniture giant Nitori says hackers stole 37.6M customer records",
-      "summary": "",
-      "date": "2026-11-10T20:54:55.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/japanese-furniture-giant-nitori-says-hackers-stole-376m-customer-records/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T20-04-36-000Z",
-      "kind": "RESEARCH",
-      "title": "Microsoft releases Windows 10 KB5131096 extended security update",
-      "summary": "",
-      "date": "2026-11-10T20:04:36.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/microsoft/microsoft-releases-windows-10-kb5131096-extended-security-update/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T19-31-11-000Z",
-      "kind": "RESEARCH",
-      "title": "Hackers exploit trusted AWS access to breach multiple cloud environments",
-      "summary": "",
-      "date": "2026-11-10T19:31:11.000Z",
-      "severity": "info",
-      "topic": "cloud and containers",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/hackers-exploit-trusted-aws-access-to-breach-multiple-cloud-environments/",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T19-23-10-000Z",
-      "kind": "RESEARCH",
-      "title": "Git Patches Flaw That Lets Malicious Repositories Execute Code During Recursive Clones",
-      "summary": "",
-      "date": "2026-11-10T19:23:10.000Z",
-      "severity": "info",
-      "topic": "reverse engineering",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/git-patches-flaw-that-lets-malicious.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T19-19-39-000Z",
-      "kind": "RESEARCH",
-      "title": "SGLang RCE Exploit Breaches NEAR AI, Steals Data From 18 Agents and About 100 Users",
-      "summary": "",
-      "date": "2026-11-10T19:19:39.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/sglang-rce-exploit-breaches-near-ai.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T19-07-36-000Z",
-      "kind": "RESEARCH",
-      "title": "Microsoft November 2026 Patch Tuesday fixes 1,235 flaws, Outlook zero-day",
-      "summary": "",
-      "date": "2026-11-10T19:07:36.000Z",
-      "severity": "info",
-      "topic": "reverse engineering",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/microsoft/microsoft-november-2026-patch-tuesday-fixes-1-235-flaws-outlook-zero-day/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T18-33-26-000Z",
-      "kind": "RESEARCH",
-      "title": "Windows 11 KB5132061 & KB5131087 cumulative updates released",
-      "summary": "",
-      "date": "2026-11-10T18:33:26.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/microsoft/windows-11-kb5132061-and-kb5131087-cumulative-updates-released/",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T18-12-21-000Z",
-      "kind": "RESEARCH",
-      "title": "Hackers Exploit Critical Xen Orchestra Auth Bypass Flaw to Gain Admin Access",
-      "summary": "",
-      "date": "2026-11-10T18:12:21.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/hackers-exploit-critical-xen-orchestra.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T17-43-23-000Z",
-      "kind": "RESEARCH",
-      "title": "Three China-Nexus Espionage Campaigns Linked Through Sparrow Malware Ecosystem",
-      "summary": "",
-      "date": "2026-11-10T17:43:23.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/three-china-nexus-espionage-campaigns.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T16-17-16-000Z",
-      "kind": "RESEARCH",
-      "title": "Critical Xen Orchestra auth bypass flaw exploited to hijack VM servers",
-      "summary": "",
-      "date": "2026-11-10T16:17:16.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/critical-xen-orchestra-auth-bypass-flaw-exploited-to-hijack-vm-servers/",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T16-00-55-000Z",
-      "kind": "RESEARCH",
-      "title": "Attackers Exploit AhsayCBS Flaws to Deploy Sandbox-Evading Python Backdoor",
-      "summary": "",
-      "date": "2026-11-10T16:00:55.000Z",
-      "severity": "info",
-      "topic": "cloud and containers",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/attackers-exploit-ahsaycbs-flaws-to.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T15-59-19-000Z",
-      "kind": "RESEARCH",
-      "title": "Binance warns of iOS flaw that could leak crypto wallet secrets",
-      "summary": "",
-      "date": "2026-11-10T15:59:19.000Z",
-      "severity": "info",
-      "topic": "cryptography",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/binance-warns-of-ios-flaw-that-could-leak-crypto-wallet-secrets/",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T15-58-44-000Z",
-      "kind": "RESEARCH",
-      "title": "Blind Eagle Uses Fake Court Notices to Deliver Remote Access Trojan Across Latin America",
-      "summary": "",
-      "date": "2026-11-10T15:58:44.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/blind-eagle-uses-fake-court-notices-to.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T15-33-59-000Z",
-      "kind": "RESEARCH",
-      "title": "Fireworks AI Confirms Wider Breach Affecting Customer Datasets, Model Weights and Notion AI Chats",
-      "summary": "",
-      "date": "2026-11-10T15:33:59.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/fireworks-ai-breach-widens-to-expose.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T12-15-31-000Z",
-      "kind": "RESEARCH",
-      "title": "Binance Warns of iOS Sandbox Escape That Could Expose Crypto Wallet Keys, No Fix Confirmed",
-      "summary": "",
-      "date": "2026-11-10T12:15:31.000Z",
-      "severity": "info",
-      "topic": "cryptography",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/binance-warns-of-ios-sandbox-escape.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T12-07-03-000Z",
-      "kind": "RESEARCH",
-      "title": "SAP patches ICM2SHELL and PROXYGATE maximum severity flaws",
-      "summary": "",
-      "date": "2026-11-10T12:07:03.000Z",
-      "severity": "info",
-      "topic": "reverse engineering",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/sap-patches-four-maximum-severity-security-vulnerabilities/",
-      "details": ""
-    },
-    {
       "id": "signal:cisa-advisories:CVE-2026-20320",
       "kind": "CVE",
       "title": "CISA Adds Six Known Exploited Vulnerabilities to Catalog",
@@ -5672,66 +5842,6 @@
       "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/11/10/cisa-adds-six-known-exploited-vulnerabilities-catalog",
       "cve": "CVE-2026-20320",
       "details": "<p>CISA has added six new vulnerabilities to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\">Known Exploited Vulnerabilities (KEV) Catalog</a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-20320\" target=\"_blank\">CVE-2026-20320</a> Cisco BroadWorks Improper Restriction of XML External Entity Reference Vulnerability&nbsp;</li> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-111560\" target=\"_blank\">CVE-2026-111560</a> Barracuda Networks Multiple Products OS Command Injection Vulnerability&nbsp;</li> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-111793\" target=\"_blank\">CVE-2026-111793</a> Openwave Messaging Limited Webtop Media Transcoder Incorrect Resource Transfer Between Spheres Vulnerabi"
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T11-38-13-000Z",
-      "kind": "RESEARCH",
-      "title": "Beyond the Alert: The Case for Rich Network Data",
-      "summary": "",
-      "date": "2026-11-10T11:38:13.000Z",
-      "severity": "info",
-      "topic": "detection and response",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/beyond-alert-case-for-rich-network-data.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T10-16-51-000Z",
-      "kind": "RESEARCH",
-      "title": "Apple Patches iMessage Group Chat Privacy Flaws and Bluetooth Pairing Vulnerabilities",
-      "summary": "",
-      "date": "2026-11-10T10:16:51.000Z",
-      "severity": "info",
-      "topic": "reverse engineering",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/apple-patches-imessage-group-chat.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T10-10-20-000Z",
-      "kind": "RESEARCH",
-      "title": "Hackers now exploit critical Barracuda ESG flaws to gain root access",
-      "summary": "",
-      "date": "2026-11-10T10:10:20.000Z",
-      "severity": "info",
-      "topic": "cloud and containers",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/hackers-exploit-barracuda-email-security-gateway-flaws-to-get-root-access/",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-10T10-07-29-000Z",
-      "kind": "RESEARCH",
-      "title": "Russian Turla Hackers Use New Cereal Malware to Steal Emails From Government Exchange Servers",
-      "summary": "",
-      "date": "2026-11-10T10:07:29.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/russian-turla-hackers-use-new-cereal.html",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-10T10-04-32-000Z",
-      "kind": "RESEARCH",
-      "title": "Turla hackers use new Cereal malware to spy on govt Exchange servers",
-      "summary": "",
-      "date": "2026-11-10T10:04:32.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/turla-hackers-use-new-ceral-malware-to-spy-on-govt-exchange-servers/",
-      "details": ""
     },
     {
       "id": "kev:CVE-2026-124194",
@@ -6122,26 +6232,12 @@
       "cve": "CVE-2026-97229",
       "product": "Community Edition and Enterprise Edition",
       "details": "GitLab Community Edition and Enterprise Edition contain a integer overflow or wraparound vulnerability that could allow an unauthenticated user to execute arbitrary code on the GitLab server via a specially crafted regular expression in a CI/CD configuration, due to insufficient regular expression validation."
-    },
-    {
-      "id": "kev:CVE-2026-76418",
-      "kind": "KEV",
-      "title": "Cisco Secure Firewall ASA Software and Cisco Secure FTD Software Unchecked Return Value to NULL Pointer Dereference Vulnerability",
-      "summary": "Cisco Secure Firewall ASA Software and Cisco Secure FTD Software contains an unchecked return value to NULL pointer dereference vulnerability that could allow an unauthenticated, remote attacker to cause the device to reload unexpectedly, resulting in a denial of service (DoS) condition.",
-      "date": "2026-10-29T00:00:00.000Z",
-      "severity": "exploited",
-      "topic": "general security",
-      "source": "CISA Known Exploited Vulnerabilities",
-      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-76418",
-      "cve": "CVE-2026-76418",
-      "product": "Secure Firewall ASA Software and Cisco Secure FTD Software",
-      "details": "Cisco Secure Firewall ASA Software and Cisco Secure FTD Software contains an unchecked return value to NULL pointer dereference vulnerability that could allow an unauthenticated, remote attacker to cause the device to reload unexpectedly, resulting in a denial of service (DoS) condition."
     }
   ],
   "topicSignals": [
     {
       "topic": "web security",
-      "count": 75,
+      "count": 78,
       "reason": "Recent source activity is clustering around web security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
@@ -6156,38 +6252,28 @@
     },
     {
       "topic": "general security",
-      "count": 26,
+      "count": 27,
       "reason": "Recent source activity is clustering around general security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "cryptography",
-      "count": 13,
+      "count": 12,
       "reason": "Recent source activity is clustering around cryptography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "linux and systems",
-      "count": 7,
+      "count": 9,
       "reason": "Recent source activity is clustering around linux and systems. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "reverse engineering",
-      "count": 6,
-      "reason": "Recent source activity is clustering around reverse engineering. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
-    },
-    {
       "topic": "identity and access",
-      "count": 4,
+      "count": 5,
       "reason": "Recent source activity is clustering around identity and access. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "cloud and containers",
-      "count": 3,
-      "reason": "Recent source activity is clustering around cloud and containers. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
-    },
-    {
-      "topic": "detection and response",
       "count": 2,
-      "reason": "Recent source activity is clustering around detection and response. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+      "reason": "Recent source activity is clustering around cloud and containers. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "digital forensics",
@@ -6195,9 +6281,19 @@
       "reason": "Recent source activity is clustering around digital forensics. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
+      "topic": "reverse engineering",
+      "count": 2,
+      "reason": "Recent source activity is clustering around reverse engineering. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
       "topic": "steganography",
       "count": 1,
       "reason": "Recent source activity is clustering around steganography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "osint",
+      "count": 1,
+      "reason": "Recent source activity is clustering around osint. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     }
   ],
   "sources": [
