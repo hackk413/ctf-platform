@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-11-27T13:31:49.386Z",
+  "updatedAt": "2026-11-28T12:44:12.999Z",
   "status": "ok",
   "summary": {
     "vulnerabilities": 30,
     "kev": 25,
     "releases": 30,
-    "techniques": 30,
-    "signals": 200,
-    "advisoriesCount": 130,
+    "techniques": 15,
+    "signals": 185,
+    "advisoriesCount": 133,
     "criticalAdvisories": 12,
-    "zeroDaysCount": 123
+    "zeroDaysCount": 126
   },
   "curriculum": [
     {
@@ -7217,368 +7217,428 @@
           "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2025-4877 Detection Signal\"; content:\"CVE-2025-4877\"; sid:3999999; rev:1;)"
         }
       }
+    },
+    {
+      "id": "cve-2026-120705",
+      "cve": "CVE-2026-120705",
+      "title": "CISA Adds Three Known Exploited Vulnerabilities to Catalog",
+      "severity": "HIGH",
+      "cvss": 8.8,
+      "category": "web security",
+      "status": "CISA Known Exploited (Active Threat)",
+      "isHistoric": false,
+      "isZeroDay": true,
+      "disclosureDate": "2026-11-27",
+      "discoveredBy": {
+        "name": "Reported to CISA KEV Catalog",
+        "organization": "CISA / Threat Intelligence Community",
+        "role": "Vulnerability Monitoring",
+        "details": "CISA Cybersecurity Advisories (US-CERT)"
+      },
+      "affected": {
+        "vendor": "Disclosed Vendor",
+        "product": "Disclosed Software",
+        "versions": "See CISA KEV security bulletin",
+        "ecosystem": "web security"
+      },
+      "summary": "<div class=\"OutlineElement Ltr SCXW1462417 BCX8\"> <p>CISA has added three new vulnerabilities to its <a class=\"Hyperlink SCXW1462417 BCX8\" href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\" rel=\"noreferrer noopener\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-120705\">CVE-2026-120705</a> OSGeo GeoServer XML Injection Vulne",
+      "research": {
+        "rootCause": "<div class=\"OutlineElement Ltr SCXW1462417 BCX8\"> <p>CISA has added three new vulnerabilities to its <a class=\"Hyperlink SCXW1462417 BCX8\" href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\" rel=\"noreferrer noopener\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-120705\">CVE-2026-120705</a> OSGeo GeoServer XML Injection Vulnerability</li> </ul> <div class=\"ListContainerWrapper SCXW129498037 BCX8\"> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-129243\" target=\"_blank\"><u>CVE-2026-129243</u></a> OSGeo GeoServer Incorrect Authorization Vulnerability&nbsp;</li> </ul> </div> <div class=\"ListContainerWrapper SCXW129498037 BCX8\"> <ul> <li><a href=\"https",
+        "exploitMechanics": "Threat actors deliver targeted payloads triggering the flaw. Remediate immediately per vendor advisory.",
+        "diagram": "[ Attacker ] ---> [ Network Request ] ---> [ Target Asset ] ---> [ State Compromise ]",
+        "technicalImpact": "Active exploitation observed across Internet-facing infrastructure.",
+        "cwe": "CWE-Other"
+      },
+      "remediation": {
+        "immediateAction": "Apply vendor security update or disconnect vulnerable device from public networks.",
+        "commands": [
+          "# Check vendor patch notes and apply latest security updates immediately",
+          "# Verify exposed service ports: nmap -sV -p- <target-host>"
+        ],
+        "mitigations": [
+          "Isolate affected host from untrusted subnets.",
+          "Review audit logs for anomalous connections."
+        ],
+        "detection": {
+          "sigma": "title: CVE-2026-120705 Potential Activity\nstatus: high\nlogsource:\n  category: webserver\ndetection:\n  selection:\n    cve: 'CVE-2026-120705'\n  condition: selection",
+          "yara": "rule CVE_CVE_2026_120705 { strings: $cve = \"CVE-2026-120705\" condition: any of them }",
+          "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2026-120705 Detection Signal\"; content:\"CVE-2026-120705\"; sid:3999999; rev:1;)"
+        }
+      }
+    },
+    {
+      "id": "cve-2026-129243",
+      "cve": "CVE-2026-129243",
+      "title": "OSGeo GeoServer Incorrect Authorization Vulnerability",
+      "severity": "EXPLOITED",
+      "cvss": 8.8,
+      "category": "web security",
+      "status": "CISA Known Exploited (Active Threat)",
+      "isHistoric": false,
+      "isZeroDay": true,
+      "disclosureDate": "2026-11-27",
+      "discoveredBy": {
+        "name": "Reported to CISA KEV Catalog",
+        "organization": "CISA / Threat Intelligence Community",
+        "role": "Vulnerability Monitoring",
+        "details": "CISA Known Exploited Vulnerabilities"
+      },
+      "affected": {
+        "vendor": "Disclosed Vendor",
+        "product": "GeoServer",
+        "versions": "See CISA KEV security bulletin",
+        "ecosystem": "web security"
+      },
+      "summary": "GeoServer contains an incorrect authorization vulnerability that allows an unauthenticated remote attacker to bypass service-level role checks and invoke operations protected solely by those checks via a request with a prefixed service parameter. This vulnerability can be chained with CVE-2026-129244, CVE-2026-120705, CVE-2026-129245, and CVE-2026-129242 to achieve unauthenticated remote code execution on an affected GeoServer instance.",
+      "research": {
+        "rootCause": "GeoServer contains an incorrect authorization vulnerability that allows an unauthenticated remote attacker to bypass service-level role checks and invoke operations protected solely by those checks via a request with a prefixed service parameter. This vulnerability can be chained with CVE-2026-129244, CVE-2026-120705, CVE-2026-129245, and CVE-2026-129242 to achieve unauthenticated remote code execution on an affected GeoServer instance.",
+        "exploitMechanics": "Threat actors deliver targeted payloads triggering the flaw. Remediate immediately per vendor advisory.",
+        "diagram": "[ Attacker ] ---> [ Network Request ] ---> [ GeoServer ] ---> [ State Compromise ]",
+        "technicalImpact": "Active exploitation observed across Internet-facing infrastructure.",
+        "cwe": "CWE-Other"
+      },
+      "remediation": {
+        "immediateAction": "Apply vendor security update or disconnect vulnerable device from public networks.",
+        "commands": [
+          "# Check vendor patch notes and apply latest security updates immediately",
+          "# Verify exposed service ports: nmap -sV -p- <target-host>"
+        ],
+        "mitigations": [
+          "Isolate affected host from untrusted subnets.",
+          "Review audit logs for anomalous connections."
+        ],
+        "detection": {
+          "sigma": "title: CVE-2026-129243 Potential Activity\nstatus: high\nlogsource:\n  category: webserver\ndetection:\n  selection:\n    cve: 'CVE-2026-129243'\n  condition: selection",
+          "yara": "rule CVE_CVE_2026_129243 { strings: $cve = \"CVE-2026-129243\" condition: any of them }",
+          "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2026-129243 Detection Signal\"; content:\"CVE-2026-129243\"; sid:3999999; rev:1;)"
+        }
+      }
+    },
+    {
+      "id": "cve-2026-136716",
+      "cve": "CVE-2026-136716",
+      "title": "Drupal Core Improper Check for Unusual or Exceptional Conditions Vulnerability",
+      "severity": "EXPLOITED",
+      "cvss": 8.8,
+      "category": "web security",
+      "status": "CISA Known Exploited (Active Threat)",
+      "isHistoric": false,
+      "isZeroDay": true,
+      "disclosureDate": "2026-11-27",
+      "discoveredBy": {
+        "name": "Reported to CISA KEV Catalog",
+        "organization": "CISA / Threat Intelligence Community",
+        "role": "Vulnerability Monitoring",
+        "details": "CISA Known Exploited Vulnerabilities"
+      },
+      "affected": {
+        "vendor": "Disclosed Vendor",
+        "product": "Core",
+        "versions": "See CISA KEV security bulletin",
+        "ecosystem": "web security"
+      },
+      "summary": "Drupal Core contains an improper check for unusual or exceptional conditions vulnerability that allows an unauthenticated remote attacker to take over a site via the exposed Drupal installer when the site is in one of the affected unusual or incomplete installation states.",
+      "research": {
+        "rootCause": "Drupal Core contains an improper check for unusual or exceptional conditions vulnerability that allows an unauthenticated remote attacker to take over a site via the exposed Drupal installer when the site is in one of the affected unusual or incomplete installation states.",
+        "exploitMechanics": "Threat actors deliver targeted payloads triggering the flaw. Remediate immediately per vendor advisory.",
+        "diagram": "[ Attacker ] ---> [ Network Request ] ---> [ Core ] ---> [ State Compromise ]",
+        "technicalImpact": "Active exploitation observed across Internet-facing infrastructure.",
+        "cwe": "CWE-Other"
+      },
+      "remediation": {
+        "immediateAction": "Apply vendor security update or disconnect vulnerable device from public networks.",
+        "commands": [
+          "# Check vendor patch notes and apply latest security updates immediately",
+          "# Verify exposed service ports: nmap -sV -p- <target-host>"
+        ],
+        "mitigations": [
+          "Isolate affected host from untrusted subnets.",
+          "Review audit logs for anomalous connections."
+        ],
+        "detection": {
+          "sigma": "title: CVE-2026-136716 Potential Activity\nstatus: high\nlogsource:\n  category: webserver\ndetection:\n  selection:\n    cve: 'CVE-2026-136716'\n  condition: selection",
+          "yara": "rule CVE_CVE_2026_136716 { strings: $cve = \"CVE-2026-136716\" condition: any of them }",
+          "snort": "alert tcp any any -> any any (msg:\"CTF-ATLAS: CVE-2026-136716 Detection Signal\"; content:\"CVE-2026-136716\"; sid:3999999; rev:1;)"
+        }
+      }
     }
   ],
   "items": [
     {
-      "id": "gtfobins:7z",
+      "id": "gtfobins:find",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: 7z",
-      "summary": "7z can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: find",
+      "summary": "find binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/7z/",
-      "details": "7z can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/find/",
+      "details": "find binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:R",
+      "id": "gtfobins:vim",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: R",
-      "summary": "R can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: vim",
+      "summary": "vim binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/R/",
-      "details": "R can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/vim/",
+      "details": "vim binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:aa-exec",
+      "id": "gtfobins:awk",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: aa-exec",
-      "summary": "aa-exec can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: awk",
+      "summary": "awk binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/aa-exec/",
-      "details": "aa-exec can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/awk/",
+      "details": "awk binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:ab",
+      "id": "gtfobins:python3",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: ab",
-      "summary": "ab can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: python3",
+      "summary": "python3 binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/ab/",
-      "details": "ab can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/python3/",
+      "details": "python3 binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:acr",
+      "id": "gtfobins:tar",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: acr",
-      "summary": "acr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: tar",
+      "summary": "tar binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/acr/",
-      "details": "acr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/tar/",
+      "details": "tar binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:agetty",
+      "id": "gtfobins:base64",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: agetty",
-      "summary": "agetty can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: base64",
+      "summary": "base64 binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/agetty/",
-      "details": "agetty can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/base64/",
+      "details": "base64 binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:alpine",
+      "id": "gtfobins:curl",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: alpine",
-      "summary": "alpine can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: curl",
+      "summary": "curl binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/alpine/",
-      "details": "alpine can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/curl/",
+      "details": "curl binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:ansible-playbook",
+      "id": "gtfobins:wget",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: ansible-playbook",
-      "summary": "ansible-playbook can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: wget",
+      "summary": "wget binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/ansible-playbook/",
-      "details": "ansible-playbook can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/wget/",
+      "details": "wget binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:ansible-test",
+      "id": "gtfobins:cp",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: ansible-test",
-      "summary": "ansible-test can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: cp",
+      "summary": "cp binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/ansible-test/",
-      "details": "ansible-test can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/cp/",
+      "details": "cp binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:aoss",
+      "id": "gtfobins:nano",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: aoss",
-      "summary": "aoss can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: nano",
+      "summary": "nano binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/aoss/",
-      "details": "aoss can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/nano/",
+      "details": "nano binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:apache2",
+      "id": "gtfobins:gdb",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: apache2",
-      "summary": "apache2 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: gdb",
+      "summary": "gdb binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/apache2/",
-      "details": "apache2 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/gdb/",
+      "details": "gdb binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:apache2ctl",
+      "id": "gtfobins:env",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: apache2ctl",
-      "summary": "apache2ctl can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: env",
+      "summary": "env binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/apache2ctl/",
-      "details": "apache2ctl can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/env/",
+      "details": "env binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:apport-cli",
+      "id": "gtfobins:less",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: apport-cli",
-      "summary": "apport-cli can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: less",
+      "summary": "less binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/apport-cli/",
-      "details": "apport-cli can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/less/",
+      "details": "less binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:apt",
+      "id": "gtfobins:more",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: apt",
-      "summary": "apt can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: more",
+      "summary": "more binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/apt/",
-      "details": "apt can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/more/",
+      "details": "more binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:apt-get",
+      "id": "gtfobins:perl",
       "kind": "TECHNIQUE",
-      "title": "GTFOBins: apt-get",
-      "summary": "apt-get can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
+      "title": "GTFOBins: perl",
+      "summary": "perl binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits.",
+      "date": "2026-11-28T12:44:12.999Z",
       "severity": "high",
       "topic": "systems and exploitation",
       "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/apt-get/",
-      "details": "apt-get can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "sourceUrl": "https://gtfobins.github.io/gtfobins/perl/",
+      "details": "perl binary contains primitives for privilege escalation, shell breakout, or sensitive file read when endowed with SUID root bits."
     },
     {
-      "id": "gtfobins:aptitude",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: aptitude",
-      "summary": "aptitude can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/aptitude/",
-      "details": "aptitude can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "id": "signal:the-hacker-news:2026-11-28T08-08-11-000Z",
+      "kind": "RESEARCH",
+      "title": "pCloud Password Manager Hit by Cyber Attack Involving Email Address Exposure and Login Attempts",
+      "summary": "",
+      "date": "2026-11-28T08:08:11.000Z",
+      "severity": "info",
+      "topic": "cloud and containers",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/pcloud-password-manager-hit-by-cyber.html",
+      "details": ""
     },
     {
-      "id": "gtfobins:ar",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: ar",
-      "summary": "ar can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/ar/",
-      "details": "ar can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "id": "signal:bleepingcomputer:2026-11-27T19-26-04-000Z",
+      "kind": "RESEARCH",
+      "title": "pCloud confirms password manager hack after suspicious login alerts",
+      "summary": "",
+      "date": "2026-11-27T19:26:04.000Z",
+      "severity": "info",
+      "topic": "cloud and containers",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/pcloud-confirms-password-manager-hack-after-suspicious-login-alerts/",
+      "details": ""
     },
     {
-      "id": "gtfobins:arch-nspawn",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: arch-nspawn",
-      "summary": "arch-nspawn can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/arch-nspawn/",
-      "details": "arch-nspawn can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "id": "signal:bleepingcomputer:2026-11-27T18-57-42-000Z",
+      "kind": "RESEARCH",
+      "title": "New Boston Scientific data breach exposes personal, medical info",
+      "summary": "",
+      "date": "2026-11-27T18:57:42.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/new-boston-scientific-data-breach-exposes-personal-medical-info/",
+      "details": ""
     },
     {
-      "id": "gtfobins:aria2c",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: aria2c",
-      "summary": "aria2c can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/aria2c/",
-      "details": "aria2c can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "id": "signal:bleepingcomputer:2026-11-27T17-06-13-000Z",
+      "kind": "RESEARCH",
+      "title": "Unpatched Cacti zero-day with public PoC gives remote code execution",
+      "summary": "",
+      "date": "2026-11-27T17:06:13.000Z",
+      "severity": "info",
+      "topic": "reverse engineering",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/unpatched-cacti-zero-day-with-public-poc-gives-remote-code-execution/",
+      "details": ""
     },
     {
-      "id": "gtfobins:arj",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: arj",
-      "summary": "arj can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/arj/",
-      "details": "arj can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "id": "signal:the-hacker-news:2026-11-27T16-36-11-000Z",
+      "kind": "RESEARCH",
+      "title": "Suspected Vietnam-Linked Hackers Target Southeast Asia in South China Sea Espionage Campaign",
+      "summary": "",
+      "date": "2026-11-27T16:36:11.000Z",
+      "severity": "info",
+      "topic": "general security",
+      "source": "The Hacker News Threat Intelligence",
+      "sourceUrl": "https://thehackernews.com/2026/11/suspected-vietnam-linked-hackers-target.html",
+      "details": ""
     },
     {
-      "id": "gtfobins:arp",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: arp",
-      "summary": "arp can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/arp/",
-      "details": "arp can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "id": "signal:bleepingcomputer:2026-11-27T15-09-40-000Z",
+      "kind": "RESEARCH",
+      "title": "US Air Force cloud platform reportedly hacked in latest federal breach",
+      "summary": "",
+      "date": "2026-11-27T15:09:40.000Z",
+      "severity": "info",
+      "topic": "cloud and containers",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/us-air-force-cloud-platform-reportedly-hacked-in-latest-federal-breach/",
+      "details": ""
     },
     {
-      "id": "gtfobins:as",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: as",
-      "summary": "as can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/as/",
-      "details": "as can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "id": "signal:bleepingcomputer:2026-11-27T15-00-10-000Z",
+      "kind": "RESEARCH",
+      "title": "Your Firewall Isn't Enough: The Hidden Risk of Unmanaged VMs",
+      "summary": "",
+      "date": "2026-11-27T15:00:10.000Z",
+      "severity": "info",
+      "topic": "steganography",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/your-firewall-isnt-enough-the-hidden-risk-of-unmanaged-vms/",
+      "details": ""
     },
     {
-      "id": "gtfobins:ascii-xfr",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: ascii-xfr",
-      "summary": "ascii-xfr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/ascii-xfr/",
-      "details": "ascii-xfr can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
-    },
-    {
-      "id": "gtfobins:ascii85",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: ascii85",
-      "summary": "ascii85 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/ascii85/",
-      "details": "ascii85 can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
-    },
-    {
-      "id": "gtfobins:ash",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: ash",
-      "summary": "ash can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/ash/",
-      "details": "ash can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
-    },
-    {
-      "id": "gtfobins:aspell",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: aspell",
-      "summary": "aspell can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/aspell/",
-      "details": "aspell can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
-    },
-    {
-      "id": "gtfobins:asterisk",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: asterisk",
-      "summary": "asterisk can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/asterisk/",
-      "details": "asterisk can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
-    },
-    {
-      "id": "gtfobins:at",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: at",
-      "summary": "at can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/at/",
-      "details": "at can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
-    },
-    {
-      "id": "gtfobins:atobm",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: atobm",
-      "summary": "atobm can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/atobm/",
-      "details": "atobm can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
-    },
-    {
-      "id": "gtfobins:autoconf",
-      "kind": "TECHNIQUE",
-      "title": "GTFOBins: autoconf",
-      "summary": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f.",
-      "date": "2026-11-27T13:31:49.386Z",
-      "severity": "high",
-      "topic": "systems and exploitation",
-      "source": "GTFOBins technique list",
-      "sourceUrl": "https://gtfobins.github.io/gtfobins/autoconf/",
-      "details": "autoconf can be leveraged for privilege escalation, shell spawning, or file read/write when SUID/sudo is misconfigured. Review SUID permissions: find / -perm -4000 -type f."
+      "id": "signal:bleepingcomputer:2026-11-27T14-22-06-000Z",
+      "kind": "RESEARCH",
+      "title": "Malwarebytes Antivirus: Get 50% off during Black Friday 2026",
+      "summary": "",
+      "date": "2026-11-27T14:22:06.000Z",
+      "severity": "info",
+      "topic": "reverse engineering",
+      "source": "BleepingComputer Vulnerability Disclosures",
+      "sourceUrl": "https://www.bleepingcomputer.com/news/security/malwarebytes-antivirus-get-50-percent-off-during-black-friday-2026/",
+      "details": ""
     },
     {
       "id": "signal:hydra:CVE-2025-4877",
@@ -7592,6 +7652,19 @@
       "sourceUrl": "https://github.com/vanhauser-thc/thc-hydra/releases/tag/v9.9",
       "cve": "CVE-2025-4877",
       "details": "<h1>Release 9.9</h1> <ul> <li>security fixes (some reported by Elpe Pinillo and TristanInSec): <ul> <li>hydra.restore deserialization: validate ownership, clamp length/count/<br> offset fields before driving malloc and loop bounds</li> <li>parent IPC: NUL-terminate after read_safe to stop strcpy past the stack<br> buffer (CodeQL cpp-unbounded-write)</li> <li>hydra.restore / segment / -o output files: open 0600 with O_NOFOLLOW;<br> segment file uses mkstemps</li> <li>signal handlers: replace exit with async-signal-safe _exit</li> <li>argv parser: -W and -T reject negative values; refuse -t > 30 on<br> Cygwin per the long-documented stack-smash issue</li> <li>HYDRA_PROXY parsing: fe80 link-local check now tests the resolved<br> address rather than the previous proxy-table entry</li> <li>modu"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-120705",
+      "kind": "CVE",
+      "title": "CISA Adds Three Known Exploited Vulnerabilities to Catalog",
+      "summary": "<div class=\"OutlineElement Ltr SCXW1462417 BCX8\"> <p>CISA has added three new vulnerabilities to its <a class=\"Hyperlink SCXW1462417 BCX8\" href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\" rel=\"noreferrer noopener\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-120705\">CVE-2026-120705</a> OSGeo GeoServer XML Injection Vulne",
+      "date": "2026-11-27T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/11/27/cisa-adds-three-known-exploited-vulnerabilities-catalog",
+      "cve": "CVE-2026-120705",
+      "details": "<div class=\"OutlineElement Ltr SCXW1462417 BCX8\"> <p>CISA has added three new vulnerabilities to its <a class=\"Hyperlink SCXW1462417 BCX8\" href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\" rel=\"noreferrer noopener\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-120705\">CVE-2026-120705</a> OSGeo GeoServer XML Injection Vulnerability</li> </ul> <div class=\"ListContainerWrapper SCXW129498037 BCX8\"> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-129243\" target=\"_blank\"><u>CVE-2026-129243</u></a> OSGeo GeoServer Incorrect Authorization Vulnerability&nbsp;</li> </ul> </div> <div class=\"ListContainerWrapper SCXW129498037 BCX8\"> <ul> <li><a href=\"https"
     },
     {
       "id": "signal:the-hacker-news:2026-11-27T11-49-34-000Z",
@@ -7727,6 +7800,48 @@
       "details": "<h3>New Templates Added: <code>260</code> | CVEs Added: <code>210</code> | First-time contributions: <code>15</code></h3> <h3>🔥 Release Highlights 🔥</h3> <ul> <li>[<a title=\"CVE-2026-133968\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-2f43-rwqm-6h67/hovercard\" href=\"https://github.com/advisories/GHSA-2f43-rwqm-6h67\">CVE-2026-133968</a>] monailabel - Directory Traversal (@0x_Akoko) [critical] (kev) (vKEV) 🔥</li> <li>[<a title=\"CVE-2026-133469\" data-hovercard-type=\"advisory\" data-hovercard-url=\"/advisories/GHSA-2r3w-c2vx-fv5g/hovercard\" href=\"https://github.com/advisories/GHSA-2r3w-c2vx-fv5g\">CVE-2026-133469</a>] XO (Xen Orchestra) - Authentication Bypass (@0x_Akoko) [critical] (kev) (vKEV) 🔥</li> <li>[<a title=\"CVE-2026-129448\" data-hovercard-type=\"advisory\" data"
     },
     {
+      "id": "kev:CVE-2026-120705",
+      "kind": "KEV",
+      "title": "OSGeo GeoServer XML Injection Vulnerability",
+      "summary": "OsGeo GeoServer contains an XML injection vulnerability that allows an unauthenticated remote attacker to cause the server to read local text files accessible to the GeoServer process or fetch attacker-specified HTTP or HTTPS URLs via a crafted ID parameter in the WFS 2.0 GetFeatureById stored query. This vulnerability can be chained with CVE-2026-129244, CVE-2026-129243, CVE-2026-129245, and CVE-2026-129242 to achieve unauthenticated remote code execution on an affected GeoServer instance.",
+      "date": "2026-11-27T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "web security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-120705",
+      "cve": "CVE-2026-120705",
+      "product": "GeoServer",
+      "details": "OsGeo GeoServer contains an XML injection vulnerability that allows an unauthenticated remote attacker to cause the server to read local text files accessible to the GeoServer process or fetch attacker-specified HTTP or HTTPS URLs via a crafted ID parameter in the WFS 2.0 GetFeatureById stored query. This vulnerability can be chained with CVE-2026-129244, CVE-2026-129243, CVE-2026-129245, and CVE-2026-129242 to achieve unauthenticated remote code execution on an affected GeoServer instance."
+    },
+    {
+      "id": "kev:CVE-2026-129243",
+      "kind": "KEV",
+      "title": "OSGeo GeoServer Incorrect Authorization Vulnerability",
+      "summary": "GeoServer contains an incorrect authorization vulnerability that allows an unauthenticated remote attacker to bypass service-level role checks and invoke operations protected solely by those checks via a request with a prefixed service parameter. This vulnerability can be chained with CVE-2026-129244, CVE-2026-120705, CVE-2026-129245, and CVE-2026-129242 to achieve unauthenticated remote code execution on an affected GeoServer instance.",
+      "date": "2026-11-27T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "web security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-129243",
+      "cve": "CVE-2026-129243",
+      "product": "GeoServer",
+      "details": "GeoServer contains an incorrect authorization vulnerability that allows an unauthenticated remote attacker to bypass service-level role checks and invoke operations protected solely by those checks via a request with a prefixed service parameter. This vulnerability can be chained with CVE-2026-129244, CVE-2026-120705, CVE-2026-129245, and CVE-2026-129242 to achieve unauthenticated remote code execution on an affected GeoServer instance."
+    },
+    {
+      "id": "kev:CVE-2026-136716",
+      "kind": "KEV",
+      "title": "Drupal Core Improper Check for Unusual or Exceptional Conditions Vulnerability",
+      "summary": "Drupal Core contains an improper check for unusual or exceptional conditions vulnerability that allows an unauthenticated remote attacker to take over a site via the exposed Drupal installer when the site is in one of the affected unusual or incomplete installation states.",
+      "date": "2026-11-27T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "web security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-136716",
+      "cve": "CVE-2026-136716",
+      "product": "Core",
+      "details": "Drupal Core contains an improper check for unusual or exceptional conditions vulnerability that allows an unauthenticated remote attacker to take over a site via the exposed Drupal installer when the site is in one of the affected unusual or incomplete installation states."
+    },
+    {
       "id": "signal:bleepingcomputer:2026-11-26T21-06-22-000Z",
       "kind": "RESEARCH",
       "title": "OpenAI warns GPT-6.2 Astra will hit usage limits 40% faster because it fixed a bug",
@@ -7799,18 +7914,6 @@
       "details": ""
     },
     {
-      "id": "signal:bleepingcomputer:2026-11-26T11-50-17-000Z",
-      "kind": "RESEARCH",
-      "title": "SYS010 malware abuses browser management to spy on Gmail, Outlook",
-      "summary": "",
-      "date": "2026-11-26T11:50:17.000Z",
-      "severity": "info",
-      "topic": "web security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/sys010-malware-abuses-browser-management-to-spy-on-gmail-outlook/",
-      "details": ""
-    },
-    {
       "id": "signal:the-hacker-news:2026-11-26T10-57-55-000Z",
       "kind": "RESEARCH",
       "title": "Most Wanted: The Phishing Kits and Techniques Getting Past Security Controls",
@@ -7871,66 +7974,6 @@
       "details": ""
     },
     {
-      "id": "signal:bleepingcomputer:2026-11-25T22-05-09-000Z",
-      "kind": "RESEARCH",
-      "title": "Palo Alto Networks warns of Fragnesia flaw exploited in PAN-OS attacks",
-      "summary": "",
-      "date": "2026-11-25T22:05:09.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/palo-alto-networks-warns-of-fragnesia-flaw-exploited-in-pan-os-attacks/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-25T21-33-33-000Z",
-      "kind": "RESEARCH",
-      "title": "1Password customer data stolen after employee GitHub account breach",
-      "summary": "",
-      "date": "2026-11-25T21:33:33.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/1password-customer-data-stolen-after-employee-github-account-breach/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-25T19-39-31-000Z",
-      "kind": "RESEARCH",
-      "title": "Italy and Switzerland warn of autonomous AI-driven cyberattacks",
-      "summary": "",
-      "date": "2026-11-25T19:39:31.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/italy-and-switzerland-warn-of-autonomous-ai-driven-cyberattacks/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-25T16-13-40-000Z",
-      "kind": "RESEARCH",
-      "title": "CISA warns of critical unpatched flaw in Danfoss refrigeration controllers",
-      "summary": "",
-      "date": "2026-11-25T16:13:40.000Z",
-      "severity": "info",
-      "topic": "reverse engineering",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/cisa-warns-of-critical-unpatched-flaw-in-danfoss-refrigeration-controllers/",
-      "details": ""
-    },
-    {
-      "id": "signal:bleepingcomputer:2026-11-25T15-00-10-000Z",
-      "kind": "RESEARCH",
-      "title": "More Pentests Without More Pentesters: Where AI Safely Helps",
-      "summary": "",
-      "date": "2026-11-25T15:00:10.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "BleepingComputer Vulnerability Disclosures",
-      "sourceUrl": "https://www.bleepingcomputer.com/news/security/more-pentests-without-more-pentesters-where-ai-safely-helps/",
-      "details": ""
-    },
-    {
       "id": "signal:the-hacker-news:2026-11-25T12-48-54-000Z",
       "kind": "RESEARCH",
       "title": "Hackers Exploit Two GeoServer Flaws as Researchers Warn of Unauthenticated RCE Chains",
@@ -7940,18 +7983,6 @@
       "topic": "osint",
       "source": "The Hacker News Threat Intelligence",
       "sourceUrl": "https://thehackernews.com/2026/11/hackers-exploit-two-geoserver-flaws-as.html",
-      "details": ""
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-25T12-30-08-000Z",
-      "kind": "RESEARCH",
-      "title": "U.S. Treasury's Financial Crimes Agency Takes Some Systems Offline After Cyber Intrusion",
-      "summary": "",
-      "date": "2026-11-25T12:30:08.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/us-treasurys-fincen-takes-some-systems.html",
       "details": ""
     },
     {
@@ -7966,18 +7997,6 @@
       "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/11/25/cisa-adds-10-known-exploited-vulnerabilities-catalog",
       "cve": "CVE-2023-25914",
       "details": "<div class=\"OutlineElement Ltr SCXW1462417 BCX8\"> <p>CISA has added 10 new vulnerabilities to its <a class=\"Hyperlink SCXW1462417 BCX8\" href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\" rel=\"noreferrer noopener\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a>, based on evidence of active exploitation.</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2023-25914\" target=\"_blank\">CVE-2023-25914</a> Danfoss AK-SM 800A Series Path Traversal Vulnerability</li> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2023-25915\" target=\"_blank\">CVE-2023-25915</a> Danfoss AK-SM 800A Series Improper Input Validation Vulnerability&nbsp;</li> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2025-41450\" target=\"_blank\">CVE-2025-41450</a> Danfoss AK-SM 800A Series Imprope"
-    },
-    {
-      "id": "signal:the-hacker-news:2026-11-25T11-51-48-000Z",
-      "kind": "RESEARCH",
-      "title": "Credential Remediation Is Slow When You Don’t Know What Will Break",
-      "summary": "",
-      "date": "2026-11-25T11:51:48.000Z",
-      "severity": "info",
-      "topic": "general security",
-      "source": "The Hacker News Threat Intelligence",
-      "sourceUrl": "https://thehackernews.com/2026/11/credential-remediation-is-slow-when-you.html",
-      "details": ""
     },
     {
       "id": "kev:CVE-2026-103406",
@@ -8347,33 +8366,183 @@
       "cve": "CVE-2026-76466",
       "product": "Expressway Series",
       "details": "Cisco Expressway Series contains a use of hard-coded credentials vulnerability that allows an unauthenticated, remote attacker with persistent cookies and network access to execute commands as root on a clustered device via the database service."
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-125132",
+      "kind": "CVE",
+      "title": "libumqtt",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-323-03.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of this vulnerability could allow a remote attacker to cause a denial of service, memory corruption, or information disclosure.</strong></p> <p>The following versions of libumqtt are affected:</p> <ul> <li>libumqtt <=1.1.1 (CVE-2026-125132)</li> </ul> <div class=\"csaf-t",
+      "date": "2026-11-19T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-03",
+      "cve": "CVE-2026-125132",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-323-03.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of this vulnerability could allow a remote attacker to cause a denial of service, memory corruption, or information disclosure.</strong></p> <p>The following versions of libumqtt are affected:</p> <ul> <li>libumqtt <=1.1.1 (CVE-2026-125132)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th> <th role=\"columnheader\">Vendor</th> <th role=\"columnheader\">Equipment</th> </tr> </thead> <tbody> <tr> <td>v3 8.6</td> <td>libumqtt</td> <td>libumqtt</td> </tr> </t"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-124281",
+      "kind": "CVE",
+      "title": "Elecbrakes EB2, VM1, ELBC2000",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-323-02.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to gain control of the brakes of a trailer, modify the firmware, disable the brake lights, modify the brake conditions or disable other critical safety features.</strong></p> <p>The following versions of Elecbrakes EB2, V",
+      "date": "2026-11-19T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-02",
+      "cve": "CVE-2026-124281",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-323-02.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of these vulnerabilities could allow an attacker to gain control of the brakes of a trailer, modify the firmware, disable the brake lights, modify the brake conditions or disable other critical safety features.</strong></p> <p>The following versions of Elecbrakes EB2, VM1, ELBC2000 are affected:</p> <ul> <li>EB2 <=3.0.4.2.0 (CVE-2026-124281, CVE-2026-125273, CVE-2026-96805)</li> <li>ELBC2000 vers:all/* (CVE-2026-124281, CVE-2026-125273, CVE-2026-96805)</li> <li>VM1 <1.3.4.2.1 (CVE-2026-124281, CVE-2026-125273, CVE-2026-96805)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" dat"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-126088",
+      "kind": "CVE",
+      "title": "Autonomy Logic OpenPLC Runtime",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-323-01.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of this vulnerability could allow several unauthenticated admin accounts to be created.</strong></p> <p>The following versions of Autonomy Logic OpenPLC Runtime are affected:</p> <ul> <li>OpenPLC Runtime <=4.2.4 (CVE-2026-126088)</li> </ul> <div class=\"csaf-table\"> <tab",
+      "date": "2026-11-19T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-323-01",
+      "cve": "CVE-2026-126088",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-323-01.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Successful exploitation of this vulnerability could allow several unauthenticated admin accounts to be created.</strong></p> <p>The following versions of Autonomy Logic OpenPLC Runtime are affected:</p> <ul> <li>OpenPLC Runtime <=4.2.4 (CVE-2026-126088)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th> <th role=\"columnheader\">Vendor</th> <th role=\"columnheader\">Equipment</th> </tr> </thead> <tbody> <tr> <td>v3 8.1</td> <td>Autonomy Logic</td> <td>OpenPLC Runtime</td> </tr> <"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2024-10441",
+      "kind": "CVE",
+      "title": "CISA Adds Four Known Exploited Vulnerabilities to Catalog",
+      "summary": "<div class=\"OutlineElement Ltr SCXW266414493 BCX8\"> <p>CISA has added four new vulnerabilities to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a>, based on evidence of active exploitation.&nbsp;</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2024-10441\" target=\"_blank\">CVE-2024-10441 </a>Synology DiskStation Manager (DSM) Improper Encoding or Escaping of Output",
+      "date": "2026-11-18T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/alerts/2026/11/18/cisa-adds-four-known-exploited-vulnerabilities-catalog",
+      "cve": "CVE-2024-10441",
+      "details": "<div class=\"OutlineElement Ltr SCXW266414493 BCX8\"> <p>CISA has added four new vulnerabilities to its <a href=\"https://www.cisa.gov/known-exploited-vulnerabilities-catalog\"><u>Known Exploited Vulnerabilities (KEV) Catalog</u></a>, based on evidence of active exploitation.&nbsp;</p> <ul> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2024-10441\" target=\"_blank\">CVE-2024-10441 </a>Synology DiskStation Manager (DSM) Improper Encoding or Escaping of Output Vulnerability</li> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-40217\" target=\"_blank\">CVE-2026-40217</a> BerriAI LiteLLM Unprotected Alternate Channel Vulnerability</li> <li><a href=\"https://www.cve.org/CVERecord?id=CVE-2026-90436\" target=\"_blank\">CVE-2026-90436</a> Apache Axis Unsafe Reflection Vulnerability</li> <li><a href=\""
+    },
+    {
+      "id": "kev:CVE-2024-10441",
+      "kind": "KEV",
+      "title": "Synology DiskStation Manager (DSM) Improper Encoding or Escaping of Output Vulnerability",
+      "summary": "Synology DSM contains an improper encoding or escaping of output vulnerability in the system plugin daemon in Synology BeeStation OS (BSM) that could allow a remote attacker to execute arbitrary code via unspecified vectors.",
+      "date": "2026-11-18T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "web security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2024-10441",
+      "cve": "CVE-2024-10441",
+      "product": "DiskStation Manager (DSM)",
+      "details": "Synology DSM contains an improper encoding or escaping of output vulnerability in the system plugin daemon in Synology BeeStation OS (BSM) that could allow a remote attacker to execute arbitrary code via unspecified vectors."
+    },
+    {
+      "id": "kev:CVE-2026-40217",
+      "kind": "KEV",
+      "title": "BerriAI LiteLLM Unprotected Alternate Channel Vulnerability",
+      "summary": "BerriAI LiteLLM contains an unprotected alternate channel vulnerability that could allow remote attackers to execute arbitrary code via bytecode rewriting at the /guardrails/test_custom_code URI.",
+      "date": "2026-11-18T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "general security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-40217",
+      "cve": "CVE-2026-40217",
+      "product": "LiteLLM",
+      "details": "BerriAI LiteLLM contains an unprotected alternate channel vulnerability that could allow remote attackers to execute arbitrary code via bytecode rewriting at the /guardrails/test_custom_code URI."
+    },
+    {
+      "id": "kev:CVE-2026-90817",
+      "kind": "KEV",
+      "title": "Vanderbilt University Research Electronic Data Capture (REDCap) Code Injection Vulnerability",
+      "summary": "Vanderbilt University Research Electronic Data Capture (REDCap) contains a code injection vulnerability which could allow an unauthenticated attacker to execute arbitrary code on the server. An attacker could exploit this via crafted HTTP requests that access an unintended controller route from a public survey context and supply a crafted file-path or stream parameter during data import processing. Exploitation requires knowledge of a valid public survey hash.",
+      "date": "2026-11-18T00:00:00.000Z",
+      "severity": "exploited",
+      "topic": "web security",
+      "source": "CISA Known Exploited Vulnerabilities",
+      "sourceUrl": "https://nvd.nist.gov/vuln/detail/CVE-2026-90817",
+      "cve": "CVE-2026-90817",
+      "product": "Research Electronic Data Capture (REDCap)",
+      "details": "Vanderbilt University Research Electronic Data Capture (REDCap) contains a code injection vulnerability which could allow an unauthenticated attacker to execute arbitrary code on the server. An attacker could exploit this via crafted HTTP requests that access an unintended controller route from a public survey context and supply a crafted file-path or stream parameter during data import processing. Exploitation requires knowledge of a valid public survey hash."
+    },
+    {
+      "id": "signal:pwntools:2026-11-17T19-05-37-000Z",
+      "kind": "RELEASE",
+      "title": "Release 4.15.1",
+      "summary": "<p>This a maintenance release hosting a lot of bug fixes and bringing pwntools to the latest Python versions. It contains a long overdue relaxation of the <a href=\"https://github.com/unicorn-engine/unicorn\">Unicorn Engine</a> version dependency to allow easy installation on Python 3.14+. Many fixes targetted the latest development branch originally and were only backported to the 4.15.* release later to include them in a patch release earlier. Thank you to",
+      "date": "2026-11-17T19:05:37.000Z",
+      "severity": "info",
+      "topic": "binary exploitation",
+      "source": "pwntools Releases (Binary Exploitation)",
+      "sourceUrl": "https://github.com/Gallopsled/pwntools/releases/tag/4.15.1",
+      "details": "<p>This a maintenance release hosting a lot of bug fixes and bringing pwntools to the latest Python versions. It contains a long overdue relaxation of the <a href=\"https://github.com/unicorn-engine/unicorn\">Unicorn Engine</a> version dependency to allow easy installation on Python 3.14+. Many fixes targetted the latest development branch originally and were only backported to the 4.15.* release later to include them in a patch release earlier. Thank you to everyone helping with this release!</p> <h2>What's Changed</h2> <ul> <li>Allow running with Unicorn 2.1.[34] but throw when emulating MIPS by <a class=\"user-mention notranslate\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/peace-maker/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"h"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-58114",
+      "kind": "CVE",
+      "title": "Siemens SIMATIC",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-321-08.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>The products listed below contain an authentication bypass vulnerability that could allow an on-path attacker to take over the session of a legitimate user and execute arbitrary code with the privileges of the victim user. Siemens is preparing fixes and recommends specific mitigations for prod",
+      "date": "2026-11-17T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-321-08",
+      "cve": "CVE-2026-58114",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-321-08.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>The products listed below contain an authentication bypass vulnerability that could allow an on-path attacker to take over the session of a legitimate user and execute arbitrary code with the privileges of the victim user. Siemens is preparing fixes and recommends specific mitigations for products where fixes are not or not yet available.</strong></p> <p>The following versions of Siemens SIMATIC are affected:</p> <ul> <li>SIMATIC BATCH V9.1 vers:all/* (CVE-2026-58114)</li> <li>SIMATIC Information Server 2020 vers:all/* (CVE-2026-58114)</li> <li>SIMATIC Information Server 2022 vers:all/* (CVE-2026-58114)</li> <li>SIMATIC PCS 7"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-109097",
+      "kind": "CVE",
+      "title": "Siemens ROS#",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-321-06.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>ROS# before version 2.3.1 contains a code injection vulnerability that could allow an attacker that is able to pass a crafted message definition file to the user to inject arbitrary code into the generated program. Siemens has released a new version for ROS# and recommends to update to the lat",
+      "date": "2026-11-17T12:00:00.000Z",
+      "severity": "high",
+      "topic": "web security",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-321-06",
+      "cve": "CVE-2026-109097",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-321-06.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>ROS# before version 2.3.1 contains a code injection vulnerability that could allow an attacker that is able to pass a crafted message definition file to the user to inject arbitrary code into the generated program. Siemens has released a new version for ROS# and recommends to update to the latest version.</strong></p> <p>The following versions of Siemens ROS# are affected:</p> <ul> <li>ROS# vers:intdot/<2.3.1 (CVE-2026-109097)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\" data-tablesaw-priority=\"persist\">CVSS</th"
+    },
+    {
+      "id": "signal:cisa-advisories:CVE-2026-64629",
+      "kind": "CVE",
+      "title": "Siemens Simcenter Femap",
+      "summary": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-321-10.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Simcenter Femap is affected by an out of bounds read vulnerability that could be triggered when the application reads files in X_T format. This could allow an attacker to crash the application or execute arbitrary code. Siemens has released a new version for Simcenter Femap and recommends to u",
+      "date": "2026-11-17T12:00:00.000Z",
+      "severity": "high",
+      "topic": "detection and response",
+      "source": "CISA Cybersecurity Advisories (US-CERT)",
+      "sourceUrl": "https://www.cisa.gov/news-events/ics-advisories/icsa-26-321-10",
+      "cve": "CVE-2026-64629",
+      "details": "<p><a href=\"https://github.com/cisagov/CSAF/blob/develop/csaf_files/OT/white/2026/icsa-26-321-10.json\"><strong>View CSAF</strong></a></p> <h2>Summary</h2> <p><strong>Simcenter Femap is affected by an out of bounds read vulnerability that could be triggered when the application reads files in X_T format. This could allow an attacker to crash the application or execute arbitrary code. Siemens has released a new version for Simcenter Femap and recommends to update to the latest version.</strong></p> <p>The following versions of Siemens Simcenter Femap are affected:</p> <ul> <li>Simcenter Femap vers:intdot/<2606.0002 (CVE-2026-64629)</li> </ul> <div class=\"csaf-table\"> <table class=\"tablesaw tablesaw-stack\" data-tablesaw-mode=\"stack\" data-tablesaw-minimap> <thead> <tr> <th role=\"columnheader\""
     }
   ],
   "topicSignals": [
     {
       "topic": "web security",
-      "count": 82,
+      "count": 84,
       "reason": "Recent source activity is clustering around web security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "binary exploitation",
-      "count": 33,
+      "count": 31,
       "reason": "Recent source activity is clustering around binary exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "systems and exploitation",
-      "count": 30,
-      "reason": "Recent source activity is clustering around systems and exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
-    },
-    {
       "topic": "general security",
-      "count": 29,
+      "count": 24,
       "reason": "Recent source activity is clustering around general security. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
+      "topic": "systems and exploitation",
+      "count": 15,
+      "reason": "Recent source activity is clustering around systems and exploitation. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
       "topic": "cryptography",
-      "count": 13,
+      "count": 12,
       "reason": "Recent source activity is clustering around cryptography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "reverse engineering",
+      "count": 5,
+      "reason": "Recent source activity is clustering around reverse engineering. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "linux and systems",
@@ -8381,14 +8550,19 @@
       "reason": "Recent source activity is clustering around linux and systems. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
-      "topic": "reverse engineering",
-      "count": 4,
-      "reason": "Recent source activity is clustering around reverse engineering. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+      "topic": "cloud and containers",
+      "count": 3,
+      "reason": "Recent source activity is clustering around cloud and containers. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "identity and access",
       "count": 2,
       "reason": "Recent source activity is clustering around identity and access. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
+    },
+    {
+      "topic": "steganography",
+      "count": 1,
+      "reason": "Recent source activity is clustering around steganography. Review the affected curriculum module, then add or deepen a lab rather than copying the advisory verbatim."
     },
     {
       "topic": "software supply chain",
@@ -8518,7 +8692,7 @@
       "id": "gtfobins",
       "name": "GTFOBins technique list",
       "status": "ok",
-      "count": 30,
+      "count": 15,
       "url": "https://gtfobins.github.io/index.json"
     }
   ],
