@@ -18,6 +18,14 @@ function loadIntel() {
   }
 }
 
+function loadAdminWriteups() {
+  try {
+    return JSON.parse(fs.readFileSync(new URL('../data/admin-writeups.json', import.meta.url), 'utf8'));
+  } catch {
+    return [];
+  }
+}
+
 export default async function handler(req, res) {
   const secret = process.env.SESSION_SECRET || 'atlas_session_vault_secret_hmac_2026';
   const session = readToken(getCookie(req, 'ctf_atlas_session'), secret);
@@ -30,14 +38,15 @@ export default async function handler(req, res) {
 
   const raw = loadIntel();
 
-  // If user is cadet, sanitize curriculum & completely omit vulnerability research
-  if (session.role === 'cadet') {
+  // Non-admin accounts (cadet / sub-users) receive sanitized curriculum and ZERO advisories or admin writeups
+  if (session.role !== 'admin') {
     const safeCurriculum = (raw.curriculum || []).filter(m =>
       !(m.domain === 'reverse' || m.domain === 'pwn' || (m.id && (m.id.includes('pwn') || m.id.includes('reverse') || m.id.includes('binary-exploitation'))))
     );
     const safeData = { ...raw, curriculum: safeCurriculum };
     delete safeData.advisories;
     delete safeData.vulnResearch;
+    delete safeData.adminWriteups;
     return res.status(200).json({ ok: true, data: safeData });
   }
 
@@ -125,6 +134,10 @@ export default async function handler(req, res) {
       // In case of network timeout or offline mode, keep existing data intact
       raw.updatedAt = new Date().toISOString();
     }
+  }
+
+  if (session.role === 'admin') {
+    raw.adminWriteups = loadAdminWriteups();
   }
 
   return res.status(200).json({ ok: true, data: raw });

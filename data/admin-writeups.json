@@ -1,0 +1,3049 @@
+[
+  {
+    "id": "gh-dd2d56c71976",
+    "title": "ASIS CTF 2019 Finals",
+    "organization": "ASIS CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Team: ak, c7, msm, rodbert, nazywam, sasza, rev, Eternal",
+    "solve_steps": "ASIS CTF 2019 Finals | Table of contents | [Serifin (crypto)](serifin) | [Primordial (crypto)](primordial) | [Close primes (ppc)](close_primes) | [Truncated form (ppc)](truncated_form) | [Secrets (forensics)](secrets) | [Protected area 1(web)](protected_area1)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2019-11-16-asis-finals/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-f7f089580c38",
+    "title": "CONFidence CTF 2020 Finals",
+    "organization": "CONFidence CTF",
+    "category": "crypto",
+    "techniques": [
+      "xor"
+    ],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "CONFidence CTF 2020 Finals | Table of contents | [Xor-as-a-Service (misc)](xaas)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-09-05-confidence-finals/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-a3746cf3e303",
+    "title": "CTFZone 2019 quals",
+    "organization": "CTFZone",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "CTFZone 2019 quals | Table of contents | [Classifier9000](classifier9000)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2019-12-01-ctfzone-quals/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-fb4b38d8cb36",
+    "title": "AI Red Teaming: Persistent Injection",
+    "organization": "Community CTF",
+    "category": "ai_ml",
+    "techniques": [
+      "strings",
+      "prompt injection"
+    ],
+    "tools": [
+      "strings"
+    ],
+    "summary": "A Quick Word Before We Start It\u2019s been a minute since my last technical post, but I\u2019m back with plenty of field notes. Over the past year, I\u2019ve spent the bulk of my time diving deep into the offensive security side of artificial intelligence, specifically, AI Red Teaming . After executing multiple complex adversarial assessments against enterprise-grade AI systems, I wanted to step back and share the architectural lessons I learned along the way.",
+    "solve_steps": "A Quick Word Before We\u00a0Start | It\u2019s been a minute since my last technical post, but I\u2019m back with plenty of field notes. Over the past year, I\u2019ve spent the bulk of my time | After executing multiple complex adversarial assessments against enterprise-grade AI systems, I wanted to step back and share the architectu | All scenarios, workflows and demonstrations discussed in this article were conducted and validated within an isolated, controlled research e | In this post, we\u2019re going to walk through a multi-stage attack chain against a modern, too",
+    "source_url": "https://infosecwriteups.com/ai-red-teaming-persistent-injection-f1f5c8aeffcf",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-c6079d2fbce8",
+    "title": "Exploiting Unauthorized Tool Invocation in the MegaCorp Office Assistant (Part 4)",
+    "organization": "Community CTF",
+    "category": "ai_ml",
+    "techniques": [
+      "prompt injection"
+    ],
+    "tools": [
+      "python"
+    ],
+    "summary": "In the fourth part of this series, I move beyond direct prompt injection and explore security risks associated with tool usage in agentic AI systems. Using PromptTrace, I\u2019ll examine an AI assistant equipped with multiple functions that allow it to interact with external services and retrieve employee information. Through The Helpful Tool challenge, I\u2019ll demonstrate how prompt manipulation can lead an assistant to invoke a restricted function desp",
+    "solve_steps": "In the fourth part of this series, I move beyond direct prompt injection and explore security risks associated with tool usage in agentic AI | The next section of PromptTrace focuses on | , with an emphasis on tool misuse and exploitation. The first challenge in this section is | Unlike the previous labs, where the focus was on manipulating model responses or influencing behavior through external data, this challenge  | Understanding the\u00a0Scenario | The lab simulates an internal company assistant with access to several tools. Although it can han",
+    "source_url": "https://infosecwriteups.com/inside-agentic-ai-exploiting-unauthorized-tool-invocation-in-the-megacorp-office-assistant-08b1f39a7582",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-4bbbb65244da",
+    "title": "TokyoWesterns 2020",
+    "organization": "Community CTF",
+    "category": "crypto",
+    "techniques": [
+      "xor"
+    ],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "TokyoWesterns 2020 | Table of contents | [`easy_hash` (crypto/warmup)](easy_hash) | [`sqrt` (crypto)](https://ctftime.org/writeup/23620) | [`twin-d` (crypto)](https://ctftime.org/writeup/23632) | [The Melancholy of Alice (crypto)](https://ctftime.org/writeup/23633) | [urlcheck v1 (web)](https://bonusplay.pl/writeups/urlcheckv1) | [urlcheck v2 (web)](urlcheck_v2)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-09-19-tokyowesterns/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-a84c14dadb75",
+    "title": "Malware Analysis\u200a\u2014\u200aZeus Banking Trojan",
+    "organization": "Community CTF",
+    "category": "forensics",
+    "techniques": [
+      "strings"
+    ],
+    "tools": [
+      "radare2",
+      "wireshark",
+      "strings",
+      "frida"
+    ],
+    "summary": "Malware Analysis \u2014 Zeus Banking Trojan Hey, I\u2019m Mihir Sathvara aka TraceX0 . In my previous writeup, I explained how you can set up a SOC home lab from scratch (yes, the one where I basically played IT god for fun and learning \ud83d\ude05). This time, we\u2019re back with some real action \u2014 a deep dive into one of the most infamous banking trojans of all time: Zeus (Zbot) . The goal of this writeup is simple: Perform static and dynamic analysis of a real malwar",
+    "solve_steps": "Malware Analysis\u200a\u2014\u200aZeus Banking\u00a0Trojan | . In my previous writeup, I explained how you can set up a SOC home lab from scratch (yes, the one where I basically played IT god for fun a | This time, we\u2019re back with some real action\u200a\u2014\u200aa deep dive into one of the most infamous banking trojans of all time: | The goal of this writeup is\u00a0simple: | static and dynamic analysis | of a real malware\u00a0sample.",
+    "source_url": "https://medium.com/@TraceX0/malware-analysis-zeus-banking-trojan-b4b2152c7510",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-fc29770a8f51",
+    "title": "CTF write-ups 2017",
+    "organization": "Community CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "[](https://gitter.im/ctfs/write-ups) [](https://www.reddit.com/r/securityCTF) [](https://twitter.com/write_ups) There are some problems with CTF write-ups in general: This repository aims to solve those problems. It\u2019s a collection of CTF source files and write-ups that anyone can contribute to. Did you just publish a CTF write-up? Let us know, and we\u2019ll add a link to your post \u2014 or just add the link yourself and submit a pull request. Spot an iss",
+    "solve_steps": "CTF write-ups 2017 | They\u2019re scattered across the interwebs | They don\u2019t usually include the original files needed to solve the challenge | Some of them are incomplete or skip \u2018obvious\u2019 parts of the explanation, and are therefore not as helpful for newcomers | Often they disappear when the owner forgets to renew their domain or shuts down their blog | Contributing | Archive | [Write-ups for CTFs that occurred in 2013](https://github.com/ctfs/write-ups-2013)",
+    "source_url": "https://github.com/ctfs/write-ups-2017/blob/master/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-7f799a396b67",
+    "title": "Exploiting Broken Brute-Force Protection with Multiple Credentials per Request",
+    "organization": "Community CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "The Scenario While testing a login endpoint, I discovered an interesting flaw in the application\u2019s brute-force defense. The login API expected credentials in JSON format, but it failed to properly validate the structure of user input. By supplying multiple password values in a single request, it was possible to make numerous authentication attempts through a single login request. A normal login request looked like this: Login Request The Vulnerab",
+    "solve_steps": "While testing a login endpoint, I discovered an interesting flaw in the application\u2019s brute-force defense. The login API expected credential | A normal login request looked like\u00a0this: | The application assumed that the password parameter would contain a single value. However, it also accepted an array of passwords. | Instead of sending one password, I modified the request to include a list of commonly used passwords. | And, the backend processed each password in the array and checked them against the target account. With the correct password in",
+    "source_url": "https://infosecwriteups.com/exploiting-broken-brute-force-protection-with-multiple-credentials-per-request-6bf33d5d9c5f",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-e7455d20693c",
+    "title": "Hack-a-Sat 4 Quals",
+    "organization": "Community CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Hack-a-Sat 4 Quals | Table of contents | [Leavenworth Street (The Magician)](leavenworth-street) | [Hyde Street (The Magician)](hyde-street)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2023-04-01-hackasat-quals/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ab29d3149832",
+    "title": "Hack.lu CTF 2020",
+    "organization": "Community CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Hack.lu CTF 2020 | Table of contents | [Russian threesome (re)](russian_threesome)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-10-23-hacklu/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-cb60fcbbe188",
+    "title": "INE Lab Write-Up: System-Host Based Attacks CTF 1",
+    "organization": "Community CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Objective: Perform system/host-based attacks on two target machines and capture all 4 hidden flags. Continue reading on Medium \u00bb",
+    "solve_steps": "Objective: Perform system/host-based attacks on two target machines and capture all 4 hidden flags. | Continue reading on Medium \u00bb",
+    "source_url": "https://medium.com/@sarahalaaeldin00/ine-lab-write-up-system-host-based-attacks-ctf-1-489d33102cd1",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ef6f486197c4",
+    "title": "SpamAndFlags Teaser 2020",
+    "organization": "Community CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "(also covers Regulated Environmental Issues)",
+    "solve_steps": "SpamAndFlags Teaser 2020 | Table of contents | [Hashing@Home (pwn)](hashing_at_home) | [Nativity Scene (pwn)](nativity_scene) | [The 3D Printer Task (misc)](3d_printer) | [Environmental Issues (pwn or misc, depends on who you ask)](environmental_issues) | [Journey: Chapter I (web)](journey1) | [Journey: Chapter II (web/re)](journey2)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-05-10-spam-and-flags-teaser/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-d3663f5a98ab",
+    "title": "WhiteHat 2020 finals",
+    "organization": "Community CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Team: msm, chivay, c7, k.2, eternal, rodbert, nazywam",
+    "solve_steps": "WhiteHat 2020 finals | Table of contents | [reversing01](reversing01) | [programming02](programming02) | [programming03](programming03) | [misc04](misc04)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-01-04-whitehat/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-0f5020b80c50",
+    "title": "hxp CTF 2021",
+    "organization": "Community CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "hxp CTF 2021 | Table of contents | [Log 4 Sanity (misc)](log-4-sanity)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2021-12-19-hxp/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-7c30ecdb719e",
+    "title": "Pwn2Win CTF 2021",
+    "organization": "Community CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Pwn2Win CTF 2021 | Table of contents | [A2S (crypto)](a2s)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2021-05-28-pwn2win/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-8c8eab59c8ca",
+    "title": "Trend Micro CTF 2020 Qualifiers",
+    "organization": "Community CTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Trend Micro CTF 2020 Qualifiers | Table of contents | [Reversing-II 100 (NES reverse engineering)](re-2-100)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-10-04-trendmicro/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-b2c83c294731",
+    "title": "Intel Inside: How a Cracked JWT Key led to Full Account Takeover on Intel and CBSE\u2019s AI Platform",
+    "organization": "Community CTF",
+    "category": "web",
+    "techniques": [
+      "jwt",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "burp"
+    ],
+    "summary": "While taking part in Tinkerpreneur 2026, I spent some time on the AI Student Community ( aistudent.community ) , an AI learning platform built through an initiative by Intel and CBSE for students. Out of curiosity, I decided to test the login endpoint just to see how the authentication flow behaved. Right away, two things stood out: there was no rate limiting, and the server took noticeably longer to respond to some emails than others. After look",
+    "solve_steps": "While taking part in Tinkerpreneur 2026, I spent some time on the | AI Student Community ( | , an AI learning platform built through an initiative by | for students. Out of curiosity, I decided to test the login endpoint just to see how the authentication flow behaved. Right away, two things | Pulling on that thread uncovered three flaws, two account enumeration bugs and a session signing key that lived up to the \u201cIntel Inside\u201d slo | Part 1: Account Enumeration",
+    "source_url": "https://infosecwriteups.com/intel-inside-how-a-cracked-jwt-key-led-to-full-account-takeover-on-intel-and-cbses-ai-platform-f06bb84ac1a2",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-6561402bd457",
+    "title": "PortSwigger lab: Password Brute-Force via Password Change",
+    "organization": "Community CTF",
+    "category": "web",
+    "techniques": [
+      "wiener"
+    ],
+    "tools": [
+      "burp"
+    ],
+    "summary": "The Scenario During testing, I discovered that the application\u2019s password change functionality could be abused to brute-force a user\u2019s current password. While the login page itself was not the target, the password change feature exposed a weakness in how credential validation was handled. A typical password change request required: Current password New password Confirmation of the new password The Vulnerability The application verified the curren",
+    "solve_steps": "During testing, I discovered that the application\u2019s password change functionality could be abused to brute-force a user\u2019s current password.  | A typical password change request required: | Confirmation of the new\u00a0password | The application verified the current password before allowing a password change. However, it responded differently depending on\u00a0whether: | The current password was incorrect. | The new passwords did not\u00a0match.",
+    "source_url": "https://infosecwriteups.com/portswigger-lab-password-brute-force-via-password-change-cb0666075eaa",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-dcebb9b6208c",
+    "title": "The Devil Went Down to Georgia: How I Made $60k Hacking the DHS",
+    "organization": "Community CTF",
+    "category": "web",
+    "techniques": [
+      "sqli",
+      "lfi",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "john",
+      "burp",
+      "sqlmap"
+    ],
+    "summary": "Sometime near the end of 2023 I was invited to The Georgia Department of Human Services private bug bounty program on Hackerone through an IRL connection. Sadly their private bug bounty program is now shut down, but while it existed it was one of the best programs I\u2019ve ever participated in. Very few hackers were invited to this private program, so competition was low, but bounties were very high and response times were fast. Basically a bug bount",
+    "solve_steps": "Sometime near the end of 2023 I was invited to The Georgia Department of Human Services private bug bounty program on Hackerone through an I | This writeup is going to detail how I found 3 critical issues that earned me $60,000 in bug bounties from them and could\u2019ve let me dump the  | The program\u2019s scope covered two of Georgia\u2019s public-facing portals: | the Division of Child Support Services portal, where parents apply for and manage child\u00a0support. | the mobile benefits portal where residents apply for SNAP, Medicaid, and other assistance. | Be",
+    "source_url": "https://infosecwriteups.com/the-devil-went-down-to-georgia-how-i-made-60k-hacking-the-dhs-5401fe833c58",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-98ecbb8a2316",
+    "title": "The Ultimate Guide to SSRF: Hunting, Bypassing and Exploiting in Modern Bug Bounty",
+    "organization": "Community CTF",
+    "category": "web",
+    "techniques": [
+      "ssrf"
+    ],
+    "tools": [],
+    "summary": "A complete, hands-on guide to hunting hidden SSRF vulnerabilities, bypassing WAFs and filters and escalating impact from cloud metadata\u2026 Continue reading on InfoSec Write-ups \u00bb",
+    "solve_steps": "A complete, hands-on guide to hunting hidden SSRF vulnerabilities, bypassing WAFs and filters and escalating impact from cloud metadata\u2026 | Continue reading on InfoSec Write-ups \u00bb",
+    "source_url": "https://infosecwriteups.com/the-ultimate-guide-to-ssrf-hunting-bypassing-and-exploiting-in-modern-bug-bounty-a43fa34ba324",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-3c8b5cfdc91b",
+    "title": "Crypto_Chall",
+    "organization": "DEF CON CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2022 Quals | | Category | uncategorized | | Upstream | challenge files | | Local assets | `challenge-files/2022/Quals/Crypto_Chall` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2022/quals/uncategorized/Crypto_Chall.md` from `wri",
+    "solve_steps": "Crypto_Chall | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2022/quals/uncategorized/Crypto_Chall/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-89592e6c8b85",
+    "title": "back-to-qoo",
+    "organization": "DEF CON CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Category | crypto | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/crypto/back-to-qoo` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/crypto/back-to-qoo.md` from `writeups/TEM",
+    "solve_steps": "back-to-qoo | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/crypto/back-to-qoo/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-5bcd0aaa742a",
+    "title": "nooombers",
+    "organization": "DEF CON CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Category | crypto | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/crypto/nooombers` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/crypto/nooombers.md` from `writeups/TEMPLAT",
+    "solve_steps": "nooombers | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/crypto/nooombers/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-cc52799e60c9",
+    "title": "perfectblue/defcon-2018: ghettohackers_throwback",
+    "organization": "DEF CON CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "ghettohackers: Throwback WARNING: THIS PRODUCT CONTAINS CHEMICALS KNOWN TO THE STATE OF CALIFORNIA TO CAUSE CANCER. We are left with only one cryptic string: It is quite obvious that letters have been replaced with exclamation marks - `n w l t i s o o s`. We then spent the next day trying to figure out what these letters were an anagram of. Some of our best ideas: Next, we did some recon on ghettohackers, and looked at their website on waybackmac",
+    "solve_steps": "",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/ghettohackers_throwback.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-4ccc36ab771c",
+    "title": "qoo-or-ooo",
+    "organization": "DEF CON CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Category | crypto | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/crypto/qoo-or-ooo` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/crypto/qoo-or-ooo.md` from `writeups/TEMPL",
+    "solve_steps": "qoo-or-ooo | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/crypto/qoo-or-ooo/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-25bc133e5e54",
+    "title": "smart-cryptooo",
+    "organization": "DEF CON CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Category | crypto | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/crypto/smart-cryptooo` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/crypto/smart-cryptooo.md` from `writeu",
+    "solve_steps": "smart-cryptooo | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/crypto/smart-cryptooo/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-bb1ba011529b",
+    "title": "elastic cloud compute (memory) corruption",
+    "organization": "DEF CON CTF",
+    "category": "forensics",
+    "techniques": [
+      "uaf",
+      "strings",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "strings"
+    ],
+    "summary": "On connecting to the service, we get the logs of a Linux VM starting up, and then a message at the end saying we have to break out of the VM. We're also given the files (qemu binary, linux filesystem and run.sh) to replicate the environment locally. Taking a look at the `run.sh` file, we notice a interesting `-device ooo` argument. If we output the device list in the qemu binary using `./qemu-system-x86_64 -device help`, we notice the `ooo` devic",
+    "solve_steps": "elastic cloud compute (memory) corruption | `mmio_buffer[i] = malloc(8 * val)` | `free(mmio_buffer[i])` | `memcpy(mmio_buffer[i] + x, &val, size)`",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/ec3.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-62b237077c80",
+    "title": "perfectblue/defcon-2018: php_eval_whitelist",
+    "organization": "DEF CON CTF",
+    "category": "forensics",
+    "techniques": [
+      "strings"
+    ],
+    "tools": [
+      "strings"
+    ],
+    "summary": "This time, we have a website that evals our stuff. At first I was pretty sad because the program blocked me from going up directories and stuff due to the basedir. After working on other problems for a bit, I came back to this one with a fresh start. Opening the source and looking at strings, I found that `shell_exec` was mentioned. I took a blind guess that this meant `shell_exec` was allowed (it probably didn't). Thus I ran `echo shell_exec(\"..",
+    "solve_steps": "",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/php_eval_whitelist.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-903a482bdb8a",
+    "title": "Say Hi",
+    "organization": "DEF CON CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "This challenge was a thoughtful addition nearing the end of a difficult 48 hours challenge. Participants were asked to take a break and spend some time with their family for Mother's Day :)",
+    "solve_steps": "Say Hi | Flag: anything was accepted, it was under an 'honor system'.",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/sayhi.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-21da7a02fea6",
+    "title": "The DEF CON CTF 2024 Qualifier #",
+    "organization": "DEF CON CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "This repository contains the open source release for Nautilus Institute's 2024 DEF CON CTF qualifier. We are releasing all of the source code for every challenge that was released during the game. In most cases, this also includes all of the code required to build that source code into a working challenge (such as `Makefile`s and `Dockerfile`s). It *does not* include the infrastructure required to *host* those challenges (e.g. our CI/CD pipeline,",
+    "solve_steps": "The DEF CON CTF 2024 Qualifier # | License ## | Contact ##",
+    "source_url": "https://github.com/Nautilus-Institute/quals-2024/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-4132d58834f9",
+    "title": "The DEF CON CTF 2025 Final #",
+    "organization": "DEF CON CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "This repository contains the open source release for Nautilus Institute's 2025 We are releasing all of the source code for every challenge that was released during the game. In most cases, this also includes all of the code required to build that source code into a working challenge (such as `Makefile`s and `Dockerfile`s). It *does not* include the infrastructure required to *host* those challenges (e.g. our CI/CD pipeline, deployment scripts, an",
+    "solve_steps": "The DEF CON CTF 2025 Final # | License ## | Contact ##",
+    "source_url": "https://github.com/Nautilus-Institute/finals-2025/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-0ad7be1dce61",
+    "title": "perfectblue/defcon-2018: readme",
+    "organization": "DEF CON CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "DEFCON 2018 Prelims Writeups Team perfect_blue's writeups We participated as a team of 8 high schoolers and we placed 26th.",
+    "solve_steps": "",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/readme.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-dceb84dfe5d8",
+    "title": "perfectblue/defcon-2018: you_already_know",
+    "organization": "DEF CON CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Unfortunately the problems were taken down immediately after the competition ended so this is off whatever screenshots I took while doing the problem. Opening it, there's a bunch of text. We tried submitting things like OOO{it!} thinking it was wordplay, to no avail. After a few hours of frustration, I decided to open the Network tab on Google Chrome console to see what was going on behind the scenes, and amazingly, it worked:",
+    "solve_steps": "",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/you_already_know.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-491305a83584",
+    "title": "DEFCON Qualifiers - Babyrop",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [
+      "rop",
+      "xor"
+    ],
+    "tools": [
+      "python",
+      "ropgadget"
+    ],
+    "summary": "Yay, a 64-bit binary this time! Again, non-PIE code, compiled with no canaries and this time babyrop. I bet you already know how we are pwning this. JOP of course :P Just like the warmup, this is a stack buffer overflow, which allows us to hijack RIP. They were even nice enough to name the symbol **vuln**. :) Now, how do we attack this? First up, let's gather a few interesting gadgets: Well, I guess there's a few stuff... Next up, I built python",
+    "solve_steps": "DEFCON Qualifiers - Babyrop",
+    "source_url": "https://github.com/naliferopoulos/defcon-quals-2020/blob/master/babyrop/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-84e0194b40b5",
+    "title": "DEFCON Qualifiers - Warmup",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "The first pwnable was indeed a warmup challenge, a 32-bit non-PIE binary, compiled with no canaries where the address of libc's *system* was leaked to us. The binary then requested user input with *fgets()* from stdin, of size 256 bytes. As expected for a warmup challenge, it was an easy-to-spot stack buffer overflow. After smashing the stack, we take control of the return pointer, and point it to the system leak for the win. Straight-forward eno",
+    "solve_steps": "DEFCON Qualifiers - Warmup",
+    "source_url": "https://github.com/naliferopoulos/defcon-quals-2020/blob/master/warmup/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-7dfa124d29b4",
+    "title": "Preview",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [
+      "ret2libc"
+    ],
+    "tools": [
+      "gdb"
+    ],
+    "summary": "In this challenge, are given a binary `preview` and the corresponding libc. So at least it isn't blind this time around. We open it up in IDA, and we notice that there's some funky `mmap`-ing going on, and it jumps to the `mmap`ed region. In GDB, we notice that the actual functionality of the program we observe over nc doesn't happen inside the code segment of the `preview` binary, so we deduce that it must be manually mapping a stage2 for the ac",
+    "solve_steps": "Preview",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/preview/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-993e51a186d5",
+    "title": "Race Wars",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "*This challenge was solved by VoidMercy and cts, VoidMercy doing the dynamic reversing and cts doing the static reversing.* **VoidMercy**: We are given a binary. Its functionality is quite boring. It lets you create tires, select chassis, engine, and transmission. Afterwards, you can modify these, and/or race, in which you always lose. Lets start with static analysis. The functionality is also quite bland. There are a ton of branches to each of t",
+    "solve_steps": "Race Wars | Big blocks (0x1000+) are allocated using `malloc` and prepended to a largeblocks linked list. The linked list elements are tags pointing to  | Small blocks heap are allocated **sequentially** with no metadata into bins of size 8196. Once a bin runs out of space, a new bin is allocat | Flag: OOO{4 c0upl3 0f n1554n 5r205 w0uld pull 4 pr3m1um 0n3 w33k b3f0r3 r4c3 w4rz}",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/racewars.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-a564e03bccaf",
+    "title": "Writeup for It's-a me! (pwn, 124 pts, 49 solves), DEF CON CTF Qualifier 2018",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "The service allows us to login as different customers and order pizza. When ordering a pizza, ingredients are accepted as UTF-8 encoded emojis (e.g. \ud83c\udf45 and \ud83c\udf4d). If we try to put a pineapple on our pizza, the shop owner gets angry and throws us out. We can also cook ordered pizzas and admire all cooked pizzas When we manage to sneak a pineapple on our pizza, we have a final chance to explain our reasoning to the shop owner before he throws us out; h",
+    "solve_steps": "Writeup for It's-a me! (pwn, 124 pts, 49 solves), DEF CON CTF Qualifier 2018 | TL;DR | Buffer overflow on the heap | Overwrite a `std::string`'s buffer pointer to leak binary's and libc's base | Overwrite a vtable pointer to call a one-shot gadget and get a shell | The Challenge | The Bug | The Exploit",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/its_a_me.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-c1e6da6e39dc",
+    "title": "baby-a-fallen-lap-ray",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/baby-a-fallen-lap-ray` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/baby-a-fallen-lap-ray.md` from `writeups/TEMPLATE.md",
+    "solve_steps": "baby-a-fallen-lap-ray | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/baby-a-fallen-lap-ray/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-fc9d4e473d77",
+    "title": "chatgpt_wasi",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2024 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2024/Quals/pwn/chatgpt_wasi` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2024/quals/pwn/chatgpt_wasi.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "chatgpt_wasi | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2024/quals/pwn/chatgpt_wasi/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-7c154c7cc6dd",
+    "title": "coalmine_revenge",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2026 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2026/Quals/pwn/coalmine_revenge` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2026/quals/pwn/coalmine_revenge.md` from `writeups/TEMPLATE.md` after so",
+    "solve_steps": "coalmine_revenge | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2026/quals/pwn/coalmine_revenge/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-0c5215f68c53",
+    "title": "exploit-for-dummies",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/exploit-for-dummies` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/exploit-for-dummies.md` from `writeups/TEMPLATE.md` af",
+    "solve_steps": "exploit-for-dummies | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/exploit-for-dummies/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-894fc5e4cb2e",
+    "title": "gitvfs_revenge",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2026 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2026/Quals/pwn/gitvfs_revenge` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2026/quals/pwn/gitvfs_revenge.md` from `writeups/TEMPLATE.md` after solvin",
+    "solve_steps": "gitvfs_revenge | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2026/quals/pwn/gitvfs_revenge/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-dd31f8e68bd2",
+    "title": "gran-a-fallen-lap-ray",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/gran-a-fallen-lap-ray` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/gran-a-fallen-lap-ray.md` from `writeups/TEMPLATE.md",
+    "solve_steps": "gran-a-fallen-lap-ray | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/gran-a-fallen-lap-ray/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-d3f8f58a011e",
+    "title": "looocked-ooout",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/looocked-ooout` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/looocked-ooout.md` from `writeups/TEMPLATE.md` after solvin",
+    "solve_steps": "looocked-ooout | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/looocked-ooout/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-700742bf11b8",
+    "title": "mama-a-fallen-lap-ray",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/mama-a-fallen-lap-ray` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/mama-a-fallen-lap-ray.md` from `writeups/TEMPLATE.md",
+    "solve_steps": "mama-a-fallen-lap-ray | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/mama-a-fallen-lap-ray/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-fd2fe762f740",
+    "title": "mooosl",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/mooosl` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/mooosl.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "mooosl | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/mooosl/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-f17bbd455705",
+    "title": "mra",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/mra` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/mra.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "mra | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/mra/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-412a82530cb0",
+    "title": "nooopster",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/nooopster` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/nooopster.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "nooopster | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/nooopster/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-c5e2ecfc88a7",
+    "title": "perfectblue/defcon-2018: previewlog",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "[x] Opening connection to cee810fa.quals2018.oooverflow.io on port 31337 [x] Opening connection to cee810fa.quals2018.oooverflow.io on port 31337: Trying 52.52.107.212 [+] Opening connection to cee810fa.quals2018.oooverflow.io on port 31337: Done Solving challenge: \"ivNoWSyZYl\", n: 22 [x] Starting local process './fastpow' [+] Starting local process './fastpow': pid 32272 Solution: 849294 -> e91045e7af51404a3a6343074f021b15c32a7087ffa867fcb3942f3",
+    "solve_steps": "",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/preview/previewlog.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-569af47cd04b",
+    "title": "pza999",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/pza999` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/pza999.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "pza999 | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/pza999/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-93c022b03b4f",
+    "title": "rad",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/rad` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/rad.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "rad | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/rad/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-2428b2cd1ee6",
+    "title": "segnalooo",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/pwn/segnalooo` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/pwn/segnalooo.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "segnalooo | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/pwn/segnalooo/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-2892eacffa31",
+    "title": "shellql",
+    "organization": "DEF CON CTF",
+    "category": "pwn",
+    "techniques": [
+      "xor",
+      "strings"
+    ],
+    "tools": [
+      "python",
+      "objdump",
+      "strings"
+    ],
+    "summary": "The challenge was basicaly shellcoding in the context of PHP under a sandbox to make SQL queries. They provide us with a shared object `shellme.so` and a website. By appending ?source to the index.php, the source is shown. This is the relevant source The main part is the our input from post request is passed to a `shellme()` function, which is defined in the shared object `shellme.so`. Opening `shellme.so` in our god IDA and following the shellme",
+    "solve_steps": "shellql | Write the cgi header ( Content-type: text/html ) | Send the SQL query to fd 4 ( mysql server ) | Read response from fd 4 ( mysql server ) | Write the response received",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/shellql.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-3492f5c1f8a4",
+    "title": "BitFlipper",
+    "organization": "DEF CON CTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "When we first connect to the service, we are prompted with: if ( curName->d_type == 8 && curName->d_name[0] > '/' && curName->d_name[0] <= 'z' ) fileList = (const char **)listAdd((__int64)fileList, curName->d_name); The output contained the content of a local file. This is in violation of the security policy --> the exfiltration attempt has been blocked!! for ( j = 0; j <= 15 && foundColor == 0 && colorTable[j]; ++j )",
+    "solve_steps": "BitFlipper",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/bitflipper.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-7cd37f403c82",
+    "title": "ELF Crumble",
+    "organization": "DEF CON CTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "We are provided with an ELf file with a missing section of length 807 and 8 files which sum up to length 807. We can try al permutations of these 8 files and run the ELF until we get the flag. I generated every possible combination of ELF file with: I ran them until I find one that gives output with: Very hacky solution because i'm lazy.",
+    "solve_steps": "ELF Crumble | Flag: welcOOOme",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/elf-crumble.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-5c303b68985f",
+    "title": "pooow-buddy",
+    "organization": "DEF CON CTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/rev/pooow-buddy` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/rev/pooow-buddy.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "pooow-buddy | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/rev/pooow-buddy/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-d1dd6b2efd8c",
+    "title": "pooow-pal",
+    "organization": "DEF CON CTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/rev/pooow-pal` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/rev/pooow-pal.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "pooow-pal | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/rev/pooow-pal/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-22880f060c0f",
+    "title": "preview",
+    "organization": "DEF CON CTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2018 Quals | | Category | uncategorized | | Upstream | challenge files | | Local assets | `challenge-files/2018/Quals/preview` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2018/quals/uncategorized/preview.md` from `writeups/TEMP",
+    "solve_steps": "preview | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2018/quals/uncategorized/preview/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-96a40ef3143a",
+    "title": "rick",
+    "organization": "DEF CON CTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/rev/rick` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/rev/rick.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "rick | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/rev/rick/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-559a0b44ce76",
+    "title": "tiamat",
+    "organization": "DEF CON CTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/rev/tiamat` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/rev/tiamat.md` from `writeups/TEMPLATE.md` after solving.",
+    "solve_steps": "tiamat | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/rev/tiamat/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-9cd4d1b7abdb",
+    "title": "DEFCON Qualifiers - Fileserver",
+    "organization": "DEF CON CTF",
+    "category": "web",
+    "techniques": [],
+    "tools": [
+      "readelf",
+      "checksec"
+    ],
+    "summary": "For this one, we were given a domain name and a port, but no binary. Behind the remote port there was a webserver, which seemed custom made, and among other things, allowed us to download a compiled copy of itself (we figured that out later on) targeted against 32-bit Linux. Evidently, at the time, I though that I was supposed to pwn the binary in order to win. The challenge, just like the previous ones, instructed us to find the flag at */proc/f",
+    "solve_steps": "DEFCON Qualifiers - Fileserver | Huh?",
+    "source_url": "https://github.com/naliferopoulos/defcon-quals-2020/blob/master/fileserver/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-de489cae7be1",
+    "title": "SBVA",
+    "organization": "DEF CON CTF",
+    "category": "web",
+    "techniques": [
+      "strings"
+    ],
+    "tools": [
+      "strings",
+      "burp"
+    ],
+    "summary": "We log into the website with the provided credentials and see it says our browser is unsupported. We then go into burp suite and log in to see any intermediate requests it makes. There is a 302 found page with some html and javascript in it. We see a scoped style attribute and a `navigator.battery.charging call` in the javascript. Apparently style scoped only works in firefox 21-54, so we bruteforce user agent strings in burp suite according to t",
+    "solve_steps": "SBVA",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/sbva.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-5678bcc10eb9",
+    "title": "perfectblue/defcon-2018: easy_pisy",
+    "organization": "DEF CON CTF",
+    "category": "web",
+    "techniques": [],
+    "tools": [
+      "openssl"
+    ],
+    "summary": "This time, we are given a website that accepts PDF files, parses them, and signs them. However, it will only sign them if the text inside starts with `ECHO`. Here is a screenshot of some of the source that I took while solving the problem: Ignore the circled stuff, that was me trying to find a vuln. Then, I looked up openssl_verify: It seems that the default signature algorithm for this is SHA1! But SHA1 has been broken for PDFs with SHATTERED",
+    "solve_steps": "",
+    "source_url": "https://github.com/perfectblue/defcon-2018/blob/master/easy_pisy.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-77d215fe5842",
+    "title": "threefactooorx",
+    "organization": "DEF CON CTF",
+    "category": "web",
+    "techniques": [],
+    "tools": [],
+    "summary": "| Event | DEF CON 2021 Quals | | Upstream | challenge files | | Local assets | `challenge-files/2021/Quals/web/threefactooorx` | Add reconnaissance, hypotheses, and useful commands here while solving. Keep original solver and exploit code in this directory. Put disposable output and large generated artifacts under the repository-level `scratch/` directory. Create `writeups/2021/quals/web/threefactooorx.md` from `writeups/TEMPLATE.md` after solvin",
+    "solve_steps": "threefactooorx | Notes | Solution files | Write-up",
+    "source_url": "https://github.com/piyush-gambhir/defcon-ctf-writeups/blob/main/challenges/2021/quals/web/threefactooorx/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-b657a4396519",
+    "title": "DefCamp CTF 2019 Finals",
+    "organization": "DefCamp CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Team: chivay, des, nazywam, sasza, shalom",
+    "solve_steps": "DefCamp CTF 2019 Finals | Table of contents | [Crypto (crypto)](crypto) | [Simple-notes (web)](simple-notes) | [Lucky (web)](lucky) | [Treasure map (for/osint)](treasure-map)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2019-11-07-defcamp-finals/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-e456a9e56fa1",
+    "title": "Fat donke diss\u2014 OSINT\u2014 DUCTF\u201925",
+    "organization": "DownUnderCTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Fat donke diss \u2014 OSINT\u2014 DUCTF\u201925 \ud83d\udc4b Who Am I? I\u2019m Mihir Sathvara, aka TraceX0 \u2014 a cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and breaking things (ethically, of course \ud83d\ude09). I break APIs, exploit web apps, play CTFs, and hunt bugs for fun. I\u2019m the captain of a CTF team 0xDEADFA11 . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF)",
+    "solve_steps": "Fat donke diss\u200a\u2014\u200aOSINT\u2014\u00a0DUCTF\u201925 | I\u2019m Mihir Sathvara, aka | \u2014\u200aa cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and brea | . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF) competitions to sharpen our skills, learn from chal | \u201cain\u2019t no fat donke tryin to spit bars on the fat\u00a0monke\u201d | Based on the description, I suspected this was a social media based diss\u00a0track.",
+    "source_url": "https://medium.com/@TraceX0/fat-donke-diss-osint-ductf25-f027f35bfcc5",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-fe879bbcbfc3",
+    "title": "Look At All Those Chickens\u200a\u2014\u200aOSINT\u200a\u2014\u200aDUCTF\u201925",
+    "organization": "DownUnderCTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Look At All Those Chickens \u2014 OSINT \u2014 DUCTF\u201925 \ud83d\udc4b Who Am I? I\u2019m Mihir Sathvara, aka TraceX0 \u2014 a cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and breaking things (ethically, of course \ud83d\ude09). I break APIs, exploit web apps, play CTFs, and hunt bugs for fun. I\u2019m the captain of a CTF team 0xDEADFA11 . We\u2019re a group of passionate hackers who actively participate in Capture T",
+    "solve_steps": "Look At All Those Chickens\u200a\u2014\u200aOSINT\u200a\u2014\u200aDUCTF\u201925 | I\u2019m Mihir Sathvara, aka | \u2014\u200aa cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and brea | . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF) competitions to sharpen our skills, learn from chal | \u201cHmmm, it appears this image was sent last year when one of our brave hackers went out to follow a lead to save some birds from those nasty  | We did have it on good word that they were in c",
+    "source_url": "https://medium.com/@TraceX0/osint-flag-hunting-look-at-all-those-chickens-ductf25-85dc7de21e45",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-af668b5e4ca6",
+    "title": "Network Disk Forensics\u200a\u2014\u200aForensics\u200a\u2014\u200aDUCTF\u201925",
+    "organization": "DownUnderCTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Network Disk Forensics \u2014 Forensics \u2014 DUCTF\u201925 \ud83d\udc4b Who Am I? I\u2019m Mihir Sathvara, aka TraceX0 \u2014 a cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and breaking things (ethically, of course \ud83d\ude09).I break APIs, exploit web apps, play CTFs, and hunt bugs for fun. I\u2019m the captain of a CTF team 0xDEADFA11 . We\u2019re a group of passionate hackers who actively participate in Capture Th",
+    "solve_steps": "Network Disk Forensics\u200a\u2014\u200aForensics\u200a\u2014\u200aDUCTF\u201925 | I\u2019m Mihir Sathvara, aka | \u2014\u200aa cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and brea | . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF) competitions to sharpen our skills, learn from chal | \u201cNobody likes having to download large disk images for CTF challenges\u200a\u2014\u200aso this time we\u2019re giving you a disk over the network!\u201d | nc chal.2025.ductf.net 30016",
+    "source_url": "https://medium.com/@TraceX0/network-disk-forensics-forensics-ductf25-d5284ebe5155",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-5b1c27b21ea9",
+    "title": "Yippee\u200a\u2014\u200aOSINT\u2014 DUCTF\u201925",
+    "organization": "DownUnderCTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Yippee \u2014 OSINT\u2014 DUCTF\u201925 \ud83d\udc4b Who Am I? I\u2019m Mihir Sathvara, aka TraceX0 \u2014 a cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and breaking things (ethically, of course \ud83d\ude09). I break APIs, exploit web apps, play CTFs, and hunt bugs for fun. I\u2019m the captain of a CTF team 0xDEADFA11 . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF) competi",
+    "solve_steps": "Yippee\u200a\u2014\u200aOSINT\u2014\u00a0DUCTF\u201925 | I\u2019m Mihir Sathvara, aka | \u2014\u200aa cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and brea | . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF) competitions to sharpen our skills, learn from chal | \u201cWe were going through a stack of pictures and postcards that we found in the hope that we can put together a timeline of events. | This one looks interesting, on the back of the photo there\u2019s a hand-drawn pictu",
+    "source_url": "https://medium.com/@TraceX0/yippee-osint-ductf25-ba2a888edd07",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-8d01e801bc37",
+    "title": "Fishy Website\u200a\u2014\u200aMisc\u200a\u2014\u200aDUCTF\u201925",
+    "organization": "DownUnderCTF",
+    "category": "web",
+    "techniques": [
+      "arc4",
+      "pcap",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "wireshark"
+    ],
+    "summary": "Fishy Website \u2014 Misc \u2014 DUCTF\u201925 \ud83d\udc4b Who Am I? I\u2019m Mihir Sathvara, aka TraceX0 \u2014 a cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and breaking things (ethically, of course \ud83d\ude09).I break APIs, exploit web apps, play CTFs, and hunt bugs for fun. I\u2019m the captain of a CTF team 0xDEADFA11 . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF) c",
+    "solve_steps": "Fishy Website\u200a\u2014\u200aMisc\u200a\u2014\u200aDUCTF\u201925 | I\u2019m Mihir Sathvara, aka | \u2014\u200aa cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and brea | . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF) competitions to sharpen our skills, learn from chal | \u201cFound this fishy website URL on my e-mail and it started to do some crazy stuff on my computer. I have captured some network traffic that m | AU: fishy-website AU link",
+    "source_url": "https://medium.com/@TraceX0/fishy-website-misc-ductf25-83c3864e7902",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-b83b70644d91",
+    "title": "STONKS\u200a\u2014\u200aWeb Exploitation\u200a\u2014\u200aDUCTF\u201925",
+    "organization": "DownUnderCTF",
+    "category": "web",
+    "techniques": [],
+    "tools": [],
+    "summary": "STONKS \u2014 Web Exploitation \u2014 DUCTF\u201925 \ud83d\udc4b Who Am I? I\u2019m Mihir Sathvara, aka TraceX0 \u2014 a cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and breaking things (ethically, of course \ud83d\ude09).I break APIs, exploit web apps, play CTFs, and hunt bugs for fun. I\u2019m the captain of a CTF team 0xDEADFA11 . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (C",
+    "solve_steps": "STONKS\u200a\u2014\u200aWeb Exploitation\u200a\u2014\u200aDUCTF\u201925 | I\u2019m Mihir Sathvara, aka | \u2014\u200aa cybersecurity enthusiast and web security researcher. I love exploring web application security, digging into weird edge cases, and brea | . We\u2019re a group of passionate hackers who actively participate in Capture The Flag (CTF) competitions to sharpen our skills, learn from chal | \u201cTimes were wild before the email apocalypse. There were even sites giving out free money that also supported currency conversions!\u201d | This challenge contains flashing colours! Add",
+    "source_url": "https://medium.com/@TraceX0/stonks-web-exploitation-ductf25-c023fa226da2",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-5073f6476a93",
+    "title": "Cyber Apocalypse CTF 2025\u00a0: Coding Write-Ups | Hack The Box | thelastdanc3",
+    "organization": "Dragon CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "Cyber Apocalypse CTF 2025 : Coding Write-Ups | Hack The Box | thelastdanc3 In this Medium Article, I will be discussing all the Coding challenges NB: No Direct Flags are revealed here! List of Challenges: 1. ClockWork Gurdian 2. Dragon Flight 3. Dragon Fury 4. Enchanted Cipher 5.Summoners Incantation 1. ClockWork Gurdian This is a coding category challenge. Problem Statement: The final code: Result: (I am hiding the flag.) 2. Dragon Flight Proble",
+    "solve_steps": "Cyber Apocalypse CTF 2025\u00a0: Coding Write-Ups | Hack The Box | thelastdanc3 | In this Medium Article, I will be discussing all the | NB: No Direct Flags are revealed\u00a0here! | 5.Summoners Incantation | This is a coding category challenge. | Result: (I am hiding the\u00a0flag.)",
+    "source_url": "https://thelastdanc3.medium.com/cyber-apocalypse-ctf-2025-coding-write-ups-hack-the-box-thelastdanc3-7c089879f8e4",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-140eb31c255f",
+    "title": "Dragon CTF Teaser 2019",
+    "organization": "Dragon CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "Team: c7, akrasuski1, nazywam, chivay, rodbert, Eternal, sasza, rev, shalom",
+    "solve_steps": "Dragon CTF Teaser 2019 | Table of contents | [RMS (web/pwn)](rms) | [ummmfpu (re)](ummmfpu) | [RSA Chained (crypto)](rsachained) | [Looking glas (web/crypto)](lookingglass)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2019-09-21-dragonctf/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-1100c7771c9e",
+    "title": "Dragon CTF 2019 Finals",
+    "organization": "Dragon CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Team: (ak, c7, msm, nazywam), (rev, rodbert, eternal, psrok1), (des, chivay, sasza, shalom)",
+    "solve_steps": "Dragon CTF 2019 Finals | Table of contents | [Cat flag (web)](cat_flag) | [Drow number guessing (game)](drow_number) | [Raiding party (game)](raiding_party) | [Expensive flag (game)](expensive_flag) | [Under the mountain (game)](under_mountain)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2019-11-14-dragon-finals/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-065ae29d6548",
+    "title": "Dragon CTF 2020",
+    "organization": "Dragon CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Dragon CTF 2020 | Table of contents | [CoolNAME Checker (misc)](coolname_checker) | [babyshell (misc)](babyshell) | [Harmony Chat (web)](harmony_chat)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-11-20-dragonctf/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ba57f1ecec3a",
+    "title": "Google CTF 2019 Finals",
+    "organization": "Google CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Team: des, rodbert, msm, nazywam, c7, niedzejkob, rev, shalom",
+    "solve_steps": "Google CTF 2019 Finals | Table of contents | [Fractorization (crypto)](fractorization)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2019-11-02-google-ctf/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-cb5e1188943a",
+    "title": "Google-CTF-2022-Writeups",
+    "organization": "Google CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "These  are my solutions for Google CTF 2022 This is my first official CTF (Capture The Flag) that will be held by a big company like Google so I hope you will enjoy my writeups. the first as the challenge says is about the log4j vulnerability. if you don't know what is that, I recommend seeing this video to have an idea of how it works: https://www.youtube.com/watch?v=0-abhd-CLwQ The challange URL is: https://log4j-web.2022.ctfcompetition.com",
+    "solve_steps": "Google-CTF-2022-Writeups | LOG4J | help    --> prints hints for using it. | /help --> same as `help` | /wc --> it will count all words after the first space | /repeat --> it will print the string after the first space | /time --> it will show the time of the system | ${java:version}",
+    "source_url": "https://github.com/FarhadAlimohammadi-dir/Google-CTF-2022-Writeups/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-0ff7af4b4e7e",
+    "title": "Intro",
+    "organization": "Google CTF",
+    "category": "forensics",
+    "techniques": [
+      "strings"
+    ],
+    "tools": [
+      "python",
+      "strings"
+    ],
+    "summary": "This is my writeup for GoogleCTF 2017 `JohnnyBoy` challenge. The file contains lines like: It seems the '*.ino.hex' format is standardized. Sourcecode for decoding is available on Github. With this knowledge we know the format: Following script creates a binary version of the ino.hex file. The result is a 15886 byte file with sha1sum: Its nice to see ASCII strings! But no `CTF{` (or case variants) can be found. Browsing the file with `hexdump -C`",
+    "solve_steps": "Intro | [https://youtu.be/Dem8Fq6hkAw](https://youtu.be/Dem8Fq6hkAw) - a short movie showing someone playing JohnnyBoy on a Arduboy. We see a small  | A file named `chall.ino.hex` | Decoding the file | each line starts with `:` | next comes a series of hex-encoded bytes | 1st byte is the data length (every line has 5 bytes overhead) | 2nd + 3rd byte is the data offset",
+    "source_url": "https://github.com/rtoma/google-ctf2017/blob/master/johnnyboy/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-2f03e3f6b634",
+    "title": "Intro",
+    "organization": "Google CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "This is my writeup for GoogleCTF 2017 `mindreader` challenge. This one took me a while! Let's start. So we received a URL fora webapp showing only this form: The form says 'Hello, what do you want to read?'. Well, I'd likethe flag please. But any way I asked, I got back: Getting more serious I entered `/etc/passwd` and I got back the password file. Usually it has local users and application users listed, but this file was actually very empty. Str",
+    "solve_steps": "Intro | Let the hunt begin | OS hunting | /etc/mtab | /etc/resolv.conf | /proc ?? | Lots more | Doubling back",
+    "source_url": "https://github.com/rtoma/google-ctf2017/blob/master/mindreader/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-84d2b899cd67",
+    "title": "CTF writeups from P4 Team",
+    "organization": "Google CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "CTF writeups from P4 Team | 2023 | [2023.04.01 **Hack-a-Sat 4 Quals**(4th place/381 teams)](2023-04-01-hackasat-quals) | [2023.03.24 **Insomni'hack CTF 2023**(7th place/84 teams)](2023-03-24-insomnihack-finals) | 2022 | [2022.01.29 **InsomniHack Teaser 2022**(1st place/489 teams)](2022-01-29-insomnihack) | 2021 | [2021.12.19 **hxp CTF 2021**(10th place/1017 teams)](2021-12-19-hxp)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-81f5b72ea313",
+    "title": "Google CTF",
+    "organization": "Google CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "This repository lists most of the challenges used in the Google CTF since 2017, as well as most of the infrastructure that can be used to run them. **IMPORTANT** - The code in the 201x and 202x folders have unfixed security vulnerabilities. These are there on purpose, and running these on real production infrastructure is not safe. Read more about the Google CTF here: https://security.googleblog.com/2017/06/announcing-google-capture-flag-2017.htm",
+    "solve_steps": "Google CTF",
+    "source_url": "https://github.com/google/google-ctf/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-663d0ede33f1",
+    "title": "Google CTF 2020 Finals",
+    "organization": "Google CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Google CTF 2020 Finals | Table of contents | [Registers matter (hardware)](registers_matter)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-08-22-google-ctf/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-dfa9d189cab6",
+    "title": "Google CTF 2021",
+    "organization": "Google CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Google CTF 2021 | Table of contents | [comlink (hardware)](comlink)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2021-07-17-google-ctf/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-e71f7e486f49",
+    "title": "Google CTF 2017 : Exploit 150",
+    "organization": "Google CTF",
+    "category": "pwn",
+    "techniques": [
+      "rop",
+      "z3"
+    ],
+    "tools": [
+      "python",
+      "pwntools",
+      "gdb",
+      "radare2",
+      "objdump",
+      "checksec",
+      "z3",
+      "angr"
+    ],
+    "summary": "**Name:** Inst Prof | **Solves:** 79 / 1998 paticipants | **Description:** Please help test our new compiler micro-service Despite there wasn't a real attack vector InstProf was a very interesting challenge, because I made a lot of mistakes as always but after a lot of computer meditation I SOLVED it. This solution doesn't involve ASLR leaking and libc is not used. This solution allocates two pages using code reuse, one page to stack pivot and th",
+    "solve_steps": "Google CTF 2017 : Exploit 150 | Write-up | Abstract | Step0: War of information | Step42: DEEEEEP dive | Tips & Tools | NX: a page can't be executable and writable at the same time | ALSR: some sections of the binary are randomized",
+    "source_url": "https://github.com/nongiach/WriteUp_GoogleCTF_2017/blob/master/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ea9cc6c42fd2",
+    "title": "}}}",
+    "organization": "Google CTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [
+      "gdb"
+    ],
+    "summary": "0:  5a                      pop    rdx 1:  52                      push   rdx ff c1                   inc    ecx echo -ne \"\\xff\\xc1\\x90\\x90\" > inc_ecx # infinite loop echo -ne \"\\xeb\\xfe\\x90\\x90\" > inc_ecx # infinite loop => 0x7ffff7ff5000:\tmov    ecx,0x1000 0x7ffff7ff5005:\tpop    rdx 0x7ffff7ff5006:\tpush   rdx 0x7ffff7ff5009:\tsub    ecx,0x1 0x7ffff7ff500c:\tjne    0x7ffff7ff5005 read_n(rsi=size, rdi=buffer) gdb-peda$ p/a &read_n",
+    "solve_steps": "{{{ | }}}",
+    "source_url": "https://github.com/nongiach/WriteUp_GoogleCTF_2017/blob/master/random_things/doc.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-927beb296627",
+    "title": "Cat Chat &ndash; write-up by @terjanq",
+    "organization": "Google CTF",
+    "category": "web",
+    "techniques": [
+      "xss"
+    ],
+    "tools": [],
+    "summary": "> Welcome to Cat Chat! This is your brand new room where you can discuss anything related to cats. You have been assigned a random nickname that you can change any time. > - You may invite anyone to this chat room. Just share the URL. > - Dog talk is strictly forbidden. If you see anyone talking about dogs, please report the incident, and the admin will take the appropriate steps. This usually means that the admin joins the room, listens to the c",
+    "solve_steps": "Cat Chat &ndash; write-up by @terjanq | Description | So our goal is simple. Find a way to steal the admin's password! | Page Functionality | *Every request to the API (`/report`, `/secret <password>`, `/ban <name>`, `<message>`, `/name <new name>`) is made by `GET` request in the  | *There are no session cookies. The only cookies received from the server are: `flag=` which stands for the secret password set by `/secret`  | *There is no mechanism to prevent from [CSRF], except for the `/report` command which is being authorized by the [Google r",
+    "source_url": "https://github.com/terjanq/google-ctf-writeups/blob/master/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-d0a235b73960",
+    "title": "HITCON 2019 Quals",
+    "organization": "HITCON CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Team: c7, nazywam, msm, chivay, Eternal, rodbert, rev, shalom",
+    "solve_steps": "HITCON 2019 Quals | Table of contents | [Lost modulus again(crypto)](lost_modulus) | [HeXdump (misc)](hexdump) | [Lost key again(crypto)](lost_key) | [Crypto in the Shell (pwn)](crypto_in_the_shell)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2019-10-12-hitcon/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-498c8e9cadcf",
+    "title": "HITCON CTF 2020",
+    "organization": "HITCON CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "HITCON CTF 2020 | Table of contents | [11011001 (re)](11011001) | [Run Run Run! (re)](run_run_run) | [SOP (re)](sop)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2020-11-28-hitcon/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-4ce9963cae7c",
+    "title": "HTB Cyber Apocalypse 2025 CTF WRITEUP\u200a\u2014\u200aOSINT Challenges!",
+    "organization": "HackTheBox CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Cyber Apocalypse CTF 2025 : OSINT Write-Ups | Hack The Box | thelastdanc3 In this Medium Article, I will be discussing all the OSINT challenges NB: No Direct Flags are revealed here! List of Challenges: The Stone That Whispers 2. Echoes in Stone 3. The Mechanical Bird\u2019s Nest 4. The Hillside Haven 5. The Ancient Citadel 6. The Shadowed Sigil 7. The Poisoned Scroll 1. The Stone That Whispers Problem Statement This is another very easy OSINT challen",
+    "solve_steps": "Cyber Apocalypse CTF 2025\u00a0: OSINT Write-Ups | Hack The Box | thelastdanc3 | In this Medium Article, I will be discussing all the | NB: No Direct Flags are revealed\u00a0here! | The Stone That\u00a0Whispers | 3. The Mechanical Bird\u2019s\u00a0Nest | 4. The Hillside\u00a0Haven",
+    "source_url": "https://thelastdanc3.medium.com/htb-cyber-apocalypse-2025-ctf-writeup-osint-challenges-dd09885055ce",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-be2faf134d27",
+    "title": "Cyber Apocalypse CTF 2025\u00a0: AI Write-Ups | Hack The Box | thelastdanc3",
+    "organization": "HackTheBox CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Cyber Apocalypse CTF 2025 : AI Write-Ups | Hack The Box | thelastdanc3 In this Medium Article, I will be discussing all the AI challenges NB: No direct flags are revealed here! List of Challenges: 1.Cursed GateKeeper 2.Lunar Orb 3.Embassy 4.Mirror Witch 5.Elixir Emporium 1.Cursed GateKeeper This is an AI category challenge; we need to trick the AI to provide the flag. From the hint, we now know that earlier AI used to give the chant to pure inten",
+    "solve_steps": "Cyber Apocalypse CTF 2025\u00a0: AI Write-Ups | Hack The Box | thelastdanc3 | In this Medium Article, I will be discussing all the AI | NB: No direct flags are revealed\u00a0here! | This is an AI category challenge; we need to trick the AI to provide the\u00a0flag. | From the hint, we now know that earlier AI used to give the chant to pure intent, but now it gives them a curse and gives the malicious peop | If we ask for the chant, we get cursed. Let's try maliciously.",
+    "source_url": "https://thelastdanc3.medium.com/cyber-apocalypse-ctf-2025-ai-write-ups-hack-the-box-thelastdanc3-577aff927032",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-f2482ca7f65c",
+    "title": "Cyber Apocalypse CTF 2025 WRITEUP | Hack The Box | thelastdanc3",
+    "organization": "HackTheBox CTF",
+    "category": "reverse",
+    "techniques": [
+      "pcap",
+      "lsb",
+      "strings",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "wireshark",
+      "strings"
+    ],
+    "summary": "I have managed to solve 22 flags out of 77 in the CTF. I have provided the whole list of challenges. LIST OF CHALLENGES: All challenges with SUCCESS status are explained here in my article! | Category | Challenge Name | Difficulty | Status | |----------------|---------------------------|------------|-----------------------| | Crypto | Kewiri | Very Easy | | | | Traces | Very Easy | | | | Hourcle | Easy | | | | Prelim | Easy | | | | Verilicious | ",
+    "solve_steps": "I have managed to solve 22 flags out of 77 in the\u00a0CTF. | I have provided the whole list of challenges. | status are explained here in my\u00a0article! | | Category       | Challenge Name             | Difficulty | Status               | | |----------------|---------------------------|------------|-----------------------| | | Crypto         | Kewiri                     | Very Easy  |                       |",
+    "source_url": "https://thelastdanc3.medium.com/cyber-apocalypse-ctf-2025-writeup-hack-the-box-thelastdanc3-7c9a04cb2834",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-56c690f5c5cc",
+    "title": "14/14 on HTB CPTS, First Attempt: What Actually Mattered",
+    "organization": "HackTheBox CTF",
+    "category": "soc_iam",
+    "techniques": [],
+    "tools": [],
+    "summary": "Prep, pacing, multi-hop pivoting, a 300-page report, and the outage I didn\u2019t see coming. Certificate I passed the Hack The Box Certified Penetration Testing Specialist (CPTS) exam on my first attempt. All 14 flags, report accepted. I\u2019m still a little surprised writing that, because CPTS was my very first certification. I\u2019d been working in security for more than three years, but I had never sat an exam of any kind. No eJPT, no OSCP, nothing to tel",
+    "solve_steps": "Prep, pacing, multi-hop pivoting, a 300-page report, and the outage I didn\u2019t see\u00a0coming. | I passed the Hack The Box Certified Penetration Testing Specialist (CPTS) exam on my first attempt. All 14 flags, report accepted. | I\u2019m still a little surprised writing that, because CPTS was my very first certification. I\u2019d been working in security for more than three ye | So this isn\u2019t a walkthrough. HTB doesn\u2019t allow sharing exam content, and honestly, spoilers would take the fun out of it for you. It\u2019s the p | First, what CPTS actually asks of\u00a0you | ",
+    "source_url": "https://infosecwriteups.com/14-14-on-htb-cpts-first-attempt-what-actually-mattered-34ab2910551b",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "hg-jcoe-hidden-in-numbers",
+    "title": "Hacker's Gambit CTF: Hidden in Numbers (8-Bit Binary Encoding)",
+    "organization": "Hacker's Gambit",
+    "category": "crypto",
+    "techniques": [
+      "binary",
+      "ascii encoding"
+    ],
+    "tools": [
+      "python"
+    ],
+    "summary": "Space-separated 8-bit binary blocks representing ASCII characters yielding flag JCOE_CTF{bin2ry_1s_key}.",
+    "solve_steps": "Verify 8-bit grouping | Convert each binary byte int(b, 2) to ASCII | Extract JCOE_CTF{...}",
+    "source_url": "https://ctftime.org/event/list/?year=2025",
+    "source_type": "ctftime_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "hg-jcoe-night-cipher",
+    "title": "Hacker's Gambit CTF: Night Cipher (Multi-Layer Hex & Cipher Chain)",
+    "organization": "Hacker's Gambit",
+    "category": "crypto",
+    "techniques": [
+      "hex",
+      "xor",
+      "caesar"
+    ],
+    "tools": [
+      "python"
+    ],
+    "summary": "Multi-stage hexadecimal and classical cipher transformation from JCOE Cyber Sentinels Hacker's Gambit CTF.",
+    "solve_steps": "Strip whitespace and decode hex | Apply classical shift / XOR crib check against JCOE_CTF{ | Validate flag",
+    "source_url": "https://ctftime.org/event/list/?year=2025",
+    "source_type": "ctftime_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-4ac2bb00aa57",
+    "title": "Insomni'hack CTF 2023",
+    "organization": "Insomni'hack",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Insomni'hack CTF 2023 | Table of contents | [InsoBot (misc,network)](insobot)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2023-03-24-insomnihack-finals/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-a7dbd9c2b646",
+    "title": "InsomniHack Teaser 2022",
+    "organization": "Insomni'hack",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "InsomniHack Teaser 2022 | Table of contents | [nobus-101 (re)](nobus-101) | [hopytal (web)](hopytal) | [AndroNotes (mobile,forensics)](andronotes) | [LoadMe (pwn)](loadme) | [PDF-Xfiltration (misc)](pdf-xfiltration) | [RetroPwn (game,pwn)](retropwn)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2022-01-29-insomnihack/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-ba58fec8eb2e",
+    "title": "notepad\u200a\u2014\u200aWeb\u2014 PicoCTF",
+    "organization": "PicoCTF",
+    "category": "web",
+    "techniques": [
+      "ssti",
+      "base64"
+    ],
+    "tools": [
+      "python"
+    ],
+    "summary": "notepad \u2014 Web\u2014 PicoCTF \ud83d\udc4b Who Am I? I\u2019m Mihir Sathvara (TraceX0) \u2014 a web security researcher, bug hunter, and CTF player. I love breaking APIs, exploiting web apps, and chasing edge cases. I also captain 0xDEADFA11 , a team of hackers who live for CTFs and the thrill of offensive security. Challenge Description \u201cThis note-taking site seems a bit off.\u201d Target: notepad.mars.picoctf.net Provided: notepad.tar (source) Difficulty: Hard Recon The app is",
+    "solve_steps": "notepad\u200a\u2014\u200aWeb\u2014\u00a0PicoCTF | Mihir Sathvara (TraceX0) | \u2014\u200aa web security researcher, bug hunter, and CTF player. I love breaking APIs, exploiting web apps, and chasing edge cases. I also captain | , a team of hackers who live for CTFs and the thrill of offensive security. | Challenge Description | \u201cThis note-taking site seems a bit\u00a0off.\u201d",
+    "source_url": "https://medium.com/@TraceX0/notepad-web-picoctf-799552ea6dea",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-63275e8f3b82",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "accepts custom byte code for a block cipher and implements CBC on top of it representation (local2 in the python code), then reversed it.",
+    "solve_steps": "reversed the program to understand the protocol, it's basically a VM that | dumped the TCP stream (stream.raw) | wrote a script (solve.py) to decode the opcodes, brought it into a nicer",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/cryptoserv/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-0a9f9ff3c923",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "crypto",
+    "techniques": [
+      "wiener"
+    ],
+    "tools": [],
+    "summary": "We guessed that maybe there would be a weak private key in case where e > phi(n). So we randomly tried to run Wiener's attack on all the inputs. It worked after some time. solve.py solves the task, but takes really long.",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/curious/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-5523141a4d78",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "There are well-known attacks on the Merkle-Hellman cryptosystem. We decided to use the more generic one based on LLL, because that's readily available. The description at http://www.math.ucsd.edu/~crypto/Projects/JenniferBakker/Math187/ helped us build the matrix we needed to use. solve.sage is a SAGE program that solves the task and outputs a corrupted version of the flag. We manually fixed the output to obtain the real flag.",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/lazy/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-f20c0a55b229",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "is prime itself. Then we have that phi(N) = N - 1 has many small prime factors and solving dlog in the field of integers mod N is easy using the Pohlig-Hellman algorithm. We chose N = 2*23*269*271*...*787 + 1 to up front. In this case g = 11 where m0 = oaep_pad(\"I hereby commit to a guess of 0\") and m1 = oaep_pad(\"I hereby commit to a guess of 1\"). inverse of d mod phi(N) because of RSA blinding and we have to set p = q = 0",
+    "solve_steps": "contructed an N such that N - 1 is the product of many small primes and N + 1 | use a generator g of the multiplicative group mod N as the cipher text we commit | generate two private keys d0 and d1 such that g^d0 = m0 (mod N) and g^d1 = m1 (mod N) | we need to be careful when packing the private key, we have to compute e as the | Now we win, we commit to the ciphertext g, chose o = 2 and depending on the | solve.py generates the two private keys | rsatool.py was used to convert the keys to PEM because Crypto wouldn't let us | doit2.py was used",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/parlor2/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-b1e38ca269fc",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "We used the attack from https://131002.net/siphash/poc.py to reconstruct the PRNG seed, then used offline brute force to produce a collision with the magic key. solve.py executes the attack, collide is a C++ program to find a collision with a given string for the given seed.",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/radhos/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-e078b4c46758",
+    "title": "Emojidb (pwn)",
+    "organization": "PlaidCTF",
+    "category": "forensics",
+    "techniques": [
+      "strings"
+    ],
+    "tools": [
+      "gdb",
+      "strings"
+    ],
+    "summary": "This is a writeup about the emojidb challenge from PlaidCTF 2020. I usually don\u2019t write about CTF challenges, but this one was really cool and some people were asking questions after I tweeted these screenshots so I figured it would be nice to share and write this short analysis. Before we start I want to thank the awesome PlaidCTF team, who every year oragnizes this amazing CTF for us to enjoy! Check it out next year if you haven't played.",
+    "solve_steps": "Emojidb (pwn) | Finding bugs | Add emoji, which is a Unicode string with controlled length up to 0x800 characters. The binary supports storing up to 4 emoji strings, as th | Delete emoji, based on its index in the array. | Print emoji, again given its index. | Exit | First primitive \u2013 information disclosure | Second primitive \u2013 off-by-one in add_emoji, corrupting is_write_to_stderr_enabled",
+    "source_url": "https://github.com/saaramar/emojidb_plaidctf2020/blob/master/docs/index.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-336bfc7d2e57",
+    "title": "emojidb_plaidctf2020",
+    "organization": "PlaidCTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "A writeup for the emojidb pwn challenge from PlaidCTF2020.",
+    "solve_steps": "emojidb_plaidctf2020",
+    "source_url": "https://github.com/saaramar/emojidb_plaidctf2020/blob/master/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-64486a669da9",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "> \tWe received this PNG file, but we're a bit concerned the transmission may have not quite been perfect. Running pngcheck on this file confirms this, the PNG is corrupted. Looking into the file shows a missing `\\r` at position 4 of the file, direct in front of a `\\n`. So maybe all `\\r\\n` were converted to `\\n` as pngcheck already said. We wrote a small script to proove this. By parsing the PNG, detecting missing bytes and guessing the missing `\\",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/png%20uncorrupt/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-369bf3479bb9",
+    "title": "neptunia/plaidctf-writeups-2018: idiot_action",
+    "organization": "PlaidCTF",
+    "category": "forensics",
+    "techniques": [
+      "xss",
+      "strings"
+    ],
+    "tools": [
+      "strings",
+      "burp"
+    ],
+    "summary": "Some people won't let any smart devices in their home at all. Some are cautious, do their research, and make an informed decision. This guy falls in neither category; he's a a downright idIoT. The idIoT uses this service called clipshare; you can find his account here or here after you make an account. He was telling me the other day about how he has a Google Home next to his computer running at all times. He also told me that if you ask politely",
+    "solve_steps": "Hack idiot's account | Hack idiot's google home using whatever data we get from his account. | hack the microphone | use our own uploaded audio clip to say \"OK google, what is the flag\" | exfiltrate microphone recorded data to our own server | Get flag!",
+    "source_url": "https://github.com/neptunia/plaidctf-writeups-2018/blob/master/idiot_action.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-086127832a8c",
+    "title": "Missing",
+    "organization": "PlaidCTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Writeups for PlaidCTF 2015 by \"Eat, Sleep, Pwn, Repeat\" Prodmanager: https://gist.github.com/stephenR/9aaeca134f8b3b7a073a",
+    "solve_steps": "Missing | Kolmogorov",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-6fe0e7c9ebb3",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "tl;dr We used a SAT formulation of the problem and used minisat to solve it. Step 1: Introduce a variable for each position/character, meaning that the given character is at that position of the final string. Conjecture that for each position, one of the variables must be true (one clause per position). Step 2: Introduce for every combination of position/character set a new variable that means that none of the characters in the set is at that pos",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/regex/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-8c13a21b1fdb",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "we guessed that the wasd characters represent the corresponding key presses in computer games, where they are often used for navigation. We wrote a simple script that traced the 2-d positions of our \"cursor\" and played with different interpretation of the interleaved e characters. We finally figured out that they toggle a drawing mode where the positions of the cursor are filled with black. The solve.py python script reconstructs and displays the",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/sawed/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-3a9a41fda72c",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "We select two of the (e, c) pairs with gcd 1, call them (e0, c0) and (e1, c1). Then we can find s and t using the extended Euclidean algorithm with Now we compute c0^s * c1^t and we get m^(s * e0 + t * e1) = m. To compute c^x with negative x we just compute (c^-1)^(-x) where c^-1 is the modular solve.py is a script that outputs the flag.",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/strength/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-38c039c7502c",
+    "title": "print `d`",
+    "organization": "PlaidCTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "You find an artifact that looks ancient, but yet looks like it's from the future... Upon further inspection, it looks like some sort of calculator, but it's calculation seems rather questionable. Maybe you can find who the owner of this is... Problem is located in /home/traveller. SSH for access 52.6.29.61 You can SSH to the (same) machine for env reasons. Your credentials are on your profile. After logging in, we look what we got:",
+    "solve_steps": "include <unistd.h> | Three signal handlers are registered: SIGUSR1, SIGFPE and SIGSEGV | An alternative stack for the signal handlers is created | Two sigsetjmp/siglongjmp pairs exist: | jmpbuf1: near the start of the main function is a sigsetjmp which is siglongjmp'ed by the SIGSEGV handler | jmpbuf2: near the start of the loop over the input numbers is a sigsetjmp which is jumped to by the SIGFPE handler | The program flow is this: | The signal handlers are registered",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/traveller/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-956f72c14fe8",
+    "title": "pwning/public-writeup: README",
+    "organization": "PlaidCTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "CTF write-ups by Plaid Parliament of Pwning",
+    "solve_steps": "",
+    "source_url": "https://github.com/pwning/public-writeup/blob/master/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-259c4f8ebb82",
+    "title": "HOST = \"localhost\"",
+    "organization": "PlaidCTF",
+    "category": "pwn",
+    "techniques": [
+      "format string"
+    ],
+    "tools": [
+      "python",
+      "checksec"
+    ],
+    "summary": "We are given a binary (ebp_a96f7231ab81e1b0d7fe24d660def25a.elf) which, when run just echos back the input: $ ./ebp_a96f7231ab81e1b0d7fe24d660def25a.elf But when using printf format characters, we see that the binary seems to have a format string vulnerability: $ ./ebp_a96f7231ab81e1b0d7fe24d660def25a.elf Segmentation fault (core dumped) Decompiling the binary results in something similar to this: char response[0x400];",
+    "solve_steps": "!/usr/bin/env python | HOST = \"localhost\" | print [hex(x) for x in addrs] | print hex(ebp) | print [hex(x) for x in addrs]",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/ebp/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-a7a26f8364b5",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "pwn",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": ">\tHree is a ctue lttile selhlcdoe challenge (old version). >\tServer: 52.4.108.221 port 4444 We are given a python script which seems to be running on the server side which builds a map of all bytes from 0 to 255 and shuffles them around according to a permutation sequence supplied by the user. The resulting permuted buffer is then written into an ELF file which gets executed The goal is to supply a permutation sequence which leads to executable c",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/RAM/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-e73252180701",
+    "title": "First Contact",
+    "organization": "PlaidCTF",
+    "category": "reverse",
+    "techniques": [
+      "uaf"
+    ],
+    "tools": [
+      "checksec"
+    ],
+    "summary": "tp was an exploitation challenge consisting of two parts, in total woth 620 points. For PlaidCTF we (KITCTF) teamed up with StratumAuhuur as \"Eat Sleep Pwn Repeat\" and me and Stephen worked together to solve this challenge during the CTF. So: here is our quick writeup. checksec.sh reports all protections as beeing enabled. Running the binary results in no noticeable output and our input seems to be ignored as well. Time for some reversing.",
+    "solve_steps": "First Contact | Reverse Engineering | After forking, the child mmaps a huge rwx memory region (0x10000000 - 0x700000000000) | The parent then (u)randomly chooses two regions inside that mapped region, one becomes the \"trusted code\", the other the \"trusted stack\" | The parent sends the addresses of these two regions to the child by means of a process\\_vm\\_writev call | The child continues executing in the trusted code trough a swapcontext call | The child starts a second thread which will continue executing the \"untrusted\" code | It initializes",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/tp/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-15540e12834f",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "reverse",
+    "techniques": [
+      "xor"
+    ],
+    "tools": [],
+    "summary": ">\tOkay, well we didn't have time to make a circuit board for you all. But we do have this. We are given a verilog source code file together with a testbench. The logic defined is supplied with signals like the clock and reset as well as a 32 bit wide user input and a win-signal which indicates a correct input The goal is to figure out the correct user data input. When looking at the verilog code we see that it consists of four basic blocks",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/eces_revenge/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-4705ce006743",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "reverse",
+    "techniques": [
+      "z3"
+    ],
+    "tools": [
+      "python",
+      "z3"
+    ],
+    "summary": ">\t\"It's a keygen problem\" We are given a binary which asks for an order and a bunch of numbers. If the numbers are correct, a flag is unobfuscated and printed. After reversing the code and translating it into a python script, we figured out which conditions have to be met for the given numbers. The sum of each row have to be equal and the first number in the first row has to be 9 and the first number in the second row has to be 11.",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/clifford/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-cfc86d9e79fb",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "reverse",
+    "techniques": [],
+    "tools": [],
+    "summary": "jumble mumble was a slightly obfuscated binary, which used conditional jumps to the string \"poop\" to throw off static analysis. In essence it took a hex-encoded string from argv[1] and split it into chunks of 4 DWORDS. In one round the dwords would be mangled with each other and then they all together would be interpreted as a quadratic matrix. The matrix would then be rotated counter-clockwise by 90 degrees, before the next round starts. In a to",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/jumblemumble/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-2ac728e272a2",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "web",
+    "techniques": [],
+    "tools": [
+      "curl"
+    ],
+    "summary": "There are 3 (three) flags to be had at http://107.189.94.25 or http://107.189.94.255 or http://107.189.94.252 or http://107.189.94.253 We visit the page http://107.189.94.25/, we get a template page with some sub pages with links like: http://107.189.94.25/?page=index. When we request something like http://107.189.94.25/?page=xxx, the server answers with \"File not found (../pages/xxx.shtml)\". After some fiddling with the url, we try http://107.18",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/qttp1/writeup.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-18d081e14677",
+    "title": "kitctf/writeups-plaidctf15: writeup",
+    "organization": "PlaidCTF",
+    "category": "web",
+    "techniques": [],
+    "tools": [],
+    "summary": "This Challenge was quite obvious: > \tWe recovered this file from a nearby computer. Maybe you can tell us what it means? Find something to read the file and we should get the flag. The content of the file was pure ascii containig some keywords like `begindata`, `enddata`, `raster`... Combining these words with some google-foo led us to http://fileformats.archiveteam.org/wiki/CMU_Andrew_Toolkit_image. Using the listed tool atktopbm converts the un",
+    "solve_steps": "",
+    "source_url": "https://github.com/kitctf/writeups-plaidctf15/blob/master/unknown/writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-eadf2e2b13b5",
+    "title": "SECCON 2019 Quals",
+    "organization": "SECCON CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Team: rev, nazywam, Eternal, kazet, rodbert, c7, msm, chivay, shalom",
+    "solve_steps": "SECCON 2019 Quals | Table of contents | [ZKPay (crypto?/web)](zk_pay) | [Fileserver (web)](fileserver) | [Pngbomb (misc)](pngbomb) | [Multiplicater (web)](multiplicater) | [Crazy repetition of codes (crypto)](crc)",
+    "source_url": "https://github.com/p4-team/ctf/blob/master/2019-10-19-seccon/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-c9f68d869535",
+    "title": "Fallen Leaf",
+    "organization": "SecLeaf CTF",
+    "category": "crypto",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "openssl"
+    ],
+    "summary": "**Category:** Digital Forensics **Objective:** Recover flag from the given img.xz file Decompress the archive: The output confirms an 8 MB ext4 filesystem. Using debugfs (rdump), we extract the filesystem tree for inspection without requiring root privileges: Seeing the extracted user profile (`/home/leaf`) shows the user's documents and various fake flags planted to mislead participants. | Location | Decoy Flag | Why it is a Decoy? |",
+    "solve_steps": "Fallen Leaf | Solution | 1. Extraction | 2. Lingering inside files and directories | Identified Decoys | Candidate keys `k_*.txt` were compressed with `gzip -N`. | The active key `.cache/k_active` was used to encrypt `harvest.txt` to `Documents/harvest.enc` via OpenSSL: | Cipher: aes-256-cbc",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/forensics/fallen-leaf.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-8c9d7952981d",
+    "title": "Masked AES Side-Channel Analysis: SecLeaf",
+    "organization": "SecLeaf CTF",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "**Category:** Cryptography / Hardware Side-Channel Analysis (SCA) **Objective:** Recover the 128-bit AES key from 60,000 desynchronized power traces protected by a 3-share Boolean masking scheme with unknown linear bitline scrambling (`linear_wire`), then decrypt `capsule.json` via AES-128-GCM. The challenge bundle contains: Inspecting the first 3 samples of each trace reveals an artificial synchronization marker (`110`) at index `phi` in `{0, 1,",
+    "solve_steps": "Masked AES Side-Channel Analysis: SecLeaf | Table of Contents | [Initial Reconnaissance and Artifact Inspection](#1-initial-reconnaissance-and-artifact-inspection) | [Clock Jitter and Phase Realignment](#2-clock-jitter-and-phase-realignment) | [3-Share Non-Linear Profiling and Site Identification](#3-3-share-non-linear-profiling-and-site-identification) | [Fast Walsh-Hadamard Transform (FWHT) Spectral Distinguisher](#4-fast-walsh-hadamard-transform-fwht-spectral-distinguisher) | [Key Recovery and Decryption](#5-key-recovery-and-decryption) | [I",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/crypto/thrid-order-forest.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-2b3fc970eb0f",
+    "title": "SecLeaf CTF Writeup",
+    "organization": "SecLeaf CTF",
+    "category": "crypto",
+    "techniques": [
+      "strings",
+      "cyberchef",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "strings",
+      "cyberchef"
+    ],
+    "summary": "**Challenge Name:** Encrypted Military Transmission We were given an encrypted transmission file (`encrypted.txt`) and tasked with recovering a hidden message. The challenge suggested that the encryption scheme was unknown, so initial analysis was required to determine the encoding method. The content of the file was: At first glance, the string appears to be random alphanumeric characters ending with `=` padding, which is a strong indicator of *",
+    "solve_steps": "SecLeaf CTF Writeup | Overview | File Analysis | Decoding Process | Command used: | Result | Flag | Conclusion",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/crypto/military_grade_encryption%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ee129a584b98",
+    "title": "**Challenge Description**",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "**Writeup for Force-push-wont-save-you** A developer force-pushed several times before the repository was archived. We suspect sensitive data may still exist somewhere in the project history. Some objects may no longer be referenced. **Flag Format:** `SecLeaf{...}` We are given a `.zip` file containing a Git repository: `force-push-wont-save-you/`. After extracting it, we see: The commit messages clearly show panic: This is a classic **Git forens",
+    "solve_steps": "**Challenge Description** | **Initial Analysis** | A very minimal `app.js` | A full `.git` directory with commit history, reflogs, stashes, and lost+found objects. | \u201ctemporary env file\u201d | \u201cremove sensitive file before push\u201d | \u201curgent cleanup\u201d | \u201cfinal cleanup\u201d",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/git-forensics/Force-push-wont-save-you%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ccce0981fa39",
+    "title": "10. Signal & Noise",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "pcap"
+    ],
+    "tools": [
+      "tshark",
+      "wireshark"
+    ],
+    "summary": "**Category:** Forensics (DDoS) **Files:** `signal-and-noise.pcap` **Flag:** `FLOWTRIQ{decoy_icmp_pivot_172.16.80.99}` > **Verification status:** Based on analysis of the capture as described in the original notes. The pivot is unambiguous; the decoy choice is a judgement call (see Caveat). A two-minute capture of a multi-vector DDoS in which at least one vector is a decoy. Identify the decoy traffic pattern and the **pivot**: the one IP that appe",
+    "solve_steps": "10. Signal & Noise | Challenge | The three vectors (victim `10.0.88.10`) | Findings | Pivot: `172.16.80.99` | Sent **29 SYNs** to port 443 (about 15 s to 70 s into the capture). | From about 60 s, sent **31 DNS ANY queries** for `big-record.example.org` to the same four reflectors. | Decoy: ICMP",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/forensics/signal-and-noise.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-c7d12e3a5e3e",
+    "title": "7. Reflected Storm",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "pcap"
+    ],
+    "tools": [
+      "tshark"
+    ],
+    "summary": "| **Category** | Forensics (DDoS) | | **Files** | `reflected-storm.pcap` | | **Flag** | `FLOWTRIQ{10.0.55.200_5_reflectors}` | | **Verified by** | Counts taken directly from the capture (format inferred from the example) | A server's bandwidth spiked. Identify the victim of the amplified traffic and the number of reflectors abused. Flag format: `FLOWTRIQ{__reflectors}` Example: `FLOWTRIQ{192.168.1.1_3_reflectors}` > **Format note:** the rendered",
+    "solve_steps": "7. Reflected Storm | Challenge | Findings | 1. Capture overview | 2. Identifying the victim: `10.0.55.200` | 3. Counting the reflectors: 5 | 4. Decoy traffic | Verification (tshark)",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/forensics/reflected-storm.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-26f0a663e14a",
+    "title": "8. LeafSync",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "pcap",
+      "base64"
+    ],
+    "tools": [
+      "python"
+    ],
+    "summary": "| **Category** | Forensics (DNS exfiltration) | | **Files** | `leafsync.pcap` | | **Flag** | `SecLeaf{dns_labels_hide_the_truth}` | | **Verified by** | Base64 chunks decode to a readable flag | A developer workstation downloaded a \"synchronization helper\" from an internal docs server and then began repeated DNS queries to an unfamiliar domain. Work out what was exfiltrated. The workstation `10.20.30.15` fetched `/tools/leafsync-helper.sh` from `d",
+    "solve_steps": "8. LeafSync | Challenge | Findings | 1. HTTP: the trigger | 2. DNS: the exfiltration | 3. Decoding the chunks | 4. Noise | `github.com`",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/forensics/leaf-sync.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-e656dcb425cb",
+    "title": "CTF Writeup \u2014 \u201cImportant.jpg\u201d (Forensics)",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [
+      "binwalk",
+      "exiftool"
+    ],
+    "summary": "**Category:** Forensics **Flag:** `SecLeaf{extensions_can_lie}` A file named `Important.jpg` was provided. The task was to inspect it, determine its real format, and recover a hidden flag. At first glance, the file appeared to be a normal image, but forensic analysis suggested otherwise. The first step was to verify the real file type using the `file` command: Despite the `.jpg` extension, the file is actually a ZIP archive. This indicates simple",
+    "solve_steps": "CTF Writeup \u2014 \u201cImportant.jpg\u201d (Forensics) | Objective | Step 1 \u2014 Identify Actual File Type | Observation: | Step 2 \u2014 Inspect Metadata | File Type: ZIP | Contains: `flag.txt` | No encryption or password protection",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/forensics/Important%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-d317845491e9",
+    "title": "Category: OSINT / Reconnaissance (1 PTS)",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "The CTF portal provided the following clue within the challenge modal: You know you want me, you know you need me, Find me where I am a disguise of SecLeaf on Instagram. Flag format: SecLeaf{} The prompt explicitly labeled the official corporate links (@secleafofficial) as 'Unrelated/Related Slop', confirming that the true target was a secondary or dormant account disguise. Investigating Historical Instagram Handles Searching Instagram directly f",
+    "solve_steps": "Category: OSINT / Reconnaissance (1 PTS) | Objective: Track down the disguised SecLeaf presence on Instagram and recover the flag hidden inside the restricted comments of a historical | Solution: | Write-up | Identified Decoys",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/OSINT/sanity-check.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-7946f449b16a",
+    "title": "Challenge",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "xor",
+      "pcap",
+      "base64"
+    ],
+    "tools": [
+      "python"
+    ],
+    "summary": "**Category:** Forensics (multi-stage) **Files:** `blackroot_archive.pcap` **Flag:** `SecLeaf{exported_objects_reveal_the_archive_key}` **Verified by:** XOR, then base64 decode, yields a readable flag. A finance workstation downloaded a ledger synchronization manifest, an internal archive notice was mailed to operations, and then odd communication with an external archive service followed. Recover the flag. The workstation `10.88.12.15` downloaded",
+    "solve_steps": "Challenge | Solution | Stage 1: HTTP (the manifest) | Stage 2: SMTP (the key) | Stage 3: The data channel (tcp/4711) | TCP ports 4700 to 4703 carry only \"healthy\" ping messages. | UDP port 9000 carries fake CPU metrics. | Stage 4: Decode",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/forensics/backroot-archive.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-d458e6aed83b",
+    "title": "Challenge: Forgotten_snapshot",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [
+      "exiftool"
+    ],
+    "summary": "**Category:** Forensics / Steganography We recovered this image from a damaged backup archive. Analysts believe the original owner attempted to conceal sensitive information before deletion. Some image data may have survived recovery. **Flag format:** `SecLeaf{}` The provided image was a classic meme (\"YOUR NEXT.\") of a guy staring intensely. Since it was recovered from a **damaged backup** and the description hinted that the owner tried to hide",
+    "solve_steps": "Challenge: Forgotten_snapshot | Description | Solution | Key Takeaway",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/forensics/Forgotten_snapshot%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-4ce8bca03e22",
+    "title": "Challenge: MemGhost",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "strings"
+    ],
+    "tools": [
+      "strings"
+    ],
+    "summary": "**Category:** Forensics / Memory Analysis **Flag:** `SecLeaf{019fcb4b2f8de31aa74c62c1f5566f48}` > A beautiful mess of memory. Corrupted, chaotic\u2026 and incredibly generous. > Flags? Oh, you\u2019ll find plenty. Seriously this file loves giving them away. > Go ahead. Submit one. If it\u2019s wrong, just try another. There\u2019s always more waiting for you \ud83d\ude42 > **Flag format:** `SecLeaf{answer}` When opening the file `memory (2).bin`, it immediately becomes clear t",
+    "solve_steps": "Challenge: MemGhost | Challenge Description | Solution | `SecLeaf{y0u_f0und_m3_haha_n0pe}` | `SecLeaf{alm0st_th3r3_just_k1dd1ng}` | `SecLeaf{n1c3_try_th1s_1snt_1t}` | and many more... | The Key Insight",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/forensics/MemGhost%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-8b18f2f2518a",
+    "title": "Challenge: VaultCore",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "lsb",
+      "strings"
+    ],
+    "tools": [
+      "strings"
+    ],
+    "summary": "**Category:** Reverse Engineering **Flag Format:** `SecLeaf{}` We recovered a protected vault executable named `vaultcore` from an abandoned workstation. The binary contains anti-debugging routines, payload decryption, and integrity verification mechanisms. **Goal:** Recover the secure access token. I started by examining the binary using basic tools: Running `strings` immediately stood out as effective due to the high number of readable strings.",
+    "solve_steps": "Challenge: VaultCore | Description | Solution | Analysis Notes | Anti-debugging routines | Payload decryption | Integrity verification | Tools Used",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/reverse-engineering/VaultCore%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-e101c0933453",
+    "title": "Executive Summary",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [],
+    "summary": "**Incident Write-up: The Invoice Incident** **Challenge:** The Invoice Incident On May 2, 2026, at approximately 09:14 AM, a finance employee (`finance.aarti`) received a malicious email containing a weaponized Microsoft Word document. The attachment `Invoice_April_2026.docm` exploited macro functionality to execute a PowerShell payload, leading to the compromise of the endpoint `FIN-WS23`. The attack followed a classic phishing + macro + PowerSh",
+    "solve_steps": "Executive Summary | Timeline of Events | **09:14:03** \u2013 Malicious email received via MAIL-GW | Sender: `billing@micr0soft-support.com` (typosquatted domain) | Recipient: `finance.aarti` | Subject: `Pending Invoice Notice` | Attachment: `Invoice_April_2026.docm` | **09:16:11** \u2013 `WINWORD.EXE` opens `Invoice_April_2026.docm` on host `FIN-WS23`",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/forensics/The%20Invoice%20Incident%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-5f7f12ef0527",
+    "title": "SecLeaf CTF 2026 (Q2)",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "ret2win",
+      "strings",
+      "base64"
+    ],
+    "tools": [
+      "strings"
+    ],
+    "summary": "**Author:** N4P1 | **Format:** `SecLeaf{...}` | Challenge | Vulnerability | Flag | |-----------|--------------|------| | Important.jpg | Extension spoofing (ZIP disguised as JPEG) | `extensions_can_lie` | | Forgotten_snapshot | Flag in JPEG Comment metadata | `metadata_never_lies` | | MemGhost | Flag = MD5 of memory dump file | `019fcb4b2f8de31aa74c62c1f5566f48` | | needle_in_context | Hex fragments across log files | `context_is_the_real_enemy`",
+    "solve_steps": "SecLeaf CTF 2026 (Q2) | Challenges | Forensics | Git Forensics | Web | Pwn | Reverse Engineering | Crypto",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-c3b342d6f8f3",
+    "title": "TL Priv Escl #1 \u2014 CTF Writeup",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [
+      "john",
+      "openssl"
+    ],
+    "summary": "| Property | Details | | **Challenge Name** | TL Priv Escl #1 | | **CTF Competition** | SecLeaf Q4 CTF 2026 | | **Category / Difficulty** | System Security / Linux Privilege Escalation (Medium) | | **Initial Credentials** | `osint` : `TLosint` | | **Final Flag** | `SecLeaf{local_escl4t3_r00t}` | The **\"TL Priv Escl #1\"** challenge is a Linux-based boot-to-root challenge featured in the **SecLeaf Q4 CTF 2026** competition. Competitors are provided",
+    "solve_steps": "TL Priv Escl #1 \u2014 CTF Writeup | 1. Executive Summary | Enumerate the local system as a low-privileged user. | Locate an insecurely exposed shadow backup file (`shadow.bak`) containing the `root` user's password hash. | Crack the password hash using **John the Ripper** to obtain root credentials. | Elevate privileges and bypass decoy flag artifacts. | Recover the final flag hidden inside a multi-dot hidden directory (`...`) in `root`'s home directory. | 2. Initial Access & Setup",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/linux/TL-PRIV-ESC.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-923d9a91b20b",
+    "title": "Writeup \u2013 Forensic Log Reconstruction Challenge",
+    "organization": "SecLeaf CTF",
+    "category": "forensics",
+    "techniques": [
+      "ecb",
+      "xor",
+      "strings"
+    ],
+    "tools": [
+      "strings"
+    ],
+    "summary": "The provided archive `logs.zip` contained a large number of structured log files, mainly under `auth_*.log`, along with a few special files: At first glance, many `auth_*` logs contained misleading entries like: These were intentional decoys. A quick pattern check shows they are generated placeholders, not valid reconstruction material. A key step was searching for **hex-encoded fragments inside logs**. Several meaningful fragments were discovere",
+    "solve_steps": "Writeup \u2013 Forensic Log Reconstruction Challenge | 1. Initial Observation | `debug_183.log` | `error_29.log` | `recovered_8.log` | `final_77.log` | `notes*.log` | `possible flag: SecLeaf{temporary_xxxxx}`",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/forensics/needle_in_context%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-5529bd2bc9fd",
+    "title": "SecLeaf CTF - Writeups",
+    "organization": "SecLeaf CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "CTF challenge writeups and solutions from **SecLeaf CTF** competition. This repository contains detailed writeups for challenges solved during the SecLeaf CTF event. Each writeup includes Problem analysis, Solution approach and techniques used to solve the challenge. > All challenges and solutions are from a legitimate CTF competition in a controlled educational environment. These writeups are for learning and authorized security testing only.",
+    "solve_steps": "SecLeaf CTF - Writeups | Team Information | **Team Name:** [Hack4Shell](https://play.secleaf.tech/teams/90) | **Total Score:** 4155 points | **Solves:** 21 challenges | **Rank:** #75 | My Contribution | Disclaimer",
+    "source_url": "https://github.com/aashifm1/SecLeaf-CTF/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ebe7d6b57e2d",
+    "title": "aashifm1/SecLeaf-CTF: corrupt",
+    "organization": "SecLeaf CTF",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "MDAxMTExMTEgMDAxMTEwMTAgMDAxMDAxMDEgMDExMDExMTEgMDEwMTAwMDAgMDExMDExMTEgMDEwMTExMDAgMDAxMDEwMDAgMDEwMTEwMTEgMDEwMDExMTEgMDExMTAxMDAgMDAxMTAxMDAgMDAxMDEwMDEgMDExMTEwMDAgMDExMDAxMDAgMDExMTEwMDEgMDEwMDExMDEgMDAxMDAxMTEgMDAxMTAwMDAgMDExMTAwMTAgMDAxMDEwMDEgMDAxMTExMTAgMDEwMTEwMTEgMDExMDAxMTEgMDEwMDAxMDEgMDEwMDExMTEgMDEwMTAxMTEgMDExMDAwMDEgMDEwMDAwMTAgMDExMTAxMDEgMDAxMDEwMDAgMDExMDExMTAgMDAxMTEwMTAgMDEwMDAwMTEgMDAxMDAxMTAgMDExMTAwMDAgMDAxMTEwMTEgMDExMT",
+    "solve_steps": "",
+    "source_url": "https://github.com/aashifm1/SecLeaf-CTF/blob/main/ego/corrupt.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-9a3a75b0435d",
+    "title": "N4P1x/Writeups: ret2win Writeup",
+    "organization": "SecLeaf CTF",
+    "category": "pwn",
+    "techniques": [
+      "ret2win",
+      "rop",
+      "strings"
+    ],
+    "tools": [
+      "python",
+      "strings"
+    ],
+    "summary": "**ret2win Writeup by N4P1** The challenge was a classic stack-based ret2win on a 64-bit ELF binary. The binary is not stripped, so symbols are visible right away. A quick `strings` pass shows the interesting messages: That strongly suggested a hidden success function. The key finding was in `vuln`: A 0x40-byte local buffer is read with `fgets(..., 0xc8, ...)`, so the function accepts far more data than the stack buffer can hold. On x86-64, the sa",
+    "solve_steps": "`Tell me your name:` | `Hello, %s` | `Access Granted!` | `Flag: %s`",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/pwn/ret2win%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-681bb9962cdd",
+    "title": "SecLeaf CTF \u2014 Combined Writeup",
+    "organization": "SecLeaf CTF",
+    "category": "reverse",
+    "techniques": [
+      "xor",
+      "pcap",
+      "lsb",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "gdb"
+    ],
+    "summary": "Author of the challenges: **5h1kh4r**. Flag formats: `SecLeaf{...}` and `FLOWTRIQ{...}` (the DDoS pcaps). Every challenge below follows the same shape, so it helps to know it up front: | # | Challenge | Category | Flag | | 1 | sugar_glass | Reversing | `SecLeaf{gl455_h0ld5_4_53cr3t}` | | 2 | dead_letter_office | Reversing | `SecLeaf{th3_p0st0ff1c3_h4s_4_d4rk_s1d3!}` | | 3 | null_choir | Reversing (VM) | `SecLeaf{th3_ch01r_s1ng5_1n_5h4d0w_m4ch1n35",
+    "solve_steps": "SecLeaf CTF \u2014 Combined Writeup | **Reversing:** an ELF reads companion data files, validates headers and hashes, derives keys from a hash chain, runs a keyed transform on th | **Forensics:** a pcap hides the real signal among decoys. Classify the traffic first, then decode only what is anomalous. | **Crypto:** a structural weakness (prime-power moduli, related nonces) removes the need for brute force. | Summary | 1. sugar_glass (Reversing) | **Length:** the input must be exactly 29 bytes. | **Index walk:** each step picks an input position from",
+    "source_url": "https://github.com/shauryarathore357-hub/SecLeaf-CTF-Writeup/blob/main/SecLeaf_CTF_Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-d7516b8e7998",
+    "title": "SecLeaf CTF \u2014 Combined Writeup",
+    "organization": "SecLeaf CTF",
+    "category": "reverse",
+    "techniques": [
+      "xor",
+      "pcap",
+      "lsb",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "gdb"
+    ],
+    "summary": "Author of the challenges: **5h1kh4r**. Flag formats: `SecLeaf{...}` and `FLOWTRIQ{...}` (the DDoS pcaps). Every challenge below follows the same shape, so it helps to know it up front: | # | Challenge | Category | Flag | | 1 | sugar_glass | Reversing | `SecLeaf{gl455_h0ld5_4_53cr3t}` | | 2 | dead_letter_office | Reversing | `SecLeaf{th3_p0st0ff1c3_h4s_4_d4rk_s1d3!}` | | 3 | null_choir | Reversing (VM) | `SecLeaf{th3_ch01r_s1ng5_1n_5h4d0w_m4ch1n35",
+    "solve_steps": "SecLeaf CTF \u2014 Combined Writeup | **Reversing:** an ELF reads companion data files, validates headers and hashes, derives keys from a hash chain, runs a keyed transform on th | **Forensics:** a pcap hides the real signal among decoys. Classify the traffic first, then decode only what is anomalous. | **Crypto:** a structural weakness (prime-power moduli, related nonces) removes the need for brute force. | Summary | 1. sugar_glass (Reversing) | **Length:** the input must be exactly 29 bytes. | **Index walk:** each step picks an input position from",
+    "source_url": "https://github.com/shauryarathore357-hub/SecLeaf-CTF-Writeup/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-6b13bb408d19",
+    "title": "CTF Write-up: Slow Leak",
+    "organization": "SecLeaf CTF",
+    "category": "web",
+    "techniques": [],
+    "tools": [
+      "python",
+      "curl"
+    ],
+    "summary": "> **Category:** Web Exploitation & Protocol Forensics > **Challenge Type:** Covert Channels / HTTP Side-Channel Leakage | **Challenge Name** | Slow Leak | | **CTF Competition** | SecLeaf CTF | | **Category** | Web Exploitation / Network Forensics | | **Points** | 100 PTS | | **Target URL** | `http://web.secleaf.xyz:8080` | | **Flag Format** | `SecLeaf{...}` | | **Flag** | `SecLeaf{h34d3r5_l34k_0n3_dr1p_4t_4_t1m3}` | > *\"Hollow Creek Water Authori",
+    "solve_steps": "CTF Write-up: Slow Leak | Challenge Metadata | 1. Challenge Overview | **Target URL:** `http://web.secleaf.xyz:8080` | **Flag Format:** `SecLeaf{...}` | 2. Reconnaissance & Clue Breakdown | 3. Technical Inspection & Protocol Analysis | Raw Response Headers",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/web/Slow_Leak.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-f66967d4042d",
+    "title": "SecLeaf CTF \u2014 Ledger",
+    "organization": "SecLeaf CTF",
+    "category": "web",
+    "techniques": [
+      "jwt",
+      "strings"
+    ],
+    "tools": [
+      "strings",
+      "curl"
+    ],
+    "summary": "> **Web Security Challenge Write-up:** HTTP Parameter Pollution (HPP) / Parser Mismatch | Property | Information | | **Challenge Name** | Ledger | | **CTF Competition** | SecLeaf CTF | | **Category & Points** | Web Exploitation / 100 Points (24 Solves) | | **Author** | 5h1kh4r | | **Target Endpoint** | `https://ledger.secleaf.xyz/` | | **Vulnerability Class** | HTTP Parameter Pollution (HPP) / Parser Precedence Mismatch |",
+    "solve_steps": "SecLeaf CTF \u2014 Ledger | Challenge Metadata | 1. Executive Summary | The **authorization gateway** evaluates user permissions based on the **first** occurrence of the `view` parameter. | The **downstream rendering engine** resolves data based on the **last** occurrence of the `view` parameter. | 2. Initial Reconnaissance & Architecture | **Load public record:** Queries `/api/records/RD-947?view=public` $\\rightarrow$ Returns standard public metadata. | **Attempt restricted view:** Queries `/api/records/RD-947?view=restricted` $\\rightarrow$ Trigger",
+    "source_url": "https://github.com/anousheh-qureshi/secleaf-2026-writeups/blob/main/web/Ledger.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-834316fe8507",
+    "title": "SecLeaf Q2 CTF 2026 \u2014 Web Challenge Write-up",
+    "organization": "SecLeaf CTF",
+    "category": "web",
+    "techniques": [],
+    "tools": [
+      "curl"
+    ],
+    "summary": "> We discovered a partially exposed internal web portal during reconnaissance. Developers claimed sensitive endpoints were \"properly hidden.\" Can you discover what was left behind? **URL:** `https://s3.secleaf.tech/` **Flag format:** `SecLeaf{}` The challenge hinted at a web portal with hidden endpoints. First step was basic HTTP recon: The response confirmed the site was live (HTTP 200), served HTML, and was behind Cloudflare. Notably, despite t",
+    "solve_steps": "SecLeaf Q2 CTF 2026 \u2014 Web Challenge Write-up | Challenge | Reconnaissance | Checking robots.txt | Flag | Lesson Learned",
+    "source_url": "https://github.com/N4P1x/Writeups/blob/main/SecLeaf-CTF-2026/web/Hidden_panel%20Writeup.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-200bf6bd3175",
+    "title": "BREAKING\u00a0BAD",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: BREAKING BAD These are the encrypted data that I got: 1 89 19 50 39 103 5 9 74 16 59 6 19 114 23 1 1 5 83 15 23 33 6 19 Also I got a hint of a chemical, so I tried to decode it using the periodic table cipher. And as a result I got the flag: HACKSNYLRBFWSPRCKFLVHHBBIPVASCK",
+    "solve_steps": "Challenge Title: BREAKING\u00a0BAD | These are the encrypted data that I\u00a0got: | 1 89 19 50 39 103 5 9 74 16 59 6 19 114 23 1 1 5 83 15 23 33 6 19 | Also I got a hint of a chemical, so I tried to decode it using the periodic table\u00a0cipher. | And as a result I got the flag: HACKSNYLRBFWSPRCKFLVHHBBIPVASCK",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-4",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-100971f95e7c",
+    "title": "CODEPOOL",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: CODEPOOL I got a file with an encoded text (mentioned in the image below). And the hint clearly mentions ROT7, so I used the text file data to decode by ROT cipher. And I got the flag.",
+    "solve_steps": "Challenge Title:\u00a0CODEPOOL | I got a file with an encoded text (mentioned in the image below). And the hint clearly mentions ROT7, so I used the text file data to decode",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-2",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-1736374e13ce",
+    "title": "MATRIX MAYHEM (Solved After the\u00a0test)",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [
+      "jwt"
+    ],
+    "tools": [],
+    "summary": "Challenge Title: MATRIX MAYHEM (Solved After the test) I got an EXE file to download (for Windows) and an EFL (for Linux). As I have Windows, therefore, on running the EXE file, I got this: On analyzing, it says 2 rules for the new combination, string should have unique characters and must be equal to no of columns, and new string should not contain charcaters that its corresponding column contains. On generating a cipher matrix, it says the leng",
+    "solve_steps": "Challenge Title: MATRIX MAYHEM (Solved After the\u00a0test) | I got an EXE file to download (for Windows) and an EFL (for Linux). As I have Windows, therefore, on running the EXE file, I got\u00a0this: | On analyzing, it says 2 rules for the new combination, string should have unique characters and must be equal to no of columns, and new stri | On generating a cipher matrix, it says the length should be more than 30, so I took 31 and got a\u00a0matrix. | By using AI tools, I analyzed the matrix and gave the rules for decoding the new\u00a0key. | And I successfully",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-14",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-babf4ee56e96",
+    "title": "Optimus Prime",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [
+      "rsactftool",
+      "dcode"
+    ],
+    "summary": "Challenge Title: Optimus Prime Flag: HQ8FLAG{c2b8c1d94d3f3afda53c4b09a4593a3} I Found two approaches I solving this challenge so this challenge was a RSA decryption so we can use two methods here  as the value of n , e , c c, and the public exponent e                    we can also use the formula m=cdmodn Here I have used dCode.fr tool to decrypt the RSA cipher but instead we can also make of the tool RsaCtf tool for decryption",
+    "solve_steps": "",
+    "source_url": "https://github.com/Ashutosh0x/TCS-HackQuest-Season-8/blob/master/DT20234931846_HackQuest8_Report.docx#chal-3",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-1f23fc938dcd",
+    "title": "SMALL-E",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Challenge: SMALL-E | Category: Hash / Encoding | Technique Used: | Pattern analysis | Result: Flag validated successfully",
+    "source_url": "https://github.com/siripuramvinodkumar/hack-quest/blob/main/WRITEUP.md#chal-2",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-f2c57cac59af",
+    "title": "Seeds of Time",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [
+      "xor"
+    ],
+    "tools": [
+      "python"
+    ],
+    "summary": "Challenge: Seeds of Time Flag: HQX{c126bb454b2d9c10d00fa7f0729fbd08} Approach (Step by Step): 1.The given encryption uses Python\u2019s random module with a seed derived from the current time 2.Since random is deterministic, using the current Unix timestamp as the seed makes the keystream predictable. 3.A keystream is generated using: int(random.random() * 256) 4.The ciphertext is produced by XOR-ing the flag with this keystream.",
+    "solve_steps": "int(time.time()) has low entropy and can be bruteforced.",
+    "source_url": "https://github.com/Antik004/TCS-HackQuest-Season10-Writeup/blob/main/CT20254676502_HackQuest10_Report.docx#chal-3",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-af14a57b9b9d",
+    "title": "Small-E",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "Challenge Title: Small-E Flag: HQX{36b868296605f95e280eaf3f687a77ff} Approach (Step by Step): The challenge uses RSA encryption with: A small public exponent e = 5 Encryption is done as c = m^e mod n Plaintext/flag is very small I.e m^5 is smaller than n Modular reduction doesen\u2019t occur and c=m^5 Because c = m^5, the plaintext can be recovered by computing the integer 5th root of the ciphertext: This completely bypasses the need for the private k",
+    "solve_steps": "integer nth-root using binary search",
+    "source_url": "https://github.com/Antik004/TCS-HackQuest-Season10-Writeup/blob/main/CT20254676502_HackQuest10_Report.docx#chal-2",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s10-r1-area64",
+    "title": "TCS HackQuest Season 10 (Round 1): Area 64 (Nested Archive & Base64 Payload Stream)",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [],
+    "summary": "The flag was stored as an ASCII string encoded with standard RFC 4648 Base64 within multi-level directory archives. Automating recursive unzipping and string decoding instantly reveals the plaintext.",
+    "solve_steps": "Download and unpack the challenge archive using `unzip`. | Traverse directory structure and locate `payload.txt`. | Inspect payload text content and observe base64 character set (A-Z, a-z, 0-9, +, /, =). | Execute standard decode: `cat payload.txt | base64 --decode`. | Read extracted flag: HQX{70c5d525ca0b3b4cd1e3f9a49bf4ccf8}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s10-r1-area64",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s10-r1-smalle",
+    "title": "TCS HackQuest Season 10 (Round 1): Small-E (Unpadded RSA e=3 Cube Root Attack)",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [
+      "python",
+      "gmpy2",
+      "sympy"
+    ],
+    "summary": "Because exponent e is extremely small (e = 3) and no padding was applied, the numerical value of the message m (roughly 37 bytes = 296 bits) raised to power 3 is m^3 < N (296 * 3 = 888 bits < 2048 bits). Consequently, no modular wrap-around occurred: C = m^3 mod N = m^3 in the integers. The message can be recovered by taking the direct integer cube root of C without factoring N or knowing private exponent d.",
+    "solve_steps": "Inspect the RSA parameters: N is 2048-bit, e = 3, C is ~888 bits. | Verify whether C < N holds true. Since C < N, modular reduction was never triggered during encryption. | Compute the exact integer cube root m = integer_cbrt(C) using binary search or sympy/gmpy2. | Convert the resulting integer m back to bytes: `m.to_bytes((m.bit_length() + 7) // 8, 'big').decode()`. | Retrieve the flag: HQX{36b8682966981a32eb486a3f687a77ff}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s10-r1-smalle",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s5-r1-digi-magic",
+    "title": "TCS HackQuest Season 5 (Round 1): Digi Magic (SSL Certificate Locality Field & XOR Decryption)",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [
+      "xor",
+      "base64"
+    ],
+    "tools": [
+      "openssl"
+    ],
+    "summary": "The web server's X.509 certificate contained an encoded base64 string in the Subject Locality (L) attribute: `aHE1e3MwX1kwdV9LTjBXX0hvV18kJDFfd29yS3N9`.",
+    "solve_steps": "Open browser certificate viewer or run `openssl s_client -connect target:443 | openssl x509 -text -noout`. | Inspect the Subject field: `C=IN, ST=MH, L=aHE1e3MwX1kwdV9LTjBXX0hvV18kJDFfd29yS3N9, O=TCS, CN=hackquest`. | Base64-decode the Locality field. | Retrieve flag: hq5{s0_Y0u_KN0W_HoW_$$1_worKs}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s5-r1-digi-magic",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s9-r1-breaking-bad",
+    "title": "TCS HackQuest Season 9 (Round 1): Breaking Bad (Periodic Table Chemical Elements Symbol Cipher)",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [],
+    "tools": [],
+    "summary": "The cipher encoded text using the Chemical Symbols of the Periodic Table of Elements. Translating each symbol to its atomic number or corresponding alphanumeric code yields the flag.",
+    "solve_steps": "Identify chemical elements: H (Hydrogen), Ac (Actinium), K (Potassium), Sn (Tin), Y (Yttrium), etc. | Map chemical symbols directly to their atomic number lookup table or concatenated letter codes. | Convert symbol groups to ASCII string. | Retrieve flag: HQ9{HACKSNYLRBFWSPRCKFLVHHBBIPVASCK}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s9-r1-breaking-bad",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s9-r1-stranger-things",
+    "title": "TCS HackQuest Season 9 (Round 1): Stranger Things (Custom Multi-Stage ROT & XOR Stream Cipher)",
+    "organization": "TCS HackQuest",
+    "category": "crypto",
+    "techniques": [
+      "xor",
+      "caesar"
+    ],
+    "tools": [],
+    "summary": "The encryption used a weak combination of affine substitution and periodic single-byte XOR. Because the flag format `HQ9{` is known, the first 4 bytes of ciphertext provide a direct known-plaintext oracle to deduce the shift and key.",
+    "solve_steps": "Read hex ciphertext and convert to raw byte stream. | Use known plaintext prefix `HQ9{` to solve for the 1-byte XOR key and Caesar shift. | Apply inverse permutation across all remaining ciphertext bytes. | Extract resulting plaintext flag: HQ9{ca0d299d47719fb49fa9fdb9af67b2edf6cb41a7}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s9-r1-stranger-things",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-4a76a705e263",
+    "title": "CTF-writeups TCS hackquest Season 7",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [],
+    "summary": "In the Rorschach test the description was really big story it has quoted that a mathematician hidden the quote in a normal text. Then moved to the website and saw the word wazhuh! A n number of times where if you copy and paste in a text editor whole linux machine will hung and meanwhile the google docs went unresponsive after pasting so i did scrolled all the way from start to end then found some letters in between the words \u201cwazhuh\u201d and merged",
+    "solve_steps": "CTF-writeups TCS hackquest Season 7 | Other than this there are two questions which has been changed during the Contest >> | Solved Questions | 1) Rorchash Test | 2) Sassy Spaghetti",
+    "source_url": "https://github.com/Iam-Sherlock/CTF--TCS-Hackquest-7-/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-5b6083c1e044",
+    "title": "HIDDEN LAYERS",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "lsb",
+      "strings"
+    ],
+    "tools": [
+      "exiftool",
+      "strings"
+    ],
+    "summary": "Challenge Title: HIDDEN LAYERS Flag:HQX{24c0ce09e05b696eb0f817439d1d48f0} Approach (Step by Step): 1: Initial File Inspection The image was inspected using standard tools: The file is a valid PNG image No suspicious metadata No readable flag or embedded files in strings output This ruled out metadata hiding, appended files, or plain-text embedding. 2: Steganography Analysis Since the image was a PNG and the hint referenced \u201cquietest corners,\u201d Lea",
+    "solve_steps": "Output of zsteg",
+    "source_url": "https://github.com/Antik004/TCS-HackQuest-Season10-Writeup/blob/main/CT20254676502_HackQuest10_Report.docx#chal-6",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-96f58c72b4b3",
+    "title": "SHADE\u00a0WARS",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: SHADE WARS I got a QR image that is not scannable; basically, its quality was distorted, so after modifying the exposure of the image and upscaling it, I found the Sharp QR. And then on Scanning it I got the flag.",
+    "solve_steps": "Challenge Title: SHADE\u00a0WARS | I got a QR image that is not scannable; basically, its quality was distorted, so after modifying the exposure of the image and upscaling it,",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-9",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-bc7b0a633a52",
+    "title": "SYNTHETIC STACKS",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [
+      "john"
+    ],
+    "summary": "Challenge Title: SYNTHETIC STACKS Flag:HQX{df30cb178e95ba63c97d003e6551c8de} Approach (Step by Step): Step 1: Initial file inspection The challenge provides a single file: Check the actual file type: 4b7581FEe5.ico: 7-zip archive data, version 0.4 Although the extension is .ico, the file is actually a 7-Zip archive. Step 2: Attempted extraction Trying to list or extract directly prompts for a password: The archive is password protected.",
+    "solve_steps": "",
+    "source_url": "https://github.com/Antik004/TCS-HackQuest-Season10-Writeup/blob/main/CT20254676502_HackQuest10_Report.docx#chal-7",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s10-r1-noise",
+    "title": "TCS HackQuest Season 10 (Round 1): Noise (Binary Stream Pattern Extraction)",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "strings"
+    ],
+    "tools": [
+      "strings"
+    ],
+    "summary": "The challenge author injected dozens of truncated, corrupted, and decoy candidate flag strings into a binary buffer to defeat naive single-line grep searches. However, the true flag possesses a specific valid MD5 hex digest length (32 hex characters enclosed in HQX{...}) and standard ASCII printable charset.",
+    "solve_steps": "Extract the challenge archive to obtain 'noise.opt'. | Run strings extraction with minimum length filter: `strings -a -n 20 noise.opt > extracted_strings.txt`. | Isolate all candidate patterns matching 'HQX{': `grep -o 'HQX{[^}]*}' extracted_strings.txt | sort -u`. | Filter candidates by inner character length: `awk '{ if (length($0) == 37) print }' candidates.txt`. | Verify the candidate matching the 32-character hexadecimal flag payload: HQX{543c40987fc903a462735e3649428016}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s10-r1-noise",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s4-r1-alien-message",
+    "title": "TCS HackQuest Season 4 (Round 1): Alien Message (Base64 Carving to PNG QR Code Scanner)",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [],
+    "summary": "Decoding the Base64 data yields a PNG image file header (`89 50 4E 47`). Saving the binary output as a `.png` file reveals a scannable QR Code.",
+    "solve_steps": "Decode base64 payload directly to file: `base64 --decode alien.txt > output.png`. | Verify file signature: `file output.png` confirms 'PNG image data, 250 x 250'. | Open or scan QR code image using `zbarimg output.png`. | Obtain flag: hq4{They.will.come1}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s4-r1-alien-message",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s4-r1-calling-charlie",
+    "title": "TCS HackQuest Season 4 (Round 1): Calling Charlie (Audio Morse Code Decoding & Signal Filtering)",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "morse"
+    ],
+    "tools": [],
+    "summary": "The audio file contained clear rhythmic beeps corresponding to international Morse code.",
+    "solve_steps": "Open `accesscode.wav` in Audacity. | Observe waveform displaying short pulses (dots) and long pulses (dashes). | Transcribe Morse symbols: `.--- ... -.. ..-. .... .--- -.- -.. ... .- -.. -.- ....- ...--`. | Translate to alphanumeric: `JSDFHJKDSADK43`. | Submit code to receive flag: hq4{hows!the!josh1}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s4-r1-calling-charlie",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s4-r1-leaks-and-leaks",
+    "title": "TCS HackQuest Season 4 (Round 1): Leaks & Leaks! (Git Repository History Diff & AWS Key Recovery)",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "git history"
+    ],
+    "tools": [],
+    "summary": "A previous commit had checked in an AWS Access Key and Secret, which was later removed in commit 'Oops. Removing AWS key'. The secret remained in git history.",
+    "solve_steps": "Inspect git commit logs: `git log --oneline`. | View commit diff: `git log -p`. | Locate removed credentials in diff: AWS Secret Key. | Use key to authenticate against challenge gate. | Receive flag: hq4{#M-Seal#1lakh#}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s4-r1-leaks-and-leaks",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s5-r1-record",
+    "title": "TCS HackQuest Season 5 (Round 1): Record (Windows Event Log Analysis & Malware Persistence Triage)",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "evtx"
+    ],
+    "tools": [
+      "python"
+    ],
+    "summary": "Event ID 7045 (A new service was installed in the system) recorded service `Malware_implement_persistance` installed into `HKLM\\SYSTEM\\CurrentControlSet\\Services`.",
+    "solve_steps": "Parse `System.evtx` using Python `python-evtx` or Windows Event Viewer. | Filter for Event ID 7045. | Examine Service Name and Service File Name: `ServiceName: hq5{Malware_implement_persistance}`. | Extract flag directly: hq5{Malware_implement_persistance}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s5-r1-record",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s8-r1-miss-magic",
+    "title": "TCS HackQuest Season 8 (Round 1): Miss Magic (Corrupted PNG Header & Magic Bytes Repair)",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "The first 8 bytes of the file were corrupted (replaced with `00 00 00 00 00 00 00 00`). The standard PNG specification mandates the exact 8-byte file signature (magic bytes): `89 50 4E 47 0D 0A 1A 0A`.",
+    "solve_steps": "Open `flag.png` in hex editor (`hexedit`, `xxd`, or Python). | Observe corrupted first 8 bytes: `00 00 00 00 00 00 00 00` followed by valid `IHDR` chunk (`49 48 44 52`). | Overwrite the first 8 bytes with genuine PNG magic signature: `\\x89\\x50\\x4E\\x47\\x0D\\x0A\\x1A\\x0A`. | Save repaired file as `repaired.png` and open. | View rendering displaying text flag: HQ8{b1beaf412f0a738590c464e79b3baab2}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s8-r1-miss-magic",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s9-r1-the-mask",
+    "title": "TCS HackQuest Season 9 (Round 1): The Mask (Encrypted PDF Forensic Hash Extraction & Cracking)",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [
+      "john",
+      "hashcat"
+    ],
+    "summary": "The document password was selected from common dictionary wordlists. Extracting the PDF encryption hash and feeding it to John the Ripper or Hashcat cracks the password within seconds.",
+    "solve_steps": "Extract the PDF hash using `pdf2john.pl classified_mask.pdf > pdf.hash`. | Run John the Ripper against rockyou wordlist: `john --wordlist=rockyou.txt pdf.hash`. | Cracked password recovered: `superhero123`. | Open PDF with password: view internal text layer containing the flag. | Flag: HQ9FLAG{0c8270dedc7e8165d46c6decf9b01ff4c2957b68}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s9-r1-the-mask",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-b89eecd2dc0d",
+    "title": "TERE BIN\u00a0QR",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: TERE BIN QR I got a text file with some code, and as the hint suggests QR, using QR Code Generator, I generated the QR from the txt file: On scanning it, I found the flag:",
+    "solve_steps": "Challenge Title: TERE BIN\u00a0QR | I got a text file with some code, and as the hint suggests QR, using QR Code Generator, I generated the QR from the txt\u00a0file: | On scanning it, I found the\u00a0flag:",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-8",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-e7a8b562a84e",
+    "title": "Tcshackquest-Season-6-Walkthrough",
+    "organization": "TCS HackQuest",
+    "category": "forensics",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [
+      "burp"
+    ],
+    "summary": "Can you recover the key hiding in plain sight? 01 : https://play.tcshackquest.com/jstime The link goes to something that looks like this: 02 : go to view page source.. 03 : After, seeing the source code Script i got to know the encryption is base64. 04 : i got the key here .. just copy paste here .. I'm Barry Allen and I'm the fastest man alive. Iris and Flash are playing a hide and seek game. Flash being the fastest man alive is not visible to I",
+    "solve_steps": "Tcshackquest-Season-6-Walkthrough | Let's start with first one >> { JS MASTER } | Overview : | Description : | Hint : | Approach : | BOOM ..!! | Second >> { The Flash }",
+    "source_url": "https://github.com/G0urav007/Tcshackquest-Season-6-Walkthrough/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-2a61b2b13158",
+    "title": "ADDRESS ABYSS",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: ADDRESS ABYSS Flag:  HQX{e1f63411d0b45cd35c6fd1bb0860d9f4} Approach (Step by Step): The challenge states that only log entries matching two specific IP formats are relevant: IPv6-like: 2510:a1:X::Y X represents an index (position) Y represents a character/value to be placed at that index All other log entries are noise and must be ignored. Each log line was scanned and matched strictly against the two required formats:",
+    "solve_steps": "Understanding the Pattern | Identifying Valid Entries | Extracting Index\u2013Character Pairs | Ordering the Characters",
+    "source_url": "https://github.com/Antik004/TCS-HackQuest-Season10-Writeup/blob/main/CT20254676502_HackQuest10_Report.docx#chal-4",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-7bc1f7466bca",
+    "title": "AREA 64",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [],
+    "summary": "",
+    "solve_steps": "Challenge: AREA 64 | Category: Encoding / Base64 | Description: Hidden key inside encoded string | Technique Used: | Base64 decoding | Result: Successfully extracted and validated flag",
+    "source_url": "https://github.com/siripuramvinodkumar/hack-quest/blob/main/WRITEUP.md#chal-1",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-403b92fd4360",
+    "title": "Area 64",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [
+      "cyberchef",
+      "base64"
+    ],
+    "tools": [
+      "cyberchef"
+    ],
+    "summary": "Challenge Title: Area 64 Flag: HQX{70c5d525ca20a6f0d9b8cfa49bf4ccf8} Approach (Step by Step): Downloaded and extracted the text The string was a base64 encoded 6.You're inside Area 64. Here's your key :HQX{70c5d525ca20a6f0d9b8cfa49bf4ccf8}",
+    "solve_steps": "",
+    "source_url": "https://github.com/Antik004/TCS-HackQuest-Season10-Writeup/blob/main/CT20254676502_HackQuest10_Report.docx#chal-1",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-7c9a9ca7d45a",
+    "title": "BUGLIFE",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: BUGLIFE I got a webpage. And on inspecting the functions of the source code, I found a function that needed to be called. And then I get the key: These were the challenges that I was able to solve in the first round. And then after a few weeks I got a mail stating that I was shortlisted for Round 2, which will be basically a Proctored Round. 2. Round 2 \u2014 Complete Challenge Writeups",
+    "solve_steps": "Challenge Title:\u00a0BUGLIFE | I got a webpage. And on inspecting the functions of the source code, I found a function that needed to be\u00a0called. | And then I get the\u00a0key: | These were the challenges that I was able to solve in the first round. And then after a few weeks I got a mail stating that I was shortliste | 2. Round 2\u200a\u2014\u200aComplete Challenge Writeups",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-7",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-f1bfdffb82a3",
+    "title": "CRYPTO CORRUNDUM",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: CRYPTO CORRUNDUM I got a string here, so I first analyze the string and realized that it is hex. After converting to raw bytes from hex, I realized it is base 45 encoding, and then after decoding it, I got the key: HQ9{252a37e575b0de0f60053b5cb30255326fc6a078",
+    "solve_steps": "Challenge Title: CRYPTO CORRUNDUM | I got a string here, so I first analyze the string and realized that it is\u00a0hex. | After converting to raw bytes from hex, I realized it is base 45 encoding, and then after decoding it, I got the key: HQ9{252a37e575b0de0f60",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-6",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-cfa4a5d59ec9",
+    "title": "CTF writeups from a user who had participated in that challenge",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "https://1nf3rn0-h.medium.com/tcs-hackquest-season-7-round-1-writeup-6ee5d83c873f",
+    "solve_steps": "CTF writeups from a user who had participated in that challenge | Credits to the creator",
+    "source_url": "https://github.com/Iam-Sherlock/CTF--TCS-Hackquest-7-/blob/main/CTF%20writeups%20%28c2c%29.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-d3f8ceb21251",
+    "title": "DUSSAHAS\u00a0DICE",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: DUSSAHAS DICE On inspecting the webpage source code, I found a java script, in which I was able to make some changes. So I added constants of both the dice in the script. Thus I got the key:",
+    "solve_steps": "Challenge Title: DUSSAHAS\u00a0DICE | On inspecting the webpage source code, I found a java script, in which I was able to make some changes. So I added constants of both the dic",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-5",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-4f6f9b2ffe34",
+    "title": "Deception Mahem",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: Deception Mahem Flag : HQ8FLAG{bdc9d7beee8379bdb3830faff9c7ff4} I tried to change the site directory nae with robots.txt Then the response was the above image which said Oops! There\u2019s an Onion your code . Then an idea clicked in my mind to intercept the traffic using burpsuite so i intercepted the traffic using burpsuite and crawled the web traffic source code and in the response section I found the onion link which I can only op",
+    "solve_steps": "",
+    "source_url": "https://github.com/Ashutosh0x/TCS-HackQuest-Season-8/blob/master/DT20234931846_HackQuest8_Report.docx#chal-4",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-c039bb200cb0",
+    "title": "GUARDIANS OF\u00a0GALAXY",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: GUARDIANS OF GALAXY I got a webpage that was showing that it needs a 4k resolution screen to load. On inspecting everything, I found I needed to access the website in 4k resolution and also had to modify the script a little bit. From here I go to the explore page: Hurrah, I found it. Now on inspecting, I get the full 6-digit codes of planets: On entering the Asgard coordinates, I got the flag.",
+    "solve_steps": "Challenge Title: GUARDIANS OF\u00a0GALAXY | I got a webpage that was showing that it needs a 4k resolution screen to load. On inspecting everything, I found I needed to access the webs | From here I go to the explore\u00a0page: | Hurrah, I found it. Now on inspecting, I get the full 6-digit codes of\u00a0planets: | On entering the Asgard coordinates, I got the\u00a0flag.",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-11",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ea5207254cc5",
+    "title": "HackQuest CTF Writeups",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "This repository contains my solutions, scripts, and proof files for HackQuest cybersecurity challenges.",
+    "solve_steps": "HackQuest CTF Writeups | Contents | Cryptography challenges | Forensics & hidden data | Proof ZIPs and screenshots",
+    "source_url": "https://github.com/siripuramvinodkumar/hack-quest/blob/main/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-4cf44b20bf73",
+    "title": "STRANGER\u00a0THINGS",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [
+      "python"
+    ],
+    "summary": "Challenge Title: STRANGER THINGS After login, I downloaded the txt file and got this; here it asks to create an algorithm to convert back the encoded data. After analyzing the pseudocode, I immediately created Python code: On running the code, I get the following flag:",
+    "solve_steps": "Challenge Title: STRANGER\u00a0THINGS | After login, I downloaded the txt file and got this; here it asks to create an algorithm to convert back the encoded\u00a0data. | After analyzing the pseudocode, I immediately created Python\u00a0code: | On running the code, I get the following flag:",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-1",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-b9c9a23517e9",
+    "title": "TANGLED",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: TANGLED This was a web-based challenge. On inspecting everything, I found a Admin > Super Admin button; on multiple clicks, I got a webpage with a URL with FLAG. And as a result I got the flag.",
+    "solve_steps": "Challenge Title:\u00a0TANGLED | This was a web-based challenge. On inspecting everything, I found a Admin > Super Admin button; on multiple clicks, I got a webpage with a U | And as a result I got the\u00a0flag.",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-12",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s7-r1-rorschach-test",
+    "title": "TCS HackQuest Season 7 (Round 1): Rorschach Test (Noise Pattern Identification & Regex Scrubbing)",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [
+      "strings"
+    ],
+    "tools": [
+      "strings"
+    ],
+    "summary": "The flag characters were interleaved with the recurring string `Wahzaa !!` to defeat visual inspection and simple word-based searches.",
+    "solve_steps": "Open file and observe repeating noise pattern: `Wahzaa !!`. | Execute global regex substitution: replace all occurrences of `Wahzaa !!` and spaces with empty strings. | In Bash: `cat rorschach.txt | sed 's/Wahzaa !!//g' | tr -d ' '`. | Obtain flag: HQ7{f0u4$Y_n01s3_cl34n3d}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s7-r1-rorschach-test",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-0b81b0b0f967",
+    "title": "TCS-HackQuest4-CTF",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "My Writeups and Data for TCS HackQuest4 CTF",
+    "solve_steps": "TCS-HackQuest4-CTF",
+    "source_url": "https://github.com/kp7742/TCS-HackQuest4-CTF/blob/master/README.md",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-ee653d8fa2bc",
+    "title": "THE\u00a0MASK",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [
+      "john"
+    ],
+    "summary": "Challenge Title: THE MASK I downloaded the file, and got a password-protected PDF Using John the Ripper, I decoded the password: Password is: password On opening the file, I got a note and an HQ9 element. On editing the file and removing the HQ9 Key Overlay, I got the flag:",
+    "solve_steps": "Challenge Title: THE\u00a0MASK | I downloaded the file, and got a password-protected PDF | Using John the Ripper, I decoded the password: | Password is: password | On opening the file, I got a note and an HQ9\u00a0element. | On editing the file and removing the HQ9 Key Overlay, I got the\u00a0flag:",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-3",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-c7ae5d4d55d2",
+    "title": "Unfair Flip",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "Challenge Title: Unfair Flip Flag: HQX{5c4e92253474fdca1050e00950e86a41} Approach (Step by Step): 1: Initial Observation The challenge presents a web page with three coins and a \u201cFlip Coins\u201d button. The description hints that the game is rigged and that the client holds a hidden entry point. This strongly suggests a client-side vulnerability rather than a server-side exploit. 2: Inspecting Client-Side JavaScript By viewing the page source, it bec",
+    "solve_steps": "",
+    "source_url": "https://github.com/Antik004/TCS-HackQuest-Season10-Writeup/blob/main/CT20254676502_HackQuest10_Report.docx#chal-8",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-1741c71891b0",
+    "title": "VEIL OF\u00a0VOID",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [
+      "john"
+    ],
+    "summary": "Challenge Title: VEIL OF VOID Here, an encrypted file was given. I used John the Ripper to crack the pass. On opening the file, the flag was disclosed in comments",
+    "solve_steps": "Challenge Title: VEIL OF\u00a0VOID | Here, an encrypted file was given. I used John the Ripper to crack the\u00a0pass. | On opening the file, the flag was disclosed in\u00a0comments",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-13",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-26375bd17aab",
+    "title": "WEB CHRONICLE",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [
+      "cyberchef"
+    ],
+    "tools": [
+      "cyberchef"
+    ],
+    "summary": "Challenge Title: WEB CHRONICLE Flag: HQ8FLAG{368ef8d0ec6fd5ebb63681ef93bd881} Approach (Step by Step): So, This Challenge was little bit tricky. First I started analysing all the files that were given to me in the web chronicle zip. There were many json files . I started going through the json source code Later after analyzing the source code I gone through the bookmarks.json and found a Pastebin url After opening the Pastebin file I was able to",
+    "solve_steps": "",
+    "source_url": "https://github.com/Ashutosh0x/TCS-HackQuest-Season-8/blob/master/DT20234931846_HackQuest8_Report.docx#chal-1",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-262d0a31e617",
+    "title": "siripuramvinodkumar/hack-quest: 4F8aD5D762",
+    "organization": "TCS HackQuest",
+    "category": "misc",
+    "techniques": [],
+    "tools": [],
+    "summary": "To get inside the Area 64, you need a key. Look around and you might find it. WW91J3JlIGluc2lkZSBBcmVhIDY0LiBIZXJlJ3MgeW91ciBrZXkgOiBIUVh7NzBjNWQ1MjVjYTZiZGQwZWM4NTQ3NmE0OWJmNGNjZjh9",
+    "solve_steps": "",
+    "source_url": "https://github.com/siripuramvinodkumar/hack-quest/blob/main/4F8aD5D762.txt",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s5-r2-its-exposed",
+    "title": "TCS HackQuest Season 5 (Round 2): It's Exposed!! (Corporate OSINT & Public Trello Board Secret Discovery)",
+    "organization": "TCS HackQuest",
+    "category": "osint",
+    "techniques": [],
+    "tools": [],
+    "summary": "A public Trello board for `arcanehqdev` contained a card titled 'Deployment Secrets' linking to a Pastebin paste.",
+    "solve_steps": "Perform Google dork: `site:trello.com \"arcanehqdev\"`. | Open public Trello board: locate card 'Production Keys'. | Follow Pastebin URL in card description. | Retrieve saved key flag: hq5{50m3*pu811c}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s5-r2-its-exposed",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-ba6f40e0a588",
+    "title": "CODE DE TOUR",
+    "organization": "TCS HackQuest",
+    "category": "reverse",
+    "techniques": [
+      "arc4"
+    ],
+    "tools": [
+      "python",
+      "radare2"
+    ],
+    "summary": "Challenge Title:  CODE DE TOUR This Challenge was one of the interesting challenge , here I was given a ELF Binary file named At first in kali linux I checked which type of file it was Here I came to know that it was an elf binary and I need to disassemble it I tried to run radare2 here but was unable to open it so it tried using online disassembler Here in the source code I was able view the string And the password which was using",
+    "solve_steps": "",
+    "source_url": "https://github.com/Ashutosh0x/TCS-HackQuest-Season-8/blob/master/DT20234931846_HackQuest8_Report.docx#chal-2",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-86ee18904a7e",
+    "title": "KNOW MEH BETTER",
+    "organization": "TCS HackQuest",
+    "category": "reverse",
+    "techniques": [
+      "xor",
+      "strings",
+      "cyberchef",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "strings",
+      "cyberchef"
+    ],
+    "summary": "Challenge Title: KNOW MEH BETTER Flag:HQX{2483296533200b45dcfc4c9245401d74} Approach (Step by Step): The challenge provides a Windows executable: Running the binary shows a quiz application that asks several questions. Even if all answers are correct, the program prints a fake flag. The challenge text states: Encoded flag is the output file This indicates the real flag is stored externally and must be decoded by reversing the program logic.",
+    "solve_steps": "Initial Analysis | Identifying the Packing Method | Extracting Embedded Python Files | Decompiling the Python Bytecode | Understanding the Encoding Logic | uncompyle6 version 3.9.3 | Python bytecode version base 2.7 (62211) | Decompiled from: Python 3.13.3 (main, Apr 10 2025, 21:38:51) [GCC 14.2.0]",
+    "source_url": "https://github.com/Antik004/TCS-HackQuest-Season10-Writeup/blob/main/CT20254676502_HackQuest10_Report.docx#chal-5",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s10-r1-whitespace",
+    "title": "TCS HackQuest Season 10 (Round 1): Whitespace (Esoteric Language Instruction Parsing)",
+    "organization": "TCS HackQuest",
+    "category": "reverse",
+    "techniques": [
+      "whitespace"
+    ],
+    "tools": [],
+    "summary": "The program was written in Whitespace, an esoteric programming language that ignores all non-whitespace characters. The program builds a stack of ASCII integers and calls output routines (Instruction Modification Type: Tab-Linefeed-Space-Space) to print the flag character by character.",
+    "solve_steps": "Open file in terminal: `cat -A code.ws` to visualize spaces as `^I` (tabs) and `$` (newlines). | Recognize the Instruction Modification Types (IMP): Space for Stack Manipulation, Tab-Linefeed for I/O. | Parse binary representation of stack push numbers: Space followed by Space indicates positive binary integer, Tab is 1, Space is 0, Linefeed terminates number. | Decode integer values on the stack into ASCII characters. | Obtain flag: HQX{ba44805fbe0bbfab55246dacb2af175e}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s10-r1-whitespace",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s10-r1-hidden-layers",
+    "title": "TCS HackQuest Season 10 (Round 1): The Hidden Layers (PNG LSB Steganography)",
+    "organization": "TCS HackQuest",
+    "category": "stego",
+    "techniques": [
+      "exif",
+      "lsb"
+    ],
+    "tools": [
+      "binwalk"
+    ],
+    "summary": "The least significant bit (LSB) of the Red, Green, and Blue channels of the image pixel array was modified to store continuous ASCII text without altering the visible color palette to the human eye.",
+    "solve_steps": "Inspect the PNG bit channels using `zsteg layers.png`. | Observe channel output at `b1,rgb,lsb,xy`: ASCII text stream starts with `HQX{`. | Extract complete stream directly: `zsteg -E 'b1,rgb,lsb,xy' layers.png`. | Read flag: HQX{24c0ce09e089f01047365a439d1d48f0}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s10-r1-hidden-layers",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s5-r1-i-am-always",
+    "title": "TCS HackQuest Season 5 (Round 1): I Am Always... (EXIF Metadata Endpoint & OSINT Investigation)",
+    "organization": "TCS HackQuest",
+    "category": "stego",
+    "techniques": [
+      "exif"
+    ],
+    "tools": [
+      "exiftool"
+    ],
+    "summary": "The image EXIF metadata contained a hidden comment URL endpoint `/avenger_hq_strongest_chamber.html` which hosted the challenge flag.",
+    "solve_steps": "Run `exiftool hulk.jpg`. | Inspect comment tag: `Comment: /avenger_hq_strongest_chamber.html`. | Navigate to `http://target/avenger_hq_strongest_chamber.html`. | Read flag: hq5{w1nn324v3n932}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s5-r1-i-am-always",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s9-r2-terebin-qr",
+    "title": "TCS HackQuest Season 9 (Round 2): Tere Bin QR (Binary Matrix Reconstruction to QR Code)",
+    "organization": "TCS HackQuest",
+    "category": "stego",
+    "techniques": [],
+    "tools": [
+      "python",
+      "numpy",
+      "pil"
+    ],
+    "summary": "The text file represented a 33x33 pixel matrix of a Version 4 QR Code. Transforming the binary matrix into an image by mapping '0' to white (255) and '1' to black (0) produces a standard scannable QR Code.",
+    "solve_steps": "Examine `0-1.txt`: dimensions are 33 rows by 33 columns. | Write a Python script using NumPy and PIL / OpenCV: parse characters '0' and '1'. | Map '1' to 0 (black pixel) and '0' to 255 (white pixel), scale by factor of 10 for scanner readability. | Save matrix as `qr_code.png`. | Scan QR code with `zbarimg` or mobile phone camera. | Read flag: HQ9{1324e7866bb8975802ec99d1f939ec92719f2632}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s9-r2-terebin-qr",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "gh-274e58b24cc1",
+    "title": "DigiMagic",
+    "organization": "TCS HackQuest",
+    "category": "web",
+    "techniques": [
+      "base64"
+    ],
+    "tools": [],
+    "summary": "L =  Bhubaneswar, Special Economic Zone, aHE1e3MwX1kwdV9LTjBXX0hvV18kJDFfd29yS3N9 root> echo aHE1e3MwX1kwdV9LTjBXX0hvV18kJDFfd29yS3N9 | base64 -d",
+    "solve_steps": "DigiMagic | This challenge was created to check the security certificates of the given domain. We were provided a link which gives us certificate error  | Steps to solve this challenges are given below: | Visit the given link which was tcshackquest.com in my case. | Perform whois lookup to the domain and notedown the IP(x.x.x.x) of domain | Well the domain was using HTTP protocol which is Insecure, Thus we will click on the left corner *LOCK Icon* of the url tab and see the cert | We got following info: | Copy the above encoded value which is o",
+    "source_url": "https://github.com/Umeshsah125/Hackquest/blob/main/README.md#chal-1",
+    "source_type": "github",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-b136c06e46d1",
+    "title": "TCS HackQuest Season 10\u200a\u2014\u200aRound 2 Writeup",
+    "organization": "TCS HackQuest",
+    "category": "web",
+    "techniques": [
+      "pcap",
+      "dns tunneling",
+      "zero-width",
+      "whitespace",
+      "strings",
+      "base64"
+    ],
+    "tools": [
+      "python",
+      "tshark",
+      "strings"
+    ],
+    "summary": "TCS HackQuest Season 10 \u2014 Round 2 Writeup \ud83d\udc4b Who Am I? I\u2019m Mihir Sathvara (TraceX0) \u2014 a web security researcher, bug hunter, and CTF player. I love breaking APIs, exploiting web apps, and chasing edge cases. Hey guys \ud83d\udc4b, Recently , I participated in TCS HackQuest Season 10 . I first cleared Round 1 , and soon after that I received the Round 2 qualification mail . Round 2 was way more interesting and practical. It had multiple CTF-style challenges f",
+    "solve_steps": "TCS HackQuest Season 10\u200a\u2014\u200aRound 2\u00a0Writeup | Mihir Sathvara (TraceX0) | \u2014\u200aa web security researcher, bug hunter, and CTF player. I love breaking APIs, exploiting web apps, and chasing edge\u00a0cases. | Recently\u00a0, I participated in | TCS HackQuest Season 10 | , and soon after that I received the",
+    "source_url": "https://medium.com/@TraceX0/tcs-hackquest-season-10-round-2-writeup-81d0f8895b65",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  },
+  {
+    "id": "writeup-tcs-hackquest-s5-r2-pandemic-inhibitor",
+    "title": "TCS HackQuest Season 5 (Round 2): A Pandemic Inhibitor (Hidden COVID-19 Information API Endpoint)",
+    "organization": "TCS HackQuest",
+    "category": "web",
+    "techniques": [],
+    "tools": [],
+    "summary": "Developers commented out an internal API route `<!-- API: /api/v1/guidelines/status -->` which lacked authentication checks.",
+    "solve_steps": "Inspect HTML comments in browser source. | Send POST request to `/api/v1/guidelines/status` with `Accept: application/json`. | Receive JSON response containing flag: hq5{y0u_54v3d_y0u2531f}.",
+    "source_url": "local://data/tournament-writeups.json#writeup-tcs-hackquest-s5-r2-pandemic-inhibitor",
+    "source_type": "local_verified",
+    "authentic_verified": true
+  },
+  {
+    "id": "med-76bf47c8936e",
+    "title": "TOLKEINS\u00a0SECRET",
+    "organization": "TCS HackQuest",
+    "category": "web",
+    "techniques": [
+      "jwt"
+    ],
+    "tools": [],
+    "summary": "Challenge Title: TOLKEINS SECRET This was a web-based challenge, so as the hint suggests, it is a TOKEN; therefore, I inspected the request. Here I found a JWT token and on decoding: Here on editing the role as User to Admin, I got the flag",
+    "solve_steps": "Challenge Title: TOLKEINS\u00a0SECRET | This was a web-based challenge, so as the hint suggests, it is a TOKEN; therefore, I inspected the\u00a0request. | Here I found a JWT token and on decoding: | Here on editing the role as User to Admin, I got the\u00a0flag",
+    "source_url": "https://thelastdanc3.medium.com/tcs-hackquest-season-9-complete-ctf-writeups-round-1-round-2-cleared-for-digital-interview-712edd920107#chal-10",
+    "source_type": "medium_rss",
+    "authentic_verified": true
+  }
+]

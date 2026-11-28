@@ -27,6 +27,7 @@ const state = {
   playbookTab: 'universal',
   casebookTab: 'all',
   casebookQuery: '',
+  adminOrgFilter: 'all',
   hackquestSeasonFilter: 'all',
   hackquestRoundFilter: 'all',
   tricksTab: 'all',
@@ -722,7 +723,7 @@ function render() {
   if (state.view === 'workbench')   view.innerHTML = workbenchHTML();
   if (state.view === 'advisories')  view.innerHTML = advisoriesHTML();
   bindViewEvents();
-  if ((state.view === 'intel' || state.view === 'curriculum' || state.view === 'advisories') && !intelCache) loadIntel();
+  if ((state.view === 'intel' || state.view === 'curriculum' || state.view === 'advisories' || (state.view === 'casebook' && isAdvancedRole())) && !intelCache) loadIntel();
   document.getElementById('sidebarProgress').textContent = completion() + '%';
   document.getElementById('sidebarProgressBar').style.width = completion() + '%';
   setTheme();
@@ -2036,9 +2037,46 @@ function playbookHTML() {
 }
 
 function casebookHTML() {
-  const tab = state.casebookTab || 'all';
+  const isAdmin = isAdvancedRole();
+  const rawTab = state.casebookTab || 'all';
+  const tab = (!isAdmin && rawTab === 'crawled') ? 'all' : rawTab;
   const q = normalizeAnswer(state.casebookQuery || '');
   const allWriteups = window.TOURNAMENT_WRITEUPS || [];
+  const adminWriteups = isAdmin ? ((intelCache && intelCache.adminWriteups) || []) : [];
+  const adminOrg = state.adminOrgFilter || 'all';
+
+  const adminOrgCounts = {};
+  if (isAdmin) {
+    adminWriteups.forEach(w => {
+      const org = w.organization || 'Community CTF';
+      adminOrgCounts[org] = (adminOrgCounts[org] || 0) + 1;
+    });
+  }
+  const priorityOrgs = ['TCS HackQuest', 'DEF CON CTF', 'PlaidCTF', 'Google CTF', 'SecLeaf CTF', "Hacker's Gambit"];
+  const sortedAdminOrgs = [
+    ...priorityOrgs.filter(o => adminOrgCounts[o]),
+    ...Object.keys(adminOrgCounts).filter(o => !priorityOrgs.includes(o)).sort()
+  ];
+
+  const filteredAdminWriteups = isAdmin ? adminWriteups.filter(w => {
+    if (tab === 'crawled') {
+      if (adminOrg !== 'all' && w.organization !== adminOrg) return false;
+    } else if (tab !== 'all' && tab !== 'cve' && tab !== 'hackquest') {
+      if (w.category !== tab) return false;
+    } else if (tab === 'hackquest') {
+      if (w.organization !== 'TCS HackQuest') return false;
+    } else if (tab === 'cve') {
+      return false;
+    }
+    if (q) {
+      const blob = normalizeAnswer([
+        w.title, w.organization, w.category, (w.techniques || []).join(' '),
+        (w.tools || []).join(' '), w.summary, w.solve_steps, w.source_url
+      ].join(' '));
+      if (!blob.includes(q)) return false;
+    }
+    return true;
+  }) : [];
 
   const filteredWriteups = allWriteups.filter(w => {
     if (tab === 'hackquest') {
@@ -2076,7 +2114,7 @@ function casebookHTML() {
       <p>Collegiate CTF tournament writeups with root-cause analysis, step-by-step methodologies, and complete runnable Python exploit scripts.</p>
     </div>
     <div class="tag-row">
-      <span class="tag accent">${allWriteups.length} Tournaments</span>
+      <span class="tag accent">${allWriteups.length + (isAdmin ? adminWriteups.length : 0)} Tournaments</span>
       <span class="tag success">${casebook.length} Historic CVEs</span>
     </div>
   </div>
@@ -2090,6 +2128,7 @@ function casebookHTML() {
   <div class="os-tabs" style="margin-bottom:18px">
     ${[
       ['all', 'All Writeups'],
+      ...(isAdmin ? [['crawled', `Crawled Writeups (${adminWriteups.length || (intelLoading ? '…' : '0')})`]] : []),
       ['hackquest', 'TCS HackQuest (All Seasons)'],
       ['pwn', 'Pwn / Binary'],
       ['web', 'Web Exploitation'],
@@ -2102,6 +2141,18 @@ function casebookHTML() {
       <button class="os-btn${tab === catKey ? ' active' : ''}" data-casebook-tab="${catKey}">${label}</button>
     `).join('')}
   </div>
+
+  ${(isAdmin && tab === 'crawled') ? `
+    <div style="background:var(--card-bg, #0f172a);border:1px solid var(--border, #334155);border-radius:8px;padding:12px;margin-bottom:18px">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px">
+        <span style="font-size:12px;color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-right:4px">Organization:</span>
+        <button class="os-btn${adminOrg === 'all' ? ' active' : ''}" data-admin-org="all" style="font-size:11px;padding:3px 8px">All (${adminWriteups.length})</button>
+        ${sortedAdminOrgs.map(org => `
+          <button class="os-btn${adminOrg === org ? ' active' : ''}" data-admin-org="${esc(org)}" style="font-size:11px;padding:3px 8px">${esc(org)} (${adminOrgCounts[org]})</button>
+        `).join('')}
+      </div>
+    </div>
+  ` : ''}
 
   ${tab === 'hackquest' ? `
     <div style="background:var(--card-bg, #0f172a);border:1px solid var(--border, #334155);border-radius:8px;padding:12px;margin-bottom:18px">
@@ -2136,7 +2187,7 @@ function casebookHTML() {
     </div>
   ` : ''}
 
-  ${tab !== 'cve' ? `
+  ${(tab !== 'cve' && tab !== 'crawled') ? `
     <div class="writeups-list">
       ${filteredWriteups.map(w => `
         <article class="writeup-card">
@@ -2187,9 +2238,63 @@ function casebookHTML() {
             <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.defense_remediation).replace(/\n/g, '<br>')}</p>
           </div>
         </article>
-      `).join('') || '<div class="empty">No tournament writeups matched this query.</div>'}
+      `).join('') || (isAdmin && filteredAdminWriteups.length ? '' : '<div class="empty">No tournament writeups matched this query.</div>')}
     </div>
   ` : ''}
+
+  ${(isAdmin && tab !== 'cve') ? (() => {
+    const adminList = tab === 'crawled' ? filteredAdminWriteups : filteredAdminWriteups.filter(w => w.source_type !== 'local_verified');
+    if (!adminList.length && tab !== 'crawled') return '';
+    return `
+      <div class="section-head" style="margin-top:${tab === 'crawled' ? '4px' : '28px'}">
+        <div>
+          <div class="eyebrow">AUTHENTIC EXTERNAL ARCHIVE // VERIFIED WRITEUPS</div>
+          <h2>Crawled CTF Writeup Vault (${adminList.length})</h2>
+        </div>
+      </div>
+      <div class="writeups-list">
+        ${adminList.map(w => {
+          const steps = String(w.solve_steps || '').split(/\s*\|\s*/).filter(Boolean);
+          const extUrl = (w.source_url && w.source_url.startsWith('http')) ? w.source_url : '';
+          return `
+            <article class="writeup-card">
+              <div class="card-top" style="align-items:flex-start">
+                <div>
+                  <div class="tag-row" style="margin-bottom:6px">
+                    <span class="tag accent">${esc((w.category || 'misc').toUpperCase())}</span>
+                    <span class="tag success">${esc(w.organization || 'Community CTF')}</span>
+                    <span class="tag">${esc(w.source_type || 'verified')}</span>
+                  </div>
+                  <h3 style="font-size:18px;color:var(--fg);margin:0 0 6px">${esc(w.title)}</h3>
+                </div>
+                ${extUrl ? `<a class="btn outline" href="${esc(extUrl)}" target="_blank" rel="noopener noreferrer">Source →</a>` : ''}
+              </div>
+              ${(w.techniques && w.techniques.length) || (w.tools && w.tools.length) ? `
+                <div class="tag-row" style="margin:6px 0 10px">
+                  ${(w.techniques || []).map(t => `<span class="tag warn">${esc(t)}</span>`).join('')}
+                  ${(w.tools || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}
+                </div>
+              ` : ''}
+              ${w.summary ? `
+                <div style="margin:10px 0">
+                  <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Summary &amp; Technique</h4>
+                  <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.summary)}</p>
+                </div>
+              ` : ''}
+              ${steps.length ? `
+                <div style="margin:12px 0">
+                  <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">Solving Steps</h4>
+                  <ol style="color:#cbd5e1;padding-left:20px;line-height:1.8;margin:0">
+                    ${steps.map(s => `<li>${esc(s)}</li>`).join('')}
+                  </ol>
+                </div>
+              ` : ''}
+            </article>
+          `;
+        }).join('') || '<div class="empty">No crawled writeups matched this query.</div>'}
+      </div>
+    `;
+  })() : ''}
 
   ${(tab === 'all' || tab === 'cve') ? `
     <div class="section-head" style="margin-top:28px">
@@ -3132,6 +3237,14 @@ function bindViewEvents() {
   view.querySelectorAll('[data-casebook-tab]').forEach(btn => {
     btn.addEventListener('click', () => {
       state.casebookTab = btn.dataset.casebookTab;
+      render();
+    });
+  });
+
+  /* Admin crawled writeup organization filters */
+  view.querySelectorAll('[data-admin-org]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.adminOrgFilter = btn.dataset.adminOrg;
       render();
     });
   });

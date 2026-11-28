@@ -121,29 +121,35 @@ async function testNetworkSanitization() {
   {
     const req = { headers: { cookie: `ctf_atlas_session=${adminToken}` } };
     const res = mockRes();
-    updatesHandler(req, res);
+    await updatesHandler(req, res);
     assert.strictEqual(res.getStatus(), 200);
     const curriculum = res.getBody().data.curriculum;
     const hasPwn = curriculum.some(m => m.id === 'binary-exploitation');
     assert.strictEqual(hasPwn, true, 'Admin MUST receive binary-exploitation');
     const advisories = res.getBody().data.advisories;
     assert(Array.isArray(advisories) && advisories.length > 0, 'Admin MUST receive live vulnerability advisories');
-    console.log(`  [PASS] Admin receives full curriculum (${curriculum.length} modules) and ${advisories.length} vulnerability advisories`);
+    const adminWriteups = res.getBody().data.adminWriteups;
+    assert(Array.isArray(adminWriteups) && adminWriteups.length >= 200, 'Admin MUST receive crawled authentic writeups');
+    console.log(`  [PASS] Admin receives full curriculum (${curriculum.length} modules), ${advisories.length} advisories, and ${adminWriteups.length} admin writeups`);
   }
 
-  // Test Cadet Updates Endpoint
+  // Test Cadet / Sub-user Updates Endpoint
   {
-    const req = { headers: { cookie: `ctf_atlas_session=${cadetToken}` } };
-    const res = mockRes();
-    updatesHandler(req, res);
-    assert.strictEqual(res.getStatus(), 200);
-    const curriculum = res.getBody().data.curriculum;
-    const hasPwn = curriculum.some(m => m.id === 'binary-exploitation' || m.domain === 'pwn' || m.domain === 'reverse');
-    assert.strictEqual(hasPwn, false, 'Cadet MUST NOT receive binary-exploitation');
-    const data = res.getBody().data;
-    assert.strictEqual(data.advisories, undefined, 'Cadet MUST NOT receive vulnerability advisories over the wire');
-    assert.strictEqual(data.vulnResearch, undefined, 'Cadet MUST NOT receive vulnerability research over the wire');
-    console.log(`  [PASS] Cadet receives sanitized curriculum (${curriculum.length} modules, ZERO binary-exploitation & ZERO advisories over the wire)`);
+    const subUserToken = makeToken({ uid: 'alice', role: 'cadet' }, SECRET);
+    for (const tok of [cadetToken, subUserToken]) {
+      const req = { headers: { cookie: `ctf_atlas_session=${tok}` } };
+      const res = mockRes();
+      await updatesHandler(req, res);
+      assert.strictEqual(res.getStatus(), 200);
+      const curriculum = res.getBody().data.curriculum;
+      const hasPwn = curriculum.some(m => m.id === 'binary-exploitation' || m.domain === 'pwn' || m.domain === 'reverse');
+      assert.strictEqual(hasPwn, false, 'Cadet MUST NOT receive binary-exploitation');
+      const data = res.getBody().data;
+      assert.strictEqual(data.advisories, undefined, 'Cadet MUST NOT receive vulnerability advisories over the wire');
+      assert.strictEqual(data.vulnResearch, undefined, 'Cadet MUST NOT receive vulnerability research over the wire');
+      assert.strictEqual(data.adminWriteups, undefined, 'Sub-users MUST NOT receive admin-only crawled writeups over the wire');
+    }
+    console.log(`  [PASS] Cadet & sub-users receive sanitized curriculum with ZERO advisories and ZERO adminWriteups over the wire`);
   }
 }
 
