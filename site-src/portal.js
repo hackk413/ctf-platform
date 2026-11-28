@@ -2070,8 +2070,9 @@ function casebookHTML() {
     }
     if (q) {
       const blob = normalizeAnswer([
-        w.title, w.organization, w.category, (w.techniques || []).join(' '),
-        (w.tools || []).join(' '), w.summary, w.solve_steps, w.source_url
+        w.title, w.organization, w.category, w.flag, (w.techniques || []).join(' '),
+        (w.tools || []).join(' '), w.scenario, w.root_cause, w.summary, w.solve_steps,
+        (w.commands_used || []).map(c => c.command).join(' '), w.source_url
       ].join(' '));
       if (!blob.includes(q)) return false;
     }
@@ -2254,39 +2255,98 @@ function casebookHTML() {
       </div>
       <div class="writeups-list">
         ${adminList.map(w => {
-          const steps = String(w.solve_steps || '').split(/\s*\|\s*/).filter(Boolean);
+          const steps = (Array.isArray(w.solve_methodology) && w.solve_methodology.length)
+            ? w.solve_methodology
+            : String(w.solve_steps || '').split(/\s*\|\s*/).filter(Boolean);
           const extUrl = (w.source_url && w.source_url.startsWith('http')) ? w.source_url : '';
+          const seasonTag = w.season ? `Season ${w.season}${w.round ? ` (Round ${w.round})` : ''}` : (w.round ? `Round ${w.round}` : '');
+          const toolsDetail = Array.isArray(w.tools_detail) ? w.tools_detail : [];
+          const cmdsUsed = Array.isArray(w.commands_used) ? w.commands_used : [];
           return `
             <article class="writeup-card">
               <div class="card-top" style="align-items:flex-start">
                 <div>
                   <div class="tag-row" style="margin-bottom:6px">
                     <span class="tag accent">${esc((w.category || 'misc').toUpperCase())}</span>
-                    <span class="tag success">${esc(w.organization || 'Community CTF')}</span>
+                    ${w.difficulty ? `<span class="tag warn">${esc(w.difficulty)}</span>` : ''}
+                    ${w.points ? `<span class="tag">${esc(String(w.points))} pts</span>` : ''}
+                    <span class="tag success">${esc(w.organization || 'Community CTF')}${seasonTag ? ` · ${esc(seasonTag)}` : ''}</span>
                     <span class="tag">${esc(w.source_type || 'verified')}</span>
                   </div>
                   <h3 style="font-size:18px;color:var(--fg);margin:0 0 6px">${esc(w.title)}</h3>
                 </div>
-                ${extUrl ? `<a class="btn outline" href="${esc(extUrl)}" target="_blank" rel="noopener noreferrer">Source →</a>` : ''}
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  ${w.exploit_script ? `<button class="btn outline copy-btn" data-copy-exploit="${esc(w.id)}">📋 Copy Script</button>` : ''}
+                  ${extUrl ? `<a class="btn outline" href="${esc(extUrl)}" target="_blank" rel="noopener noreferrer">Source →</a>` : ''}
+                </div>
               </div>
+
+              ${w.flag ? `
+                <div class="note" style="border-left-color:var(--green);margin:10px 0">
+                  <strong>🏆 Flag:</strong> <code style="color:var(--green);font-size:13px">${esc(w.flag)}</code>
+                </div>
+              ` : ''}
+
               ${(w.techniques && w.techniques.length) || (w.tools && w.tools.length) ? `
                 <div class="tag-row" style="margin:6px 0 10px">
                   ${(w.techniques || []).map(t => `<span class="tag warn">${esc(t)}</span>`).join('')}
                   ${(w.tools || []).map(t => `<span class="tag">${esc(t)}</span>`).join('')}
                 </div>
               ` : ''}
-              ${w.summary ? `
-                <div style="margin:10px 0">
-                  <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Summary &amp; Technique</h4>
-                  <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.summary)}</p>
+
+              ${(w.scenario || w.summary) ? `
+                <div style="margin:12px 0">
+                  <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Scenario &amp; Challenge Environment</h4>
+                  <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.scenario || w.summary)}</p>
                 </div>
               ` : ''}
+
+              ${w.root_cause ? `
+                <div class="note" style="margin:12px 0">
+                  <h4 style="font-family:var(--display);color:var(--amber);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Root Cause Analysis</h4>
+                  <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.root_cause)}</p>
+                </div>
+              ` : ''}
+
               ${steps.length ? `
-                <div style="margin:12px 0">
-                  <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">Solving Steps</h4>
+                <div style="margin:14px 0">
+                  <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">Step-by-Step Solving Methodology</h4>
                   <ol style="color:#cbd5e1;padding-left:20px;line-height:1.8;margin:0">
                     ${steps.map(s => `<li>${esc(s)}</li>`).join('')}
                   </ol>
+                </div>
+              ` : ''}
+
+              ${(toolsDetail.length || cmdsUsed.length) ? `
+                <div class="note" style="margin:14px 0">
+                  <h4 style="font-family:var(--display);color:var(--cyan);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">Tools &amp; Commands Used (What &amp; Why)</h4>
+                  ${toolsDetail.length ? `
+                    <ul style="color:#cbd5e1;padding-left:18px;line-height:1.7;margin:0 0 8px">
+                      ${toolsDetail.map(td => `<li><strong><code>${esc(td.tool)}</code></strong> — ${esc(td.why)}</li>`).join('')}
+                    </ul>
+                  ` : ''}
+                  ${cmdsUsed.length ? `
+                    <ul style="color:#cbd5e1;padding-left:18px;line-height:1.7;margin:0">
+                      ${cmdsUsed.map(cu => `<li><code>${esc(cu.command)}</code><br><span style="color:var(--muted);font-size:12px">Why: ${esc(cu.why)}</span></li>`).join('')}
+                    </ul>
+                  ` : ''}
+                </div>
+              ` : ''}
+
+              ${w.exploit_script ? `
+                <div style="margin:14px 0">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                    <h4 style="font-family:var(--display);color:var(--green);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0">Extracted Exploit / Solver Script</h4>
+                    <button class="btn outline copy-btn" data-copy-exploit="${esc(w.id)}" style="margin:0">Copy Script</button>
+                  </div>
+                  <pre style="max-height:340px;overflow:auto"><code id="code-${esc(w.id)}">${esc(w.exploit_script)}</code></pre>
+                </div>
+              ` : ''}
+
+              ${w.defense_remediation ? `
+                <div class="note warn-note" style="margin-top:12px">
+                  <h4 style="font-family:var(--display);color:var(--amber);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px">Defensive Remediation &amp; Production Hardening</h4>
+                  <p style="color:#cbd5e1;line-height:1.7;margin:0">${esc(w.defense_remediation).replace(/\n/g, '<br>')}</p>
                 </div>
               ` : ''}
             </article>
